@@ -1,5 +1,43 @@
 version: '3.9'
 services:
+  discovery-service:
+    container_name: discovery-service
+    build:
+      context: ../discovery-service-eric6166
+      dockerfile: Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8761:8761"
+    networks:
+      - internal-network
+    expose:
+      - "8761"
+#    depends_on:
+#      zipkin:
+#        condition: service_started
+  
+  gateway-service:
+    container_name: gateway-service
+    build:
+      context: ../gateway-service-eric6166
+      dockerfile: Dockerfile
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    ports:
+      - "8181:8181"
+    expose:
+      - "8181"
+    networks:
+      - internal-network
+    depends_on:
+      discovery-service:
+        condition: service_started
+#      zipkin:
+#        condition: service_started
+#      keycloak:
+#        condition: service_healthy
+  
   postgres-inventory:
     container_name: postgres-inventory
     image: postgres:14.9-alpine
@@ -36,10 +74,10 @@ services:
     depends_on:
       postgres-inventory:
         condition: service_healthy
-#      discovery-server:
-#        condition: service_started
-#      api-gateway:
-#        condition: service_started
+      discovery-service:
+        condition: service_started
+      gateway-service:
+        condition: service_started
 #      kafka:
 #        condition: service_started
 #      activemq:
