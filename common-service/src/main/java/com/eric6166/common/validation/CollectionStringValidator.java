@@ -41,7 +41,7 @@ public class CollectionStringValidator implements ConstraintValidator<ValidColle
         } else {
             isValid = valueList.containsAll(s.stream().map(String::toUpperCase).toList());
         }
-        return appValidationUtils.handleConstrainsValidValue(constraintValidatorContext, isValid, message, messageParams, messageCode, valueList);
+        return appValidationUtils.handleConstrainsValidValue(constraintValidatorContext, isValid, message, messageParams, messageCode, valueList.toString());
     }
 
 }

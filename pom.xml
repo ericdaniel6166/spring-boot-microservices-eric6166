@@ -16,7 +16,6 @@
     <version>1.0-RELEASE</version>
 
     <modules>
-        <module>base-service</module>
         <module>common-service</module>
         <module>jpa-service</module>
     </modules>

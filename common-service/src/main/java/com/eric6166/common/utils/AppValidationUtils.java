@@ -7,6 +7,7 @@ import lombok.experimental.FieldDefaults;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -16,16 +17,17 @@ public class AppValidationUtils {
 
     AppMessageUtils appMessageUtils;
 
-    public boolean handleConstrainsValidValue(ConstraintValidatorContext constraintValidatorContext, boolean isValid, String message, String[] messageParams, String messageCode, List<String> valueList) {
+    public boolean handleConstrainsValidValue(ConstraintValidatorContext constraintValidatorContext, boolean isValid, String message, String[] messageParams, String messageCode, String validValues) {
         if (!isValid && StringUtils.isBlank(message)) {
             if (messageParams.length == 0 && StringUtils.isBlank(messageCode)) {
                 appMessageUtils.addViolation(constraintValidatorContext,
                         MessageConstant.MSG_ERR_CONSTRAINS_VALID_VALUE,
-                        new String[]{Const.PLACEHOLDER_0, valueList.toString()});
+                        new String[]{Const.PLACEHOLDER_0, validValues});
             } else {
                 appMessageUtils.addViolation(constraintValidatorContext, messageCode, messageParams);
             }
         }
         return isValid;
     }
+
 }

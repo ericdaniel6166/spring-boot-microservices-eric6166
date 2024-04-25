@@ -16,7 +16,7 @@ public class AppPageRequest {
 
     Integer pageSize;
 
-    Set<String> sortColumn;
+    String sortColumn;
 
     String sortDirection;
 

@@ -13,7 +13,8 @@ public final class Const {
     public static final String DEFAULT_PAGE_SIZE_STRING = "10";
     public static final int MAXIMUM_SORT_COLUMN = 10;
     public static final int INTEGER_ONE = 1;
-    public static final String STRING_ONE = "1";
+    public static final int DEFAULT_PAGE_NUMBER = 1;
+    public static final String DEFAULT_PAGE_NUMBER_STRING = "1";
     public static final int DEFAULT_SIZE_MAX_STRING = 255;
     public static final int SIZE_MAX_STRING = 60000;
     public static final long DEFAULT_MAX_LONG = Long.MAX_VALUE; //change
