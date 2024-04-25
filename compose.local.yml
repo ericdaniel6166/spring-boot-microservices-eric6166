@@ -1,0 +1,35 @@
+version: '3.9'
+services:
+  postgres-inventory:
+    container_name: postgres-inventory
+    image: postgres:14.9-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: inventory_service_v1
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres-inventory-data:/var/lib/postgresql/data
+    networks:
+      - internal-network
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+networks:
+  internal-network:
+
+volumes:
+  postgres-inventory-data:
+#  postgres-product-data:
+#  postgres-order-data:
+#  postgres-payment-data:
+#  postgres-user-data:
+#  postgres-keycloak-data:
+#  activemq-data:
+#  activemq-log:
+#  cache:
