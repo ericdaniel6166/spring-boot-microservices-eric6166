@@ -26,7 +26,7 @@ services:
       context: ../inventory-service-eric6166
       dockerfile: Dockerfile
     environment:
-      SPRING_PROFILES_ACTIVE: jpa, docker
+      SPRING_PROFILES_ACTIVE: docker
     ports:
       - "8083:8083"
     expose:
