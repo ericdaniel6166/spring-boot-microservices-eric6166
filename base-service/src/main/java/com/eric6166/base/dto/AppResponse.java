@@ -1,6 +1,6 @@
-package com.eric6166.common.dto;
+package com.eric6166.base.dto;
 
-import com.eric6166.common.config.exception.ErrorResponse;
+import com.eric6166.base.exception.ErrorResponse;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;

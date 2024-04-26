@@ -1,4 +1,4 @@
-package com.eric6166.common.config.exception;
+package com.eric6166.base.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;

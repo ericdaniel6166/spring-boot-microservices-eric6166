@@ -1,6 +1,6 @@
-package com.eric6166.common.config.exception;
+package com.eric6166.common.exception;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.eric6166.base.exception.ErrorDetail;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
