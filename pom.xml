@@ -26,6 +26,7 @@
 
     <properties>
         <java.version>17</java.version>
+        <spring-boot-starter-parent.version>3.1.11</spring-boot-starter-parent.version>
         <spring.cloud-version>2022.0.5</spring.cloud-version>
         <opentelemetry-bom.version>1.37.0</opentelemetry-bom.version>
         <keycloak-adapter-bom.version>24.0.3</keycloak-adapter-bom.version>
@@ -98,6 +99,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot-starter-parent.version}</version>
                 <configuration>
                     <excludes>
                         <exclude>
