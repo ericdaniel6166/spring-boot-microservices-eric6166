@@ -3,7 +3,6 @@ package com.eric6166.common.exception;
 import com.eric6166.base.exception.ErrorDetail;
 import com.eric6166.base.exception.ErrorResponse;
 import com.eric6166.base.utils.BaseUtils;
-import com.eric6166.common.exception.ValidationErrorDetail;
 import com.eric6166.common.utils.Const;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
@@ -69,46 +68,17 @@ public class RestExceptionHandler {
     public ResponseEntity<Object> handleBindException(BindException e, HttpServletRequest httpServletRequest, HandlerMethod handlerMethod) {
         String errorMessage = BaseUtils.getRootCauseMessage(e);
         log.info("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
-        var allErrors = e.getAllErrors();
         List<ErrorDetail> errorDetails = new ArrayList<>();
-        for (var error : allErrors) {
+        for (var error : e.getAllErrors()) {
             if (error instanceof FieldError fieldError) {
+                String messageTemplate = buildMessageTemplate(fieldError);
+                var msg = messageTemplate;
                 String apiClassName = handlerMethod.getBeanType().getSimpleName();
                 var keyField = String.format(KEY_FIELD_TEMPLATE, apiClassName, fieldError.getObjectName(), fieldError.getField());
-                var keyCommonField = String.format(KEY_COMMON_FIELD, Const.COMMON, fieldError.getField());
-
-                var messageTemplate = StringUtils.EMPTY;
-                if (ObjectUtils.isNotEmpty(fieldError.getCodes())) {
-                    for (var code : fieldError.getCodes()) {
-                        try {
-                            messageTemplate = messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
-                            break;
-                        } catch (NoSuchMessageException ignored) {
-                        }
-                    }
-                }
-                if (StringUtils.isBlank(messageTemplate)) {
-                    messageTemplate = fieldError.getDefaultMessage();
-                }
-                var msg = messageTemplate;
                 if (messageTemplate.contains(Const.PLACEHOLDER_0)) {
-                    var formattedMsg = new MessageFormat(messageTemplate);
-
-                    List<String> keyFieldList = List.of(keyField, keyCommonField);
-                    var model = StringUtils.EMPTY;
-                    for (var key : keyFieldList) {
-                        try {
-                            model = messageSource.getMessage(key, null, LocaleContextHolder.getLocale());
-                            break;
-                        } catch (NoSuchMessageException ignored) {
-                        }
-                    }
-                    if (StringUtils.isBlank(model)) {
-                        model = keyField; // comment // for local testing
-//                        model = messageSource.getMessage(Const.GENERAL_FIELD, null, LocaleContextHolder.getLocale()); // uncomment
-                    }
-
-                    msg = formattedMsg.format(new Object[]{model});
+                    var keyCommonField = String.format(KEY_COMMON_FIELD, Const.COMMON, fieldError.getField());
+                    String model = buildModel(keyField, keyCommonField);
+                    msg = formatMsg(messageTemplate, model);
                 }
                 errorDetails.add(new ValidationErrorDetail(keyField, fieldError.getField(), null, fieldError.getRejectedValue(), StringUtils.capitalize(msg)));
             }
@@ -116,6 +86,45 @@ public class RestExceptionHandler {
         var errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.name(),
                 null, httpServletRequest, errorDetails);
         return BaseUtils.buildResponseExceptionEntity(errorResponse);
+    }
+
+    private String buildMessageTemplate(FieldError fieldError) {
+        var messageTemplate = StringUtils.EMPTY;
+        if (ObjectUtils.isNotEmpty(fieldError.getCodes())) {
+            for (var code : fieldError.getCodes()) {
+                try {
+                    messageTemplate = messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
+                    break;
+                } catch (NoSuchMessageException ignored) {
+                }
+            }
+        }
+        if (StringUtils.isBlank(messageTemplate)) {
+            messageTemplate = fieldError.getDefaultMessage();
+        }
+        return messageTemplate;
+    }
+
+    private String formatMsg(String messageTemplate, String model) {
+        var formattedMsg = new MessageFormat(messageTemplate);
+        return formattedMsg.format(new Object[]{model});
+    }
+
+    private String buildModel(String keyField, String keyCommonField) {
+        var model = StringUtils.EMPTY;
+        List<String> keyFieldList = List.of(keyField, keyCommonField);
+        for (var key : keyFieldList) {
+            try {
+                model = messageSource.getMessage(key, null, LocaleContextHolder.getLocale());
+                break;
+            } catch (NoSuchMessageException ignored) {
+            }
+        }
+        if (StringUtils.isBlank(model)) {
+            model = keyField; // comment // for local testing
+//                        model = messageSource.getMessage(Const.GENERAL_FIELD, null, LocaleContextHolder.getLocale()); // uncomment
+        }
+        return model;
     }
 
     @ExceptionHandler(Exception.class)
