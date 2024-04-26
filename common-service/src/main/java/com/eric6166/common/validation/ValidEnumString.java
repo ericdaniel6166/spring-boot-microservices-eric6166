@@ -17,7 +17,6 @@ import java.lang.annotation.Target;
 )
 public @interface ValidEnumString {
 
-    @SuppressWarnings("squid:S1452")
     Class<? extends Enum<?>> value();
 
     boolean caseSensitive() default true;
