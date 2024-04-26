@@ -1,4 +1,4 @@
-package com.eric6166.security.config;
+package com.eric6166.keycloak.config;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

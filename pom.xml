@@ -19,6 +19,7 @@
         <module>common-service</module>
         <module>jpa-service</module>
         <module>security-service</module>
+        <module>security-service</module>
     </modules>
 
     <name>spring-boot-microservices-eric6166</name>

@@ -20,6 +20,26 @@ services:
       timeout: 5s
       retries: 5
 
+  postgres-user:
+    container_name: postgres-user
+    image: postgres:14.9-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: user_service_v1
+    ports:
+      - "5436:5432"
+    volumes:
+      - postgres-user-data:/var/lib/postgresql/data
+    networks:
+      - internal-network
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
   postgres-keycloak:
     container_name: postgres-keycloak
     image: postgres:14.9-alpine
@@ -77,10 +97,10 @@ networks:
 volumes:
   postgres-keycloak-data:
   postgres-inventory-data:
+  postgres-user-data:
 #  postgres-product-data:
 #  postgres-order-data:
 #  postgres-payment-data:
-#  postgres-user-data:
 #  activemq-data:
 #  activemq-log:
 #  cache:
