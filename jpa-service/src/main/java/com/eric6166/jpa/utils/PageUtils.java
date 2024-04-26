@@ -6,8 +6,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import java.util.List;
-
 @Slf4j
 public final class PageUtils {
 
@@ -15,16 +13,15 @@ public final class PageUtils {
         throw new IllegalStateException("Utility class");
     }
 
-
-    public static Pageable buildPageable(Integer pageNumber, Integer size, Sort sort) {
-        return PageRequest.of(pageNumber - 1, size, sort);
-    }
-
-    public static void addDefaultOrder(List<Sort.Order> orders) {
-        if (orders.stream().anyMatch(order -> StringUtils.equals(order.getProperty(), PageConst.ID))) {
-            return;
+    public static Pageable buildPageable(Integer pageNumber, Integer size, String sortColumn, String sortDirection) {
+        Sort sort;
+        if (StringUtils.equals(sortColumn, PageConst.ID)) {
+            sort = Sort.by(new Sort.Order(Sort.Direction.fromString(sortDirection), PageConst.ID));
+        } else {
+            sort = Sort.by(new Sort.Order(Sort.Direction.fromString(sortDirection), sortColumn),
+                    Sort.Order.asc(PageConst.ID));
         }
-        orders.add(PageConst.DEFAULT_SORT_ORDER);
+        return PageRequest.of(pageNumber - 1, size, sort);
     }
 
 //    public static <T> CursorPageResponse<T> buildBlankCursorPageResponse(Page<?> page) {
