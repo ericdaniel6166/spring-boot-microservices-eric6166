@@ -39,7 +39,6 @@ public class RestExceptionHandler {
 
     MessageSource messageSource;
 
-
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Object> handleResponseStatusException(ResponseStatusException e, HttpServletRequest httpServletRequest) {
         var errorMessage = BaseUtils.getRootCauseMessage(e);
