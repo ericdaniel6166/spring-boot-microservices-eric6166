@@ -2,7 +2,6 @@ package com.eric6166.common.exception;
 
 import com.eric6166.base.exception.ErrorDetail;
 import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -11,7 +10,6 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = false)
 public class ValidationErrorDetail extends ErrorDetail {
 
 //    @JsonIgnore // uncomment // for local testing
