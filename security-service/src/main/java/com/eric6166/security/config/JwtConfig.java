@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @ConditionalOnProperty(name = "security.enabled", havingValue = "true")
 public class JwtConfig {
 
+    @SuppressWarnings("squid:S6204")
     @Bean
     public JwtAuthenticationConverter jwtAuthenticationConverterForKeycloak() {
         Converter<Jwt, Collection<GrantedAuthority>> jwtGrantedAuthoritiesConverter = jwt -> {
