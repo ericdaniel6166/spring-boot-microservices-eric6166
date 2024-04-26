@@ -1,4 +1,4 @@
-package com.eric6166.jpa.dto;
+package com.eric6166.common.dto;
 
 import lombok.AccessLevel;
 import lombok.Getter;
