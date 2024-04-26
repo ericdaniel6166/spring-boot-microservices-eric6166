@@ -16,4 +16,6 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "security")
 public class SecurityProps {
     String[] skipUrls;
+    String[] customerUrls;
+    String[] adminUrls;
 }
