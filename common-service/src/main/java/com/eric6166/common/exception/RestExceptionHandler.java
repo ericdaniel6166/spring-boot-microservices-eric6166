@@ -63,7 +63,7 @@ public class RestExceptionHandler {
         List<ErrorDetail> errorDetails = new ArrayList<>();
         for (var error : e.getAllErrors()) {
             if (error instanceof FieldError fieldError) {
-                errorDetails.add(buildValidationErrorDetail(handlerMethod, fieldError));
+                errorDetails.add(buildErrorDetail(handlerMethod, fieldError));
             }
         }
         var errorResponse = new ErrorResponse(ErrorCode.VALIDATION_ERROR.getHttpStatus(),
@@ -71,7 +71,7 @@ public class RestExceptionHandler {
         return BaseUtils.buildResponseExceptionEntity(errorResponse);
     }
 
-    private ValidationErrorDetail buildValidationErrorDetail(HandlerMethod handlerMethod, FieldError fieldError) {
+    private ErrorDetail buildErrorDetail(HandlerMethod handlerMethod, FieldError fieldError) {
         String messageTemplate = buildMessageTemplate(fieldError);
         var msg = messageTemplate;
         String apiClassName = handlerMethod.getBeanType().getSimpleName();
