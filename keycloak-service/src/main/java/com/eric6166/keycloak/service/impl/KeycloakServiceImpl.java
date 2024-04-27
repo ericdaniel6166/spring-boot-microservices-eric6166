@@ -48,11 +48,13 @@ public class KeycloakServiceImpl implements KeycloakService {
 
     @Override
     public Optional<GroupRepresentation> searchGroupByName(String name) {
+        log.info("KeycloakServiceImpl.searchGroupByName"); // comment // for local testing
         return getRealm().groups().groups(name, 0, 1).stream().findFirst();
     }
 
     @Override
     public Response createUser(UserRepresentation user) {
+        log.info("KeycloakServiceImpl.createUser"); // comment // for local testing
         return getUsersResource().create(user);
     }
 }

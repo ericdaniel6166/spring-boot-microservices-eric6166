@@ -37,6 +37,7 @@ public class RestExceptionHandler {
     private static final String KEY_FIELD_TEMPLATE = "%s.%s.%s";
 
     MessageSource messageSource;
+    BaseUtils baseUtils;
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Object> handleResponseStatusException(ResponseStatusException e, HttpServletRequest httpServletRequest) {
@@ -44,7 +45,7 @@ public class RestExceptionHandler {
         log.info("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage);
         var errorResponse = new ErrorResponse(e.getStatusCode(), e.getStatusCode().toString(),
                 errorMessage, httpServletRequest, null);
-        return BaseUtils.buildResponseExceptionEntity(errorResponse);
+        return baseUtils.buildResponseExceptionEntity(errorResponse);
     }
 
 //    @ExceptionHandler(AppException.class)
@@ -68,7 +69,7 @@ public class RestExceptionHandler {
         }
         var errorResponse = new ErrorResponse(ErrorCode.VALIDATION_ERROR.getHttpStatus(),
                 ErrorCode.VALIDATION_ERROR.name(), null, httpServletRequest, errorDetails);
-        return BaseUtils.buildResponseExceptionEntity(errorResponse);
+        return baseUtils.buildResponseExceptionEntity(errorResponse);
     }
 
     private ErrorDetail buildErrorDetail(HandlerMethod handlerMethod, FieldError fieldError) {
@@ -130,7 +131,7 @@ public class RestExceptionHandler {
         log.info("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
         ErrorResponse errorResponse = new ErrorResponse(ErrorCode.VALIDATION_ERROR.getHttpStatus(),
                 ErrorCode.VALIDATION_ERROR.name(), e.getMessage(), httpServletRequest, e.getErrorDetails());
-        return BaseUtils.buildResponseExceptionEntity(errorResponse);
+        return baseUtils.buildResponseExceptionEntity(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)
@@ -139,6 +140,6 @@ public class RestExceptionHandler {
         log.info("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.name(),
                 HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), httpServletRequest, null);
-        return BaseUtils.buildResponseExceptionEntity(errorResponse);
+        return baseUtils.buildResponseExceptionEntity(errorResponse);
     }
 }
