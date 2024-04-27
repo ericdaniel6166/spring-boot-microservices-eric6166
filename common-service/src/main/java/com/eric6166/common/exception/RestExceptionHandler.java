@@ -56,27 +56,33 @@ public class RestExceptionHandler {
 
 
     @ExceptionHandler(BindException.class)
-    public ResponseEntity<Object> handleBindException(BindException e, HttpServletRequest httpServletRequest, HandlerMethod handlerMethod) {
+    public ResponseEntity<Object> handleBindException(BindException e, HttpServletRequest httpServletRequest,
+                                                      HandlerMethod handlerMethod) {
         String errorMessage = BaseUtils.getRootCauseMessage(e);
         log.info("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
         List<ErrorDetail> errorDetails = new ArrayList<>();
         for (var error : e.getAllErrors()) {
             if (error instanceof FieldError fieldError) {
-                String messageTemplate = buildMessageTemplate(fieldError);
-                var msg = messageTemplate;
-                String apiClassName = handlerMethod.getBeanType().getSimpleName();
-                var keyField = String.format(KEY_FIELD_TEMPLATE, apiClassName, fieldError.getObjectName(), fieldError.getField());
-                if (messageTemplate.contains(Const.PLACEHOLDER_0)) {
-                    var keyCommonField = String.format(KEY_COMMON_FIELD, Const.COMMON, fieldError.getField());
-                    String model = buildModel(keyField, keyCommonField);
-                    msg = formatMsg(messageTemplate, model);
-                }
-                errorDetails.add(new ValidationErrorDetail(keyField, fieldError.getField(), null, fieldError.getRejectedValue(), StringUtils.capitalize(msg)));
+                errorDetails.add(buildValidationErrorDetail(handlerMethod, fieldError));
             }
         }
-        var errorResponse = new ErrorResponse(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.name(),
-                null, httpServletRequest, errorDetails);
+        var errorResponse = new ErrorResponse(ErrorCode.VALIDATION_ERROR.getHttpStatus(),
+                ErrorCode.VALIDATION_ERROR.name(), null, httpServletRequest, errorDetails);
         return BaseUtils.buildResponseExceptionEntity(errorResponse);
+    }
+
+    private ValidationErrorDetail buildValidationErrorDetail(HandlerMethod handlerMethod, FieldError fieldError) {
+        String messageTemplate = buildMessageTemplate(fieldError);
+        var msg = messageTemplate;
+        String apiClassName = handlerMethod.getBeanType().getSimpleName();
+        var keyField = String.format(KEY_FIELD_TEMPLATE, apiClassName, fieldError.getObjectName(), fieldError.getField());
+        if (messageTemplate.contains(Const.PLACEHOLDER_0)) {
+            var keyCommonField = String.format(KEY_COMMON_FIELD, Const.COMMON, fieldError.getField());
+            String model = buildModel(keyField, keyCommonField);
+            msg = formatMsg(messageTemplate, model);
+        }
+        return new ValidationErrorDetail(keyField, fieldError.getField(), null, fieldError.getRejectedValue(),
+                StringUtils.capitalize(msg));
     }
 
     private String buildMessageTemplate(FieldError fieldError) {
@@ -122,8 +128,8 @@ public class RestExceptionHandler {
     public ResponseEntity<Object> handleAppValidationException(AppValidationException e, HttpServletRequest httpServletRequest) {
         String errorMessage = BaseUtils.getRootCauseMessage(e);
         log.info("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
-        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.VALIDATION_ERROR.getHttpStatus(), ErrorCode.VALIDATION_ERROR.name(),
-                e.getMessage(), httpServletRequest, e.getErrorDetails());
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.VALIDATION_ERROR.getHttpStatus(),
+                ErrorCode.VALIDATION_ERROR.name(), e.getMessage(), httpServletRequest, e.getErrorDetails());
         return BaseUtils.buildResponseExceptionEntity(errorResponse);
     }
 
