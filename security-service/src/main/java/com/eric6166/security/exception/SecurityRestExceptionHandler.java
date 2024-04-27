@@ -1,4 +1,4 @@
-package com.eric6166.security.config.exception;
+package com.eric6166.security.exception;
 
 import com.eric6166.base.exception.ErrorResponse;
 import com.eric6166.base.utils.BaseUtils;
