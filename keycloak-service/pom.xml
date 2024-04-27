@@ -18,6 +18,11 @@
     <description>keycloak-service</description>
 
     <dependencies>
+<!--        <dependency>-->
+<!--            <groupId>com.eric6166</groupId>-->
+<!--            <artifactId>base-service</artifactId>-->
+<!--            <version>${project.parent.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.keycloak</groupId>
             <artifactId>keycloak-admin-client</artifactId>

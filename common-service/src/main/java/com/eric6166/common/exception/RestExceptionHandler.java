@@ -55,15 +55,6 @@ public class RestExceptionHandler {
 //    }
 
 
-//    @ExceptionHandler(AccessDeniedException.class)
-//    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException e, HttpServletRequest httpServletRequest) {
-//        String errorMessage = BaseUtils.getRootCauseMessage(e);
-//        log.info("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
-//        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.name(),
-//                HttpStatus.FORBIDDEN.getReasonPhrase(), httpServletRequest, null);
-//        return BaseUtils.buildResponseExceptionEntity(errorResponse);
-//    }
-
     @ExceptionHandler(BindException.class)
     public ResponseEntity<Object> handleBindException(BindException e, HttpServletRequest httpServletRequest, HandlerMethod handlerMethod) {
         String errorMessage = BaseUtils.getRootCauseMessage(e);
@@ -122,9 +113,18 @@ public class RestExceptionHandler {
         }
         if (StringUtils.isBlank(model)) {
             model = keyField; // comment // for local testing
-//                        model = messageSource.getMessage(Const.GENERAL_FIELD, null, LocaleContextHolder.getLocale()); // uncomment
+//            model = messageSource.getMessage(Const.GENERAL_FIELD, null, LocaleContextHolder.getLocale()); // uncomment
         }
         return model;
+    }
+
+    @ExceptionHandler(AppValidationException.class)
+    public ResponseEntity<Object> handleAppValidationException(AppValidationException e, HttpServletRequest httpServletRequest) {
+        String errorMessage = BaseUtils.getRootCauseMessage(e);
+        log.info("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
+        ErrorResponse errorResponse = new ErrorResponse(ErrorCode.VALIDATION_ERROR.getHttpStatus(), ErrorCode.VALIDATION_ERROR.name(),
+                e.getMessage(), httpServletRequest, e.getErrorDetails());
+        return BaseUtils.buildResponseExceptionEntity(errorResponse);
     }
 
     @ExceptionHandler(Exception.class)
