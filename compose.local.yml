@@ -1,5 +1,25 @@
 version: '3.9'
 services:
+  postgres-keycloak:
+    container_name: postgres-keycloak
+    image: postgres:14.9-alpine
+    environment:
+      POSTGRES_PASSWORD: secret
+      POSTGRES_USER: postgres
+      POSTGRES_DB: keycloak_service_v1
+    ports:
+      - "5439:5432"
+    volumes:
+      - postgres-keycloak-data:/var/lib/postgresql/data
+    networks:
+      - internal-network
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
   postgres-inventory:
     container_name: postgres-inventory
     image: postgres:14.9-alpine
@@ -31,26 +51,6 @@ services:
       - "5436:5432"
     volumes:
       - postgres-user-data:/var/lib/postgresql/data
-    networks:
-      - internal-network
-    restart: always
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 15s
-      timeout: 5s
-      retries: 5
-
-  postgres-keycloak:
-    container_name: postgres-keycloak
-    image: postgres:14.9-alpine
-    environment:
-      POSTGRES_PASSWORD: secret
-      POSTGRES_USER: postgres
-      POSTGRES_DB: keycloak_service_v1
-    ports:
-      - "5439:5432"
-    volumes:
-      - postgres-keycloak-data:/var/lib/postgresql/data
     networks:
       - internal-network
     restart: always
