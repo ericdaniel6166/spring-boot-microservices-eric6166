@@ -1,6 +1,7 @@
-package com.eric6166.base.config.tracing;
+package com.eric6166.common.config.tracing;
 
 import brave.Tracer;
+import com.eric6166.base.config.tracing.AppTraceIdContext;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

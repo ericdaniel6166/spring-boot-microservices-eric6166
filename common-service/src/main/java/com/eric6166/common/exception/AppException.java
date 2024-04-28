@@ -35,4 +35,10 @@ public class AppException extends Exception {
         this.status = httpStatus.value();
     }
 
+    public AppException(Throwable cause) {
+        super(cause);
+        this.error = HttpStatus.INTERNAL_SERVER_ERROR.name();
+        this.httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+        this.status = HttpStatus.INTERNAL_SERVER_ERROR.value();
+    }
 }

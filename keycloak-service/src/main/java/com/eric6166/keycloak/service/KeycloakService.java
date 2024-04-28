@@ -7,7 +7,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import java.util.Optional;
 
-@ConditionalOnProperty(name = "keycloak.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "keycloak-admin-client.enabled", havingValue = "true")
 public interface KeycloakService {
 
     Optional<UserRepresentation> searchUserByUsername(String username);

@@ -13,19 +13,19 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
-@ConditionalOnProperty(name = "keycloak.enabled", havingValue = "true")
-public class KeycloakClientConfig {
+@ConditionalOnProperty(name = "keycloak-admin-client.enabled", havingValue = "true")
+public class KeycloakAdminClientConfig {
 
-    KeycloakProps keycloakProps;
+    KeycloakAdminClientProps keycloakAdminClientProps;
 
     @Bean
     public Keycloak keycloak() {
         return KeycloakBuilder.builder()
                 .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
-                .serverUrl(keycloakProps.getAuthServerUrl())
-                .realm(keycloakProps.getRealm())
-                .clientId(keycloakProps.getResource())
-                .clientSecret(keycloakProps.getCredentials().getSecret())
+                .serverUrl(keycloakAdminClientProps.getServerUrl())
+                .realm(keycloakAdminClientProps.getRealm())
+                .clientId(keycloakAdminClientProps.getClientId())
+                .clientSecret(keycloakAdminClientProps.getClientSecret())
                 .build();
     }
 }

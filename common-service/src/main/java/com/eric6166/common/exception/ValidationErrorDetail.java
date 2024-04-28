@@ -12,13 +12,13 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ValidationErrorDetail extends ErrorDetail {
 
-//    @JsonIgnore // uncomment // for local testing
+    //    @JsonIgnore // uncomment // for local testing
     private String keyField;
 
     private String field;
     private String object;
 
-//    @JsonIgnore // uncomment // for local testing
+    //    @JsonIgnore // uncomment // for local testing
     private Object rejectedValue;
 
     private String message;

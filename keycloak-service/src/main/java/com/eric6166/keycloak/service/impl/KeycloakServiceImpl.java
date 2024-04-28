@@ -1,6 +1,6 @@
 package com.eric6166.keycloak.service.impl;
 
-import com.eric6166.keycloak.config.KeycloakProps;
+import com.eric6166.keycloak.config.KeycloakAdminClientProps;
 import com.eric6166.keycloak.service.KeycloakService;
 import jakarta.ws.rs.core.Response;
 import lombok.AccessLevel;
@@ -21,11 +21,11 @@ import java.util.Optional;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @Slf4j
-@ConditionalOnProperty(name = "keycloak.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "keycloak-admin-client.enabled", havingValue = "true")
 public class KeycloakServiceImpl implements KeycloakService {
 
     Keycloak keycloak;
-    KeycloakProps keycloakProps;
+    KeycloakAdminClientProps keycloakAdminClientProps;
 
     @Override
     public Optional<UserRepresentation> searchUserByUsername(String username) {
@@ -33,7 +33,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     }
 
     private RealmResource getRealm() {
-        return keycloak.realm(keycloakProps.getRealm());
+        return keycloak.realm(keycloakAdminClientProps.getRealm());
     }
 
     @Override

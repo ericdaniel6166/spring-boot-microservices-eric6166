@@ -164,8 +164,8 @@ services:
         condition: service_healthy
       zipkin:
         condition: service_started
-#      kafka:
-#        condition: service_started
+      kafka:
+        condition: service_started
 #      activemq:
 #        condition: service_started
 #      redis:
@@ -195,8 +195,8 @@ services:
         condition: service_healthy
       zipkin:
         condition: service_started
-#      kafka:
-#        condition: service_started
+      kafka:
+        condition: service_started
 #      activemq:
 #        condition: service_started
 #      redis:
@@ -209,6 +209,36 @@ services:
       - "9411:9411"
     networks:
       - internal-network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - internal-network
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:7.0.1
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    networks:
+      - internal-network
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_INTERNAL:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    depends_on:
+      zookeeper:
+        condition: service_started
 
 networks:
   internal-network:

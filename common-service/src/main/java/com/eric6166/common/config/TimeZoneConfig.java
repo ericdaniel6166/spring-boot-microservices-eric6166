@@ -1,7 +1,6 @@
 package com.eric6166.common.config;
 
 import com.eric6166.base.utils.BaseConst;
-import com.eric6166.common.utils.Const;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 

@@ -12,19 +12,12 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 @Configuration
-@ConditionalOnProperty(name = "keycloak.enabled", havingValue = "true")
-@ConfigurationProperties(prefix = "keycloak")
-public class KeycloakProps {
+@ConditionalOnProperty(name = "keycloak-admin-client.enabled", havingValue = "true")
+@ConfigurationProperties(prefix = "keycloak-admin-client")
+public class KeycloakAdminClientProps {
 
-    String authServerUrl;
+    String serverUrl;
     String realm;
-    String resource;
-    Credentials credentials = new Credentials();
-
-    @FieldDefaults(level = AccessLevel.PRIVATE)
-    @Getter
-    @Setter
-    public static class Credentials {
-        String secret;
-    }
+    String clientId;
+    String clientSecret;
 }
