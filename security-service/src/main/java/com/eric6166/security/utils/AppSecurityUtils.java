@@ -26,10 +26,6 @@ public class AppSecurityUtils {
 
     HttpServletRequest httpServletRequest;
 
-    public String getAuthorizationHeader() {
-        return httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
-    }
-
     public static boolean hasAnyRole(String... roles) {
         Collection<String> authorities = getAuthorities();
         for (var role : roles) {
@@ -165,6 +161,10 @@ public class AppSecurityUtils {
 
     public static String getSessionId() {
         return getDetails().getSessionId();
+    }
+
+    public String getAuthorizationHeader() {
+        return httpServletRequest.getHeader(HttpHeaders.AUTHORIZATION);
     }
 
 }

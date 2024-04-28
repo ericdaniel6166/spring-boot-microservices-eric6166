@@ -20,14 +20,14 @@ public class BaseUtils {
 
     AppTraceIdContext appTraceIdContext;
 
+    public static String getRootCauseMessage(Exception e) {
+        return ExceptionUtils.getRootCause(e).getMessage();
+    }
+
     public ResponseEntity<Object> buildResponseExceptionEntity(ErrorResponse errorResponse) {
         if (ObjectUtils.isNotEmpty(appTraceIdContext)) {
             errorResponse.setTraceId(appTraceIdContext.getTraceId());
         }
         return new ResponseEntity<>(new AppResponse<>(errorResponse), errorResponse.getHttpStatus());
-    }
-
-    public static String getRootCauseMessage(Exception e) {
-        return ExceptionUtils.getRootCause(e).getMessage();
     }
 }
