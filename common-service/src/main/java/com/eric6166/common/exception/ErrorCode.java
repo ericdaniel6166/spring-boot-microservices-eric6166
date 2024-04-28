@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 @Getter
 @RequiredArgsConstructor
 public enum ErrorCode {
+    GENERIC_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "Generic Error"),
     VALIDATION_ERROR(HttpStatus.BAD_REQUEST, "Validation Error"),
     ;
 

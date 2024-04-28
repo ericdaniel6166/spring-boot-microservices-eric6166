@@ -91,6 +91,14 @@ services:
     volumes:
       - ./realms/:/opt/keycloak/data/import/
 
+  zipkin:
+    image: openzipkin/zipkin:2.24.3
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - internal-network
+
 networks:
   internal-network:
 

@@ -114,9 +114,9 @@ services:
       interval: 15s
       timeout: 5s
       retries: 5
-#    depends_on:
-#      zipkin:
-#        condition: service_started
+    depends_on:
+      zipkin:
+        condition: service_started
 
   gateway-service:
     container_name: gateway-service
@@ -136,8 +136,8 @@ services:
         condition: service_started
       keycloak:
         condition: service_healthy
-#      zipkin:
-#        condition: service_started
+      zipkin:
+        condition: service_started
 
 
   inventory-service:
@@ -162,11 +162,11 @@ services:
         condition: service_started
       keycloak:
         condition: service_healthy
+      zipkin:
+        condition: service_started
 #      kafka:
 #        condition: service_started
 #      activemq:
-#        condition: service_started
-#      zipkin:
 #        condition: service_started
 #      redis:
 #        condition: service_healthy
@@ -193,14 +193,22 @@ services:
         condition: service_started
       keycloak:
         condition: service_healthy
+      zipkin:
+        condition: service_started
 #      kafka:
 #        condition: service_started
 #      activemq:
 #        condition: service_started
-#      zipkin:
-#        condition: service_started
 #      redis:
 #        condition: service_healthy
+
+  zipkin:
+    image: openzipkin/zipkin:2.24.3
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - internal-network
 
 networks:
   internal-network:
