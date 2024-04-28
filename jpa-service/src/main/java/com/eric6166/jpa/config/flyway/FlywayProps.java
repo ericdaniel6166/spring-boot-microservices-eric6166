@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @ConditionalOnProperty(name = "spring.flyway.enabled", havingValue = "true")
 @ConfigurationProperties(prefix = "spring.flyway")
-public class  FlywayProperties {
+public class FlywayProps {
 
     String baselineVersion;
 

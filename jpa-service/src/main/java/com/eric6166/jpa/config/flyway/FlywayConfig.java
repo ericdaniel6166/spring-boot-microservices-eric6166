@@ -23,21 +23,21 @@ public class FlywayConfig {
     private static final String FLYWAY_BASELINE_VERSION_DEFAULT = "0.0";
     private static final String FLYWAY_LOCATION_DEFAULT = "classpath:db/migration/";
 
-    FlywayProperties flywayProperties;
+    FlywayProps flywayProps;
 
     @Bean
     public Flyway flyway(DataSource dataSource) {
         return Flyway.configure()
                 .dataSource(dataSource)
-                .baselineOnMigrate(flywayProperties.getBaselineOnMigrate())
+                .baselineOnMigrate(flywayProps.getBaselineOnMigrate())
                 .baselineVersion(MigrationVersion.fromVersion(
-                        Optional.ofNullable(flywayProperties.getBaselineVersion())
+                        Optional.ofNullable(flywayProps.getBaselineVersion())
                                 .orElse(FLYWAY_BASELINE_VERSION_DEFAULT)))
-                .table(Optional.ofNullable(flywayProperties.getTable())
+                .table(Optional.ofNullable(flywayProps.getTable())
                         .orElse(SCHEMA_HISTORY))
-                .locations(Optional.ofNullable(flywayProperties.getLocations())
+                .locations(Optional.ofNullable(flywayProps.getLocations())
                         .orElse(FLYWAY_LOCATION_DEFAULT))
-                .validateOnMigrate(Optional.ofNullable(flywayProperties.getValidateOnMigrate())
+                .validateOnMigrate(Optional.ofNullable(flywayProps.getValidateOnMigrate())
                         .orElse(Boolean.TRUE))
                 .load();
     }
