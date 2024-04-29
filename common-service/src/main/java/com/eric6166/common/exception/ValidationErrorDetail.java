@@ -14,13 +14,12 @@ public class ValidationErrorDetail extends ErrorDetail {
 
     //    @JsonIgnore // uncomment // for local testing
     private String keyField;
-
     private String field;
+    //    @JsonIgnore // uncomment // for local testing
+    private String keyObject;
     private String object;
-
     //    @JsonIgnore // uncomment // for local testing
     private Object rejectedValue;
-
     private String message;
 
     public ValidationErrorDetail(String field, String object, String message) {

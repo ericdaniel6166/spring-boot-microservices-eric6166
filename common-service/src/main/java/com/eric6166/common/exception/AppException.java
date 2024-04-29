@@ -22,9 +22,18 @@ public class AppException extends Exception {
 
     List<ErrorDetail> errorDetails;
 
-    public AppException(String error, String message) {
+    public AppException(HttpStatus httpStatus, String message) {
+        super(message);
+        this.error = httpStatus.name();
+        this.httpStatus = httpStatus;
+        this.status = httpStatus.value();
+    }
+
+    public AppException(HttpStatus httpStatus, String error, String message) {
         super(message);
         this.error = error;
+        this.httpStatus = httpStatus;
+        this.status = httpStatus.value();
     }
 
     public AppException(HttpStatus httpStatus, String error, String message, List<ErrorDetail> errorDetails) {
