@@ -1,6 +1,10 @@
 package com.eric6166.common.exception;
 
+import brave.Span;
+import brave.Tracer;
+import brave.propagation.TraceContextOrSamplingFlags;
 import com.eric6166.base.exception.ErrorDetail;
+import com.eric6166.base.exception.ErrorResponse;
 import com.eric6166.base.utils.BaseUtils;
 import com.eric6166.common.utils.Const;
 import lombok.AccessLevel;
@@ -36,34 +40,69 @@ public class RestExceptionHandler {
 
     MessageSource messageSource;
     BaseUtils baseUtils;
+    Tracer tracer;
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Object> handleResponseStatusException(ResponseStatusException e) {
-        var errorMessage = BaseUtils.getRootCauseMessage(e);
-        log.info("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
-        return baseUtils.buildResponseExceptionEntity(baseUtils.buildErrorResponse(HttpStatus.valueOf(e.getStatusCode().value()), e.getMessage()));
+        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleResponseStatusException").start();
+        try (var ws = tracer.withSpanInScope(span)) {
+            span.error(e);
+            var errorMessage = BaseUtils.getRootCauseMessage(e);
+            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
+            var errorResponse = baseUtils.buildErrorResponse(HttpStatus.valueOf(e.getStatusCode().value()), e.getMessage());
+            span.tag("handleResponseStatusException errorResponse", errorResponse.toString());
+            return baseUtils.buildResponseExceptionEntity(errorResponse);
+        } catch (RuntimeException exception) {
+            span.error(exception);
+            throw exception;
+        } finally {
+            span.finish();
+        }
     }
 
     @ExceptionHandler(AppException.class)
     public ResponseEntity<Object> handleAppException(AppException e) {
-        var errorMessage = BaseUtils.getRootCauseMessage(e);
-        log.info("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
-        return baseUtils.buildResponseExceptionEntity(baseUtils.buildErrorResponse(e.getHttpStatus(), e.getMessage()));
+        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleAppException").start();
+        try (var ws = tracer.withSpanInScope(span)) {
+            span.error(e);
+            var errorMessage = BaseUtils.getRootCauseMessage(e);
+            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
+            var errorResponse = baseUtils.buildErrorResponse(e.getHttpStatus(), e.getMessage());
+            span.tag("handleAppException errorResponse", errorResponse.toString());
+            return baseUtils.buildResponseExceptionEntity(errorResponse);
+        } catch (RuntimeException exception) {
+            span.error(exception);
+            throw exception;
+        } finally {
+            span.finish();
+        }
     }
 
 
     @ExceptionHandler(BindException.class)
     public ResponseEntity<Object> handleBindException(BindException e, HandlerMethod handlerMethod) {
-        var errorMessage = BaseUtils.getRootCauseMessage(e);
-        log.info("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
-        List<ErrorDetail> errorDetails = new ArrayList<>();
-        for (var error : e.getAllErrors()) {
-            if (error instanceof FieldError fieldError) {
-                errorDetails.add(buildErrorDetail(handlerMethod, fieldError));
+        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleBindException").start();
+        try (var ws = tracer.withSpanInScope(span)) {
+            span.error(e);
+            var errorMessage = BaseUtils.getRootCauseMessage(e);
+            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
+            List<ErrorDetail> errorDetails = new ArrayList<>();
+            for (var error : e.getAllErrors()) {
+                if (error instanceof FieldError fieldError) {
+                    errorDetails.add(buildErrorDetail(handlerMethod, fieldError));
+                }
             }
+            var errorResponse = baseUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR.getHttpStatus(),
+                    ErrorCode.VALIDATION_ERROR.name(), ErrorCode.VALIDATION_ERROR.getReasonPhrase(), errorDetails);
+            span.tag("handleBindException errorResponse", errorResponse.toString());
+            return baseUtils.buildResponseExceptionEntity(errorResponse);
+        } catch (RuntimeException exception) {
+            span.error(exception);
+            throw exception;
+        } finally {
+            span.finish();
         }
-        return baseUtils.buildResponseExceptionEntity(baseUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR.getHttpStatus(),
-                ErrorCode.VALIDATION_ERROR.name(), ErrorCode.VALIDATION_ERROR.getReasonPhrase(), errorDetails));
+
     }
 
     private ErrorDetail buildErrorDetail(HandlerMethod handlerMethod, FieldError fieldError) {
@@ -120,16 +159,38 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(AppValidationException.class)
     public ResponseEntity<Object> handleAppValidationException(AppValidationException e) {
-        var errorMessage = BaseUtils.getRootCauseMessage(e);
-        log.info("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
-        return baseUtils.buildResponseExceptionEntity(baseUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR.getHttpStatus(),
-                ErrorCode.VALIDATION_ERROR.name(), ErrorCode.VALIDATION_ERROR.getReasonPhrase(), e.getErrorDetails()));
+        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleAppValidationException").start();
+        try (var ws = tracer.withSpanInScope(span)) {
+            span.error(e);
+            var errorMessage = BaseUtils.getRootCauseMessage(e);
+            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
+            var errorResponse = baseUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR.getHttpStatus(),
+                    ErrorCode.VALIDATION_ERROR.name(), ErrorCode.VALIDATION_ERROR.getReasonPhrase(), e.getErrorDetails());
+            span.tag("handleAppValidationException errorResponse", errorResponse.toString());
+            return baseUtils.buildResponseExceptionEntity(errorResponse);
+        } catch (RuntimeException exception) {
+            span.error(exception);
+            throw exception;
+        } finally {
+            span.finish();
+        }
     }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(Exception e) {
-        var errorMessage = BaseUtils.getRootCauseMessage(e);
-        log.info("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
-        return baseUtils.buildResponseExceptionEntity(baseUtils.buildInternalServerErrorResponse(e.getMessage()));
+        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleException").start();
+        try (var ws = tracer.withSpanInScope(span)) {
+            span.error(e);
+            var errorMessage = BaseUtils.getRootCauseMessage(e);
+            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
+            var errorResponse = baseUtils.buildInternalServerErrorResponse(e.getMessage());
+            span.tag("handleException errorResponse", errorResponse.toString());
+            return baseUtils.buildResponseExceptionEntity(errorResponse);
+        } catch (RuntimeException exception) {
+            span.error(exception);
+            throw exception;
+        } finally {
+            span.finish();
+        }
     }
 }

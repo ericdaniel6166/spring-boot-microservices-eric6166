@@ -2,12 +2,12 @@ package com.eric6166.common.exception;
 
 import com.eric6166.base.exception.ErrorDetail;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@EqualsAndHashCode(callSuper = false)
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class ValidationErrorDetail extends ErrorDetail {

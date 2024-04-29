@@ -38,7 +38,7 @@ public class BaseUtils {
     }
 
     public ResponseEntity<Object> buildInternalServerErrorResponseExceptionEntity(Exception e) {
-        log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage());
+        log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage());
         var errorResponse = buildInternalServerErrorResponse(e.getMessage());
         return buildResponseExceptionEntity(errorResponse);
     }
@@ -53,7 +53,7 @@ public class BaseUtils {
     }
 
     public ErrorResponse buildErrorResponse(HttpStatus httpStatus, String error, String message, List<ErrorDetail> errorDetails) {
-        log.info("e: {} , errorMessage: {}", error, message);
+        log.debug("e: {} , errorMessage: {}", error, message);
         return new ErrorResponse(httpStatus, error,
                 message, httpServletRequest, errorDetails);
     }

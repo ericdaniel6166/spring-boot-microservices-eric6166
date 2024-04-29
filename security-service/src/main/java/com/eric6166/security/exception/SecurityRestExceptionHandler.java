@@ -27,7 +27,7 @@ public class SecurityRestExceptionHandler {
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException e, HttpServletRequest httpServletRequest) {
         String errorMessage = BaseUtils.getRootCauseMessage(e);
-        log.info("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
+        log.debug("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.name(),
                 HttpStatus.FORBIDDEN.getReasonPhrase(), httpServletRequest, null);
         return baseUtils.buildResponseExceptionEntity(errorResponse);
