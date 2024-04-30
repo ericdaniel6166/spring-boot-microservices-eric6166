@@ -25,13 +25,20 @@ public class ValidationErrorDetail extends ErrorDetail {
     Object rejectedValue;
     String message;
 
-    public ValidationErrorDetail(String field, String object, String message) {
+    public ValidationErrorDetail(String field, String message) {
         this.field = field;
         this.message = message;
-        this.object = object;
     }
 
-    public ValidationErrorDetail(String field, String object, Object rejectedValue, String message) {
+    public ValidationErrorDetail(String keyObject, String object, Object rejectedValue, String message) {
+        this.keyObject = keyObject;
+        this.object = object;
+        this.rejectedValue = rejectedValue;
+        this.message = message;
+    }
+
+    public ValidationErrorDetail(String keyField, String field, String object, Object rejectedValue, String message) {
+        this.keyField = keyField;
         this.field = field;
         this.object = object;
         this.rejectedValue = rejectedValue;

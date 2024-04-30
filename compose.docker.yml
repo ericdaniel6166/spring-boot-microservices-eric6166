@@ -91,10 +91,48 @@ services:
     volumes:
       - ./realms/:/opt/keycloak/data/import/
     healthcheck:
-      test: ['CMD-SHELL', '[ -f /tmp/HealthCheck.java ] || echo "public class HealthCheck { public static void main(String[] args) throws java.lang.Throwable { System.exit(java.net.HttpURLConnection.HTTP_OK == ((java.net.HttpURLConnection)new java.net.URL(args[0]).openConnection()).getResponseCode() ? 0 : 1); } }" > /tmp/HealthCheck.java && java /tmp/HealthCheck.java http://localhost:8090/health/live']
+      test: [ 'CMD-SHELL', '[ -f /tmp/HealthCheck.java ] || echo "public class HealthCheck { public static void main(String[] args) throws java.lang.Throwable { System.exit(java.net.HttpURLConnection.HTTP_OK == ((java.net.HttpURLConnection)new java.net.URL(args[0]).openConnection()).getResponseCode() ? 0 : 1); } }" > /tmp/HealthCheck.java && java /tmp/HealthCheck.java http://localhost:8090/health/live' ]
       interval: 15s
       timeout: 5s
       retries: 5
+
+  zipkin:
+    image: openzipkin/zipkin:2.24.3
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - internal-network
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:7.0.1
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    networks:
+      - internal-network
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  kafka:
+    image: confluentinc/cp-kafka:7.0.1
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    networks:
+      - internal-network
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+    depends_on:
+      zookeeper:
+        condition: service_started
 
   discovery-service:
     container_name: discovery-service
@@ -166,10 +204,10 @@ services:
         condition: service_started
       kafka:
         condition: service_started
-#      activemq:
-#        condition: service_started
-#      redis:
-#        condition: service_healthy
+  #      activemq:
+  #        condition: service_started
+  #      redis:
+  #        condition: service_healthy
 
   user-service:
     container_name: user-service
@@ -201,44 +239,6 @@ services:
 #        condition: service_started
 #      redis:
 #        condition: service_healthy
-
-  zipkin:
-    image: openzipkin/zipkin:2.24.3
-    container_name: zipkin
-    ports:
-      - "9411:9411"
-    networks:
-      - internal-network
-
-  zookeeper:
-    image: confluentinc/cp-zookeeper:7.0.1
-    container_name: zookeeper
-    ports:
-      - "2181:2181"
-    networks:
-      - internal-network
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-
-  kafka:
-    image: confluentinc/cp-kafka:7.0.1
-    container_name: kafka
-    ports:
-      - "9092:9092"
-    networks:
-      - internal-network
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 'zookeeper:2181'
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
-      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
-    depends_on:
-      zookeeper:
-        condition: service_started
 
 networks:
   internal-network:

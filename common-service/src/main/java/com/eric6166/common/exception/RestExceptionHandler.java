@@ -118,7 +118,7 @@ public class RestExceptionHandler {
             var model = buildModel(keyField, keyCommonField);
             msg = formatMsg(messageTemplate, model);
         }
-        return new ValidationErrorDetail(keyField, field, null, null, constraintViolation.getInvalidValue(), StringUtils.capitalize(msg));
+        return new ValidationErrorDetail(keyField, field, null, constraintViolation.getInvalidValue(), StringUtils.capitalize(msg));
     }
 
     @ExceptionHandler(BindException.class)
@@ -157,7 +157,7 @@ public class RestExceptionHandler {
             var model = buildModel(keyField, keyCommonField);
             msg = formatMsg(messageTemplate, model);
         }
-        return new ValidationErrorDetail(keyField, field, null, null, fieldError.getRejectedValue(), StringUtils.capitalize(msg));
+        return new ValidationErrorDetail(keyField, field, null, fieldError.getRejectedValue(), StringUtils.capitalize(msg));
     }
 
     private String buildMessageTemplate(FieldError fieldError) {
@@ -193,8 +193,7 @@ public class RestExceptionHandler {
             }
         }
         if (StringUtils.isBlank(model)) {
-            model = keyField; // comment // for local testing
-//            model = messageSource.getMessage(KEY_COMMON_GENERAL_FIELD, null, LocaleContextHolder.getLocale()); // uncomment
+            model = messageSource.getMessage(KEY_COMMON_GENERAL_FIELD, null, LocaleContextHolder.getLocale()); // uncomment
         }
         return model;
     }

@@ -67,7 +67,7 @@ services:
       - "start-dev"
       - "--features=preview"
       - "--import-realm"
-#      - "--features=token-exchange,declarative-user-profile"
+    #      - "--features=token-exchange,declarative-user-profile"
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
@@ -90,6 +90,11 @@ services:
         condition: service_healthy
     volumes:
       - ./realms/:/opt/keycloak/data/import/
+    healthcheck:
+      test: [ 'CMD-SHELL', '[ -f /tmp/HealthCheck.java ] || echo "public class HealthCheck { public static void main(String[] args) throws java.lang.Throwable { System.exit(java.net.HttpURLConnection.HTTP_OK == ((java.net.HttpURLConnection)new java.net.URL(args[0]).openConnection()).getResponseCode() ? 0 : 1); } }" > /tmp/HealthCheck.java && java /tmp/HealthCheck.java http://localhost:8090/health/live' ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
 
   zipkin:
     image: openzipkin/zipkin:2.24.3
@@ -136,7 +141,6 @@ volumes:
   postgres-keycloak-data:
   postgres-inventory-data:
   postgres-user-data:
-#  postgres-product-data:
 #  postgres-order-data:
 #  postgres-payment-data:
 #  activemq-data:
