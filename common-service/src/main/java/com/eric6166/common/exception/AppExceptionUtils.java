@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
@@ -17,25 +16,18 @@ import org.springframework.stereotype.Component;
 @Slf4j
 public final class AppExceptionUtils {
 
-    BaseUtils baseUtils;
     HttpServletRequest httpServletRequest;
 
     public static Object getAppExceptionRootCause(AppException e) {
         return e.getRootCause() == null ? BaseUtils.getRootCauseMessage(e) : e.getRootCause();
     }
 
-    public ResponseEntity<Object> buildInternalServerErrorResponseExceptionEntity(Exception e) {
-        log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage());
-        var errorResponse = buildInternalServerErrorResponse(e.getMessage(), BaseUtils.getRootCauseMessage(e));
-        return baseUtils.buildResponseExceptionEntity(errorResponse);
-    }
-
-    public ErrorResponse buildInternalServerErrorResponse(String message, Object rootCause) {
-        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, message, rootCause);
-    }
-
     public ErrorResponse buildErrorResponse(HttpStatus httpStatus, String message, Object rootCause) {
         return buildErrorResponse(httpStatus, httpStatus.name(), message, rootCause);
+    }
+
+    public ErrorResponse buildErrorResponse(HttpStatus httpStatus, Exception e) {
+        return buildErrorResponse(httpStatus, e.getMessage(), BaseUtils.getRootCauseMessage(e));
     }
 
     public ErrorResponse buildErrorResponse(HttpStatus httpStatus, String error, String message, Object rootCause) {
@@ -43,4 +35,11 @@ public final class AppExceptionUtils {
         return new ErrorResponse(httpStatus, error,
                 message, httpServletRequest, rootCause);
     }
+
+    public ErrorResponse buildErrorResponse(ErrorCode errorCode, Object rootCause) {
+        log.debug("errorCode: {}, errorMessage: {}, rootCause: {}", errorCode, errorCode.getReasonPhrase(), rootCause);
+        return new ErrorResponse(errorCode.getHttpStatus(), errorCode.name(),
+                errorCode.getReasonPhrase(), httpServletRequest, rootCause);
+    }
+
 }

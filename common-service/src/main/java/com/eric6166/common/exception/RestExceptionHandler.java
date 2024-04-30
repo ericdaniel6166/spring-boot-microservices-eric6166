@@ -51,9 +51,8 @@ public class RestExceptionHandler {
         Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleResponseStatusException").start();
         try (var ws = tracer.withSpanInScope(span)) {
             span.error(e);
-            var rootCause = BaseUtils.getRootCauseMessage(e);
-            log.debug("e: {} , rootCause: {}", e.getClass().getName(), rootCause); // comment // for local testing
-            var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.valueOf(e.getStatusCode().value()), e.getMessage(), rootCause);
+            var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.valueOf(e.getStatusCode().value()), e);
+            log.debug("e: {} , rootCause: {}", e.getClass().getName(), errorResponse.getRootCause()); // comment // for local testing
             span.tag("handleResponseStatusException errorResponse", errorResponse.toString());
             return baseUtils.buildResponseExceptionEntity(errorResponse);
         } catch (RuntimeException exception) {
@@ -69,9 +68,8 @@ public class RestExceptionHandler {
         Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleAppException").start();
         try (var ws = tracer.withSpanInScope(span)) {
             span.error(e);
-            var rootCause = AppExceptionUtils.getAppExceptionRootCause(e);
-            log.debug("e: {} , rootCause: {}", e.getClass().getName(), rootCause); // comment // for local testing
-            var errorResponse = appExceptionUtils.buildErrorResponse(e.getHttpStatus(), e.getError(), e.getMessage(), rootCause);
+            var errorResponse = appExceptionUtils.buildErrorResponse(e.getHttpStatus(), e.getError(), e.getMessage(), AppExceptionUtils.getAppExceptionRootCause(e));
+            log.debug("e: {} , rootCause: {}", e.getClass().getName(), errorResponse.getRootCause());
             span.tag("handleAppException errorResponse", errorResponse.toString());
             return baseUtils.buildResponseExceptionEntity(errorResponse);
         } catch (RuntimeException exception) {
@@ -87,15 +85,13 @@ public class RestExceptionHandler {
         Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleConstraintViolationException").start();
         try (var ws = tracer.withSpanInScope(span)) {
             span.error(e);
-            var errorMessage = BaseUtils.getRootCauseMessage(e);
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
             List<ErrorDetail> errorDetails = new ArrayList<>();
             var apiClassName = handlerMethod.getBeanType().getSimpleName();
             for (var constraintViolation : e.getConstraintViolations()) {
                 errorDetails.add(buildErrorDetail(constraintViolation, apiClassName));
             }
-            var errorResponse = appExceptionUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR.getHttpStatus(),
-                    ErrorCode.VALIDATION_ERROR.name(), ErrorCode.VALIDATION_ERROR.getReasonPhrase(), errorDetails);
+            var errorResponse = appExceptionUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR, errorDetails);
+            log.debug("e: {} , rootCause: {}", e.getClass().getName(), errorResponse.getRootCause()); // comment // for local testing
             span.tag("handleConstraintViolationException errorResponse", errorResponse.toString());
             return baseUtils.buildResponseExceptionEntity(errorResponse);
         } catch (RuntimeException exception) {
@@ -135,8 +131,7 @@ public class RestExceptionHandler {
                     errorDetails.add(buildErrorDetail(fieldError, apiClassName));
                 }
             }
-            var errorResponse = appExceptionUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR.getHttpStatus(),
-                    ErrorCode.VALIDATION_ERROR.name(), ErrorCode.VALIDATION_ERROR.getReasonPhrase(), errorDetails);
+            var errorResponse = appExceptionUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR, errorDetails);
             span.tag("handleBindException errorResponse", errorResponse.toString());
             return baseUtils.buildResponseExceptionEntity(errorResponse);
         } catch (RuntimeException exception) {
@@ -205,8 +200,7 @@ public class RestExceptionHandler {
             span.error(e);
             var rootCause = AppExceptionUtils.getAppExceptionRootCause(e);
             log.debug("e: {} , rootCause: {}", e.getClass().getName(), rootCause); // comment // for local testing
-            var errorResponse = appExceptionUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR.getHttpStatus(),
-                    ErrorCode.VALIDATION_ERROR.name(), ErrorCode.VALIDATION_ERROR.getReasonPhrase(), rootCause);
+            var errorResponse = appExceptionUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR, rootCause);
             span.tag("handleAppValidationException errorResponse", errorResponse.toString());
             return baseUtils.buildResponseExceptionEntity(errorResponse);
         } catch (RuntimeException exception) {
@@ -225,7 +219,7 @@ public class RestExceptionHandler {
             span.error(e);
             var rootCauseMessage = BaseUtils.getRootCauseMessage(e);
             log.debug("e: {} , rootCauseMessage: {}", e.getClass().getName(), rootCauseMessage); // comment // for local testing
-            var errorResponse = appExceptionUtils.buildInternalServerErrorResponse(e.getMessage(), rootCauseMessage);
+            var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage(), rootCauseMessage);
             span.tag("handleException errorResponse", errorResponse.toString());
             return baseUtils.buildResponseExceptionEntity(errorResponse);
         } catch (RuntimeException exception) {
