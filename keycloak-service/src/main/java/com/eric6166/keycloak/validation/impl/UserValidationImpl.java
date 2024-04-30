@@ -3,8 +3,8 @@ package com.eric6166.keycloak.validation.impl;
 import com.eric6166.base.dto.AccountDto;
 import com.eric6166.base.exception.AppValidationException;
 import com.eric6166.base.exception.ValidationErrorDetail;
+import com.eric6166.base.utils.BaseConst;
 import com.eric6166.base.utils.BaseMessageConstant;
-import com.eric6166.base.utils.Const;
 import com.eric6166.keycloak.service.KeycloakService;
 import com.eric6166.keycloak.validation.UserValidation;
 import lombok.AccessLevel;
@@ -41,13 +41,13 @@ public class UserValidationImpl implements UserValidation {
         if (searchByUsername.isPresent()) {
             String res = messageSource.getMessage(BaseMessageConstant.MGS_RES_USERNAME, null, LocaleContextHolder.getLocale());
             String msg = messageSource.getMessage(BaseMessageConstant.MSG_ERR_RESOURCE_EXISTED, new String[]{res}, LocaleContextHolder.getLocale());
-            errorDetails.add(new ValidationErrorDetail(Const.FIELD_USERNAME, StringUtils.capitalize(msg)));
+            errorDetails.add(new ValidationErrorDetail(BaseConst.FIELD_USERNAME, StringUtils.capitalize(msg)));
         }
         Optional<UserRepresentation> searchByEmail = keycloakService.searchUserByEmail(account.getEmail());
         if (searchByEmail.isPresent()) {
             String res = messageSource.getMessage(BaseMessageConstant.MGS_RES_EMAIL, null, LocaleContextHolder.getLocale());
             String msg = messageSource.getMessage(BaseMessageConstant.MSG_ERR_RESOURCE_EXISTED, new String[]{res}, LocaleContextHolder.getLocale());
-            errorDetails.add(new ValidationErrorDetail(Const.FIELD_EMAIL, StringUtils.capitalize(msg)));
+            errorDetails.add(new ValidationErrorDetail(BaseConst.FIELD_EMAIL, StringUtils.capitalize(msg)));
         }
 
         if (CollectionUtils.isNotEmpty(errorDetails)) {

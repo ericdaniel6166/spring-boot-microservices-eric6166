@@ -3,8 +3,8 @@ package com.eric6166.base.exception;
 import brave.Span;
 import brave.Tracer;
 import brave.propagation.TraceContextOrSamplingFlags;
+import com.eric6166.base.utils.BaseConst;
 import com.eric6166.base.utils.BaseUtils;
-import com.eric6166.base.utils.Const;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.AccessLevel;
@@ -38,7 +38,7 @@ public class RestExceptionHandler {
     private static final String KEY_COMMON_FIELD = "%s.%s";
     private static final String KEY_FIELD_TEMPLATE = "%s.%s.%s";
     private static final String KEY_FIELD_TEMPLATE_PROPERTY_PATH = "%s.%s";
-    private static final String KEY_COMMON_GENERAL_FIELD = String.format(KEY_COMMON_FIELD, Const.COMMON, Const.GENERAL_FIELD);
+    private static final String KEY_COMMON_GENERAL_FIELD = String.format(KEY_COMMON_FIELD, BaseConst.COMMON, BaseConst.GENERAL_FIELD);
 
     MessageSource messageSource;
     BaseUtils baseUtils;
@@ -104,12 +104,12 @@ public class RestExceptionHandler {
     private ErrorDetail buildErrorDetail(ConstraintViolation<?> constraintViolation, String apiClassName) {
         var propertyPath = constraintViolation.getPropertyPath().toString();
         var keyField = String.format(KEY_FIELD_TEMPLATE_PROPERTY_PATH, apiClassName, propertyPath);
-        var parts = propertyPath.split(Const.SPLIT_REGEX_DOT);
-        var field = parts.length >= 1 ? parts[parts.length - 1] : Const.GENERAL_FIELD;
+        var parts = propertyPath.split(BaseConst.SPLIT_REGEX_DOT);
+        var field = parts.length >= 1 ? parts[parts.length - 1] : BaseConst.GENERAL_FIELD;
         var messageTemplate = constraintViolation.getMessage();
         var msg = messageTemplate;
-        if (messageTemplate.contains(Const.PLACEHOLDER_0)) {
-            var keyCommonField = String.format(KEY_COMMON_FIELD, Const.COMMON, field);
+        if (messageTemplate.contains(BaseConst.PLACEHOLDER_0)) {
+            var keyCommonField = String.format(KEY_COMMON_FIELD, BaseConst.COMMON, field);
             var model = buildModel(keyField, keyCommonField);
             msg = formatMsg(messageTemplate, model);
         }
@@ -145,8 +145,8 @@ public class RestExceptionHandler {
         var field = fieldError.getField();
         var keyField = String.format(KEY_FIELD_TEMPLATE, apiClassName, fieldError.getObjectName(), field);
         var msg = messageTemplate;
-        if (messageTemplate.contains(Const.PLACEHOLDER_0)) {
-            var keyCommonField = String.format(KEY_COMMON_FIELD, Const.COMMON, field);
+        if (messageTemplate.contains(BaseConst.PLACEHOLDER_0)) {
+            var keyCommonField = String.format(KEY_COMMON_FIELD, BaseConst.COMMON, field);
             var model = buildModel(keyField, keyCommonField);
             msg = formatMsg(messageTemplate, model);
         }

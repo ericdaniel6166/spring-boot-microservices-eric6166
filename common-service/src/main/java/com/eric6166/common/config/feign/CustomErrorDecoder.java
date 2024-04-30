@@ -1,7 +1,7 @@
 package com.eric6166.common.config.feign;
 
 import com.eric6166.base.exception.AppException;
-import com.eric6166.base.utils.Const;
+import com.eric6166.base.utils.BaseConst;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;
 import feign.codec.ErrorDecoder;
@@ -26,7 +26,7 @@ public class CustomErrorDecoder implements ErrorDecoder {
         if (response.body() != null) {
             var reader = response.body();
             var jsonNode = objectMapper.readTree(reader.asReader(Charset.defaultCharset()));
-            var errorJsonNode = jsonNode.findValue(Const.FIELD_ERROR);
+            var errorJsonNode = jsonNode.findValue(BaseConst.FIELD_ERROR);
             rootCause = errorJsonNode == null || errorJsonNode.isTextual() ? jsonNode : errorJsonNode;
         }
         var httpStatus = HttpStatus.valueOf(response.status());

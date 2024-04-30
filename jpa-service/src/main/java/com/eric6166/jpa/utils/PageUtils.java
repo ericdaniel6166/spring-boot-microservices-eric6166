@@ -1,6 +1,6 @@
 package com.eric6166.jpa.utils;
 
-import com.eric6166.base.utils.Const;
+import com.eric6166.base.utils.BaseConst;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.domain.PageRequest;
@@ -16,11 +16,11 @@ public final class PageUtils {
 
     public static Pageable buildPageable(Integer pageNumber, Integer size, String sortColumn, String sortDirection) {
         Sort sort;
-        if (StringUtils.equals(sortColumn, Const.ID)) {
-            sort = Sort.by(new Sort.Order(Sort.Direction.fromString(sortDirection), Const.ID));
+        if (StringUtils.equals(sortColumn, BaseConst.ID)) {
+            sort = Sort.by(new Sort.Order(Sort.Direction.fromString(sortDirection), BaseConst.ID));
         } else {
             sort = Sort.by(new Sort.Order(Sort.Direction.fromString(sortDirection), sortColumn),
-                    Sort.Order.asc(Const.ID));
+                    Sort.Order.asc(BaseConst.ID));
         }
         return PageRequest.of(pageNumber - 1, size, sort);
     }

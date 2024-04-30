@@ -19,7 +19,7 @@ public class AppValidationUtils {
             if (messageParams.length == 0 && StringUtils.isBlank(messageCode)) {
                 appMessageUtils.addViolation(constraintValidatorContext,
                         BaseMessageConstant.MSG_ERR_CONSTRAINS_VALID_VALUE,
-                        new String[]{Const.PLACEHOLDER_0, validValues});
+                        new String[]{BaseConst.PLACEHOLDER_0, validValues});
             } else {
                 appMessageUtils.addViolation(constraintValidatorContext, messageCode, messageParams);
             }

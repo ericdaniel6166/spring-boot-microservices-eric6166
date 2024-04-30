@@ -1,6 +1,6 @@
 package com.eric6166.base.config;
 
-import com.eric6166.base.utils.Const;
+import com.eric6166.base.utils.BaseConst;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
@@ -24,7 +24,7 @@ public class MvcConfig implements WebMvcConfigurer {
     @Bean
     public LocaleChangeInterceptor localeChangeInterceptor() {
         LocaleChangeInterceptor lci = new LocaleChangeInterceptor();
-        lci.setParamName(Const.REQUEST_PARAM_LANGUAGE);
+        lci.setParamName(BaseConst.REQUEST_PARAM_LANGUAGE);
         return lci;
     }
 
