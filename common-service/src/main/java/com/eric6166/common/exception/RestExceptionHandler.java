@@ -192,24 +192,6 @@ public class RestExceptionHandler {
         return model;
     }
 
-//    @ExceptionHandler(AppValidationException.class)
-//    public ResponseEntity<Object> handleAppValidationException(AppValidationException e) {
-//        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleAppValidationException").start();
-//        try (var ws = tracer.withSpanInScope(span)) {
-//            span.error(e);
-//            var errorResponse = appExceptionUtils.buildErrorResponse(e.getHttpStatus(), e.getError(), e.getMessage(), e.getRootCause());
-//            log.debug("e: {} , rootCause: {}", e.getClass().getName(), errorResponse.getRootCause()); // comment // for local testing
-//            span.tag("handleAppValidationException errorResponse", errorResponse.toString());
-//            return baseUtils.buildResponseExceptionEntity(errorResponse);
-//        } catch (RuntimeException exception) {
-//            span.error(exception);
-//            throw exception;
-//        } finally {
-//            span.finish();
-//        }
-//    }
-
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(Exception e) {
         Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleException").start();
@@ -226,23 +208,5 @@ public class RestExceptionHandler {
             span.finish();
         }
     }
-
-//    @ExceptionHandler(CallNotPermittedException.class)
-//    public ResponseEntity<Object> handleCallNotPermittedException(CallNotPermittedException e) {
-//        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleCallNotPermittedException").start();
-//        try (var ws = tracer.withSpanInScope(span)) {
-//            span.error(e);
-//            var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e);
-//            log.debug("e: {}", e.getClass().getName()); // comment // for local testing
-//            span.tag("handleCallNotPermittedException errorResponse", errorResponse.toString());
-//            return baseUtils.buildResponseExceptionEntity(errorResponse);
-//        } catch (RuntimeException exception) {
-//            span.error(exception);
-//            throw exception;
-//        } finally {
-//            span.finish();
-//        }
-//    }
-
 
 }
