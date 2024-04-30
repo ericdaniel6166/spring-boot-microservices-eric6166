@@ -20,7 +20,7 @@
         <module>common-service</module>
         <module>jpa-service</module>
         <module>security-service</module>
-        <module>keycloak-service</module>
+        <module>keycloak-admin-client-service</module>
     </modules>
 
     <name>spring-boot-microservices-eric6166</name>

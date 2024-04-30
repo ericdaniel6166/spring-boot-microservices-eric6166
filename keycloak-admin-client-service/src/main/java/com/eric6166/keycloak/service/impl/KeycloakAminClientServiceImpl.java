@@ -1,7 +1,7 @@
 package com.eric6166.keycloak.service.impl;
 
 import com.eric6166.keycloak.config.KeycloakAdminClientProps;
-import com.eric6166.keycloak.service.KeycloakService;
+import com.eric6166.keycloak.service.KeycloakAminClientService;
 import jakarta.ws.rs.core.Response;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 @Slf4j
 @ConditionalOnProperty(name = "keycloak-admin-client.enabled", havingValue = "true")
-public class KeycloakServiceImpl implements KeycloakService {
+public class KeycloakAminClientServiceImpl implements KeycloakAminClientService {
 
     Keycloak keycloak;
     KeycloakAdminClientProps keycloakAdminClientProps;

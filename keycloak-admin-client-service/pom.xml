@@ -11,11 +11,11 @@
 
     <packaging>jar</packaging>
 
-    <artifactId>keycloak-service</artifactId>
+    <artifactId>keycloak-admin-client-service</artifactId>
     <version>${project.parent.version}</version>
 
-    <name>keycloak-service</name>
-    <description>keycloak-service</description>
+    <name>keycloak-admin-client-service</name>
+    <description>keycloak-admin-client-service</description>
 
     <dependencies>
         <dependency>
