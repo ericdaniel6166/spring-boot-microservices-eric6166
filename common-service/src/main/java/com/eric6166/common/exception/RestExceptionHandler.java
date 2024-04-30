@@ -4,7 +4,6 @@ import brave.Span;
 import brave.Tracer;
 import brave.propagation.TraceContextOrSamplingFlags;
 import com.eric6166.base.exception.ErrorDetail;
-import com.eric6166.base.exception.ErrorResponse;
 import com.eric6166.base.utils.BaseUtils;
 import com.eric6166.common.utils.Const;
 import lombok.AccessLevel;

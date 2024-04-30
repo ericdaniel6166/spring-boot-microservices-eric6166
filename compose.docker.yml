@@ -247,7 +247,6 @@ volumes:
   postgres-keycloak-data:
   postgres-inventory-data:
   postgres-user-data:
-#  postgres-product-data:
 #  postgres-order-data:
 #  postgres-payment-data:
 #  activemq-data:
