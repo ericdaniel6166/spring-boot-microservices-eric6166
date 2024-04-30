@@ -6,6 +6,8 @@ import brave.propagation.TraceContextOrSamplingFlags;
 import com.eric6166.base.exception.ErrorDetail;
 import com.eric6166.base.utils.BaseUtils;
 import com.eric6166.common.utils.Const;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -36,6 +38,8 @@ public class RestExceptionHandler {
 
     private static final String KEY_COMMON_FIELD = "%s.%s";
     private static final String KEY_FIELD_TEMPLATE = "%s.%s.%s";
+    private static final String KEY_FIELD_TEMPLATE_PROPERTY_PATH = "%s.%s";
+    private static final String KEY_COMMON_GENERAL_FIELD = String.format(KEY_COMMON_FIELD, Const.COMMON, Const.GENERAL_FIELD);
 
     MessageSource messageSource;
     BaseUtils baseUtils;
@@ -77,6 +81,44 @@ public class RestExceptionHandler {
         }
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException e, HandlerMethod handlerMethod) {
+        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleConstraintViolationException").start();
+        try (var ws = tracer.withSpanInScope(span)) {
+            span.error(e);
+            var errorMessage = BaseUtils.getRootCauseMessage(e);
+            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
+            List<ErrorDetail> errorDetails = new ArrayList<>();
+            var apiClassName = handlerMethod.getBeanType().getSimpleName();
+            for (var constraintViolation : e.getConstraintViolations()) {
+                errorDetails.add(buildErrorDetail(constraintViolation, apiClassName));
+            }
+            var errorResponse = baseUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR.getHttpStatus(),
+                    ErrorCode.VALIDATION_ERROR.name(), ErrorCode.VALIDATION_ERROR.getReasonPhrase(), errorDetails);
+            span.tag("handleConstraintViolationException errorResponse", errorResponse.toString());
+            return baseUtils.buildResponseExceptionEntity(errorResponse);
+        } catch (RuntimeException exception) {
+            span.error(exception);
+            throw exception;
+        } finally {
+            span.finish();
+        }
+    }
+
+    private ErrorDetail buildErrorDetail(ConstraintViolation<?> constraintViolation, String apiClassName) {
+        var propertyPath = constraintViolation.getPropertyPath().toString();
+        var keyField = String.format(KEY_FIELD_TEMPLATE_PROPERTY_PATH, apiClassName, propertyPath);
+        var parts = propertyPath.split(Const.SPLIT_REGEX_DOT);
+        var field = parts.length >= 1 ? parts[parts.length - 1] : Const.GENERAL_FIELD;
+        var messageTemplate = constraintViolation.getMessage();
+        var msg = messageTemplate;
+        if (messageTemplate.contains(Const.PLACEHOLDER_0)) {
+            var keyCommonField = String.format(KEY_COMMON_FIELD, Const.COMMON, field);
+            var model = buildModel(keyField, keyCommonField);
+            msg = formatMsg(messageTemplate, model);
+        }
+        return new ValidationErrorDetail(keyField, field, null, null, constraintViolation.getInvalidValue(), StringUtils.capitalize(msg));
+    }
 
     @ExceptionHandler(BindException.class)
     public ResponseEntity<Object> handleBindException(BindException e, HandlerMethod handlerMethod) {
@@ -86,9 +128,10 @@ public class RestExceptionHandler {
             var errorMessage = BaseUtils.getRootCauseMessage(e);
             log.debug("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
             List<ErrorDetail> errorDetails = new ArrayList<>();
+            var apiClassName = handlerMethod.getBeanType().getSimpleName();
             for (var error : e.getAllErrors()) {
                 if (error instanceof FieldError fieldError) {
-                    errorDetails.add(buildErrorDetail(handlerMethod, fieldError));
+                    errorDetails.add(buildErrorDetail(fieldError, apiClassName));
                 }
             }
             var errorResponse = baseUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR.getHttpStatus(),
@@ -101,20 +144,19 @@ public class RestExceptionHandler {
         } finally {
             span.finish();
         }
-
     }
 
-    private ErrorDetail buildErrorDetail(HandlerMethod handlerMethod, FieldError fieldError) {
+    private ErrorDetail buildErrorDetail(FieldError fieldError, String apiClassName) {
         var messageTemplate = buildMessageTemplate(fieldError);
+        var field = fieldError.getField();
+        var keyField = String.format(KEY_FIELD_TEMPLATE, apiClassName, fieldError.getObjectName(), field);
         var msg = messageTemplate;
-        var apiClassName = handlerMethod.getBeanType().getSimpleName();
-        var keyField = String.format(KEY_FIELD_TEMPLATE, apiClassName, fieldError.getObjectName(), fieldError.getField());
         if (messageTemplate.contains(Const.PLACEHOLDER_0)) {
-            var keyCommonField = String.format(KEY_COMMON_FIELD, Const.COMMON, fieldError.getField());
+            var keyCommonField = String.format(KEY_COMMON_FIELD, Const.COMMON, field);
             var model = buildModel(keyField, keyCommonField);
             msg = formatMsg(messageTemplate, model);
         }
-        return new ValidationErrorDetail(keyField, fieldError.getField(), null, null, fieldError.getRejectedValue(), StringUtils.capitalize(msg));
+        return new ValidationErrorDetail(keyField, field, null, null, fieldError.getRejectedValue(), StringUtils.capitalize(msg));
     }
 
     private String buildMessageTemplate(FieldError fieldError) {
@@ -151,7 +193,7 @@ public class RestExceptionHandler {
         }
         if (StringUtils.isBlank(model)) {
             model = keyField; // comment // for local testing
-//            model = messageSource.getMessage(Const.GENERAL_FIELD, null, LocaleContextHolder.getLocale()); // uncomment
+//            model = messageSource.getMessage(KEY_COMMON_GENERAL_FIELD, null, LocaleContextHolder.getLocale()); // uncomment
         }
         return model;
     }

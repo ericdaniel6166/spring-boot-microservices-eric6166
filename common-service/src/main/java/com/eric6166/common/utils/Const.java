@@ -23,12 +23,13 @@ public final class Const {
     public static final String ID = "id";
     public static final String DEFAULT_SORT_COLUMN = "id";
     public static final String DEFAULT_SORT_DIRECTION = "ASC";
-    public static final String GENERAL_FIELD = "common.generalField";
+    public static final String GENERAL_FIELD = "generalField";
     public static final String FIELD_USERNAME = "username";
     public static final String FIELD_EMAIL = "email";
     public static final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE; //change
     public static final String DEFAULT_DATE_TIME_PATTERN = " yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"; //change
     public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_PATTERN); //change
+    public static final String SPLIT_REGEX_DOT = "\\.";
 
     private Const() {
         throw new IllegalStateException("Utility class");
