@@ -22,22 +22,19 @@ public final class AppExceptionUtils {
         return e.getRootCause() == null ? BaseUtils.getRootCauseMessage(e) : e.getRootCause();
     }
 
-    public ErrorResponse buildErrorResponse(HttpStatus httpStatus, String message, Object rootCause) {
-        return buildErrorResponse(httpStatus, httpStatus.name(), message, rootCause);
-    }
-
     public ErrorResponse buildErrorResponse(HttpStatus httpStatus, Exception e) {
-        return buildErrorResponse(httpStatus, e.getMessage(), BaseUtils.getRootCauseMessage(e));
+        return buildErrorResponse(httpStatus, httpStatus.name(), httpStatus.getReasonPhrase(), BaseUtils.getRootCauseMessage(e));
     }
 
     public ErrorResponse buildErrorResponse(HttpStatus httpStatus, String error, String message, Object rootCause) {
-        log.debug("e: {} , errorMessage: {}, rootCause: {}", error, message, rootCause);
+        log.debug("error: {} , errorMessage: {}, rootCause: {}", error, message, rootCause);
         return new ErrorResponse(httpStatus, error,
                 message, httpServletRequest, rootCause);
     }
 
+
     public ErrorResponse buildErrorResponse(ErrorCode errorCode, Object rootCause) {
-        log.debug("errorCode: {}, errorMessage: {}, rootCause: {}", errorCode, errorCode.getReasonPhrase(), rootCause);
+        log.debug("error: {}, errorMessage: {}, rootCause: {}", errorCode.name(), errorCode.getReasonPhrase(), rootCause);
         return new ErrorResponse(errorCode.getHttpStatus(), errorCode.name(),
                 errorCode.getReasonPhrase(), httpServletRequest, rootCause);
     }

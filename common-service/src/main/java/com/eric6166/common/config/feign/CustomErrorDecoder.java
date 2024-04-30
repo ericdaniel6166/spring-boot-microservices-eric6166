@@ -27,13 +27,9 @@ public class CustomErrorDecoder implements ErrorDecoder {
             var reader = response.body();
             var jsonNode = objectMapper.readTree(reader.asReader(Charset.defaultCharset()));
             var errorJsonNode = jsonNode.findValue(Const.FIELD_ERROR);
-            rootCause = errorJsonNode == null ? jsonNode : errorJsonNode;
-        } else {
-
+            rootCause = errorJsonNode == null || errorJsonNode.isTextual() ? jsonNode : errorJsonNode;
         }
-
         var httpStatus = HttpStatus.valueOf(response.status());
-//        throw new FeignException()
         return new AppException(httpStatus, httpStatus.name(), response.reason(), rootCause);
     }
 }
