@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
@@ -24,26 +24,22 @@
             <version>${project.parent.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.modelmapper</groupId>
             <artifactId>modelmapper</artifactId>
             <version>${modelmapper.version}</version>
         </dependency>
-<!--        netflix-eureka-client -->
+        <!--        netflix-eureka-client -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
-<!--        swagger-->
+        <!--        swagger-->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc-openapi-starter-webmvc-ui.version}</version>
         </dependency>
-<!--        opentelemetry, micrometer-tracing-bridge-brave, micrometer-observation-->
+        <!--        opentelemetry, micrometer-tracing-bridge-brave, micrometer-observation-->
         <dependency>
             <groupId>io.opentelemetry.instrumentation</groupId>
             <artifactId>opentelemetry-logback-1.0</artifactId>
@@ -58,61 +54,48 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-observation</artifactId>
         </dependency>
-<!--        brave, zipkin-reporter, zipkin-sender-okhttp3, and zipkin-reporter-brave-->
-<!--        https://www.baeldung.com/java-brave-->
-        <dependency>
-            <groupId>io.zipkin.brave</groupId>
-            <artifactId>brave</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.zipkin.reporter2</groupId>
-            <artifactId>zipkin-reporter-brave</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.zipkin.reporter2</groupId>
-            <artifactId>zipkin-reporter</artifactId>
-        </dependency>
-<!--        <dependency>-->
-<!--            <groupId>io.zipkin.reporter2</groupId>-->
-<!--            <artifactId>zipkin-sender-okhttp3</artifactId>-->
-<!--        </dependency>-->
-<!--        &lt;!&ndash; Adds the MVC class and method names to server spans &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>io.zipkin.brave</groupId>-->
-<!--            <artifactId>brave-instrumentation-spring-webmvc</artifactId>-->
-<!--        </dependency>-->
-<!--        &lt;!&ndash; Instruments the underlying OkHttpClient requests that call the backend &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>io.zipkin.brave</groupId>-->
-<!--            <artifactId>brave-instrumentation-okhttp3</artifactId>-->
-<!--        </dependency>-->
-<!--        &lt;!&ndash; Integrates so you can use log patterns like %X{traceId}/%X{spanId} &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>io.zipkin.brave</groupId>-->
-<!--            <artifactId>brave-context-slf4j</artifactId>-->
-<!--        </dependency>-->
 
-<!--        <dependency>-->
-<!--            <groupId>javax.servlet</groupId>-->
-<!--            <artifactId>javax.servlet-api</artifactId>-->
-<!--            <version>4.0.1</version>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
-<!--&lt;!&ndash;        <dependency>&ndash;&gt;-->
-<!--&lt;!&ndash;            <groupId>com.squareup.okhttp3</groupId>&ndash;&gt;-->
-<!--&lt;!&ndash;            <artifactId>okhttp</artifactId>&ndash;&gt;-->
-<!--&lt;!&ndash;            &lt;!&ndash; Intentionally OkHttp 3 as it doesn't have a Kotlin dependency &ndash;&gt;&ndash;&gt;-->
-<!--&lt;!&ndash;        </dependency>&ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework</groupId>-->
-<!--            <artifactId>spring-webmvc</artifactId>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>org.springframework</groupId>-->
-<!--            <artifactId>spring-web</artifactId>-->
-<!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.zipkin.reporter2</groupId>-->
+        <!--            <artifactId>zipkin-sender-okhttp3</artifactId>-->
+        <!--        </dependency>-->
+        <!--        &lt;!&ndash; Adds the MVC class and method names to server spans &ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.zipkin.brave</groupId>-->
+        <!--            <artifactId>brave-instrumentation-spring-webmvc</artifactId>-->
+        <!--        </dependency>-->
+        <!--        &lt;!&ndash; Instruments the underlying OkHttpClient requests that call the backend &ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.zipkin.brave</groupId>-->
+        <!--            <artifactId>brave-instrumentation-okhttp3</artifactId>-->
+        <!--        </dependency>-->
+        <!--        &lt;!&ndash; Integrates so you can use log patterns like %X{traceId}/%X{spanId} &ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.zipkin.brave</groupId>-->
+        <!--            <artifactId>brave-context-slf4j</artifactId>-->
+        <!--        </dependency>-->
 
-<!--        open feign-->
+        <!--        <dependency>-->
+        <!--            <groupId>javax.servlet</groupId>-->
+        <!--            <artifactId>javax.servlet-api</artifactId>-->
+        <!--            <version>4.0.1</version>-->
+        <!--            <scope>provided</scope>-->
+        <!--        </dependency>-->
+        <!--&lt;!&ndash;        <dependency>&ndash;&gt;-->
+        <!--&lt;!&ndash;            <groupId>com.squareup.okhttp3</groupId>&ndash;&gt;-->
+        <!--&lt;!&ndash;            <artifactId>okhttp</artifactId>&ndash;&gt;-->
+        <!--&lt;!&ndash;            &lt;!&ndash; Intentionally OkHttp 3 as it doesn't have a Kotlin dependency &ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;        </dependency>&ndash;&gt;-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework</groupId>-->
+        <!--            <artifactId>spring-webmvc</artifactId>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>org.springframework</groupId>-->
+        <!--            <artifactId>spring-web</artifactId>-->
+        <!--        </dependency>-->
+
+        <!--        open feign-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-openfeign</artifactId>
@@ -130,12 +113,12 @@
             <groupId>io.github.openfeign</groupId>
             <artifactId>feign-micrometer</artifactId>
         </dependency>
-<!--        kafka-->
+        <!--        kafka-->
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka</artifactId>
         </dependency>
-<!--        resilience4j-->
+        <!--        resilience4j-->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-circuitbreaker-resilience4j</artifactId>

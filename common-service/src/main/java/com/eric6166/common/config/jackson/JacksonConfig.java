@@ -1,6 +1,6 @@
 package com.eric6166.common.config.jackson;
 
-import com.eric6166.common.utils.Const;
+import com.eric6166.base.utils.Const;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

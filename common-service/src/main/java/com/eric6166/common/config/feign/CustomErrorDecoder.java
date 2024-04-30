@@ -1,7 +1,7 @@
 package com.eric6166.common.config.feign;
 
-import com.eric6166.common.exception.AppException;
-import com.eric6166.common.utils.Const;
+import com.eric6166.base.exception.AppException;
+import com.eric6166.base.utils.Const;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;
 import feign.codec.ErrorDecoder;
