@@ -28,15 +28,14 @@ public final class AppExceptionUtils {
 
     public ErrorResponse buildErrorResponse(HttpStatus httpStatus, String error, String message, Object rootCause) {
         log.debug("error: {} , errorMessage: {}, rootCause: {}", error, message, rootCause);
-        return new ErrorResponse(httpStatus, error,
-                message, httpServletRequest, rootCause);
+        return new ErrorResponse(httpStatus, error, message, httpServletRequest, rootCause);
     }
 
 
     public ErrorResponse buildErrorResponse(ErrorCode errorCode, Object rootCause) {
         log.debug("error: {}, errorMessage: {}, rootCause: {}", errorCode.name(), errorCode.getReasonPhrase(), rootCause);
-        return new ErrorResponse(errorCode.getHttpStatus(), errorCode.name(),
-                errorCode.getReasonPhrase(), httpServletRequest, rootCause);
+        return new ErrorResponse(errorCode.getHttpStatus(), errorCode.name(), errorCode.getReasonPhrase(),
+                httpServletRequest, rootCause);
     }
 
 }

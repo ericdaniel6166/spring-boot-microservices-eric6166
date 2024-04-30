@@ -26,10 +26,10 @@ public class SecurityRestExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException e, HttpServletRequest httpServletRequest) {
-        String errorMessage = BaseUtils.getRootCauseMessage(e);
-        log.debug("e: {} , errorMessage: {}", e.getClass().getName(), errorMessage); // comment // for local testing
+        String rootCause = BaseUtils.getRootCauseMessage(e);
+        log.debug("e: {} , rootCause: {}", e.getClass().getName(), rootCause); // comment // for local testing
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.name(),
-                HttpStatus.FORBIDDEN.getReasonPhrase(), httpServletRequest, null);
+                HttpStatus.FORBIDDEN.getReasonPhrase(), httpServletRequest, rootCause);
         return baseUtils.buildResponseExceptionEntity(errorResponse);
     }
 }
