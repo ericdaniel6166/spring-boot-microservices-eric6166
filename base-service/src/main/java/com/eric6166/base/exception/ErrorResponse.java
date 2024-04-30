@@ -7,7 +7,6 @@ import lombok.Data;
 import org.springframework.http.HttpStatusCode;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Data
 public class ErrorResponse {
@@ -24,22 +23,21 @@ public class ErrorResponse {
     private String error;
 
     private String message;
-
     private String path;
-
-    private List<ErrorDetail> errorDetails;
+    private Object rootCause;
 
     public ErrorResponse() {
         this.timestamp = LocalDateTime.now();
     }
 
-    public ErrorResponse(HttpStatusCode httpStatus, String error, String message, HttpServletRequest httpServletRequest, List<ErrorDetail> errorDetails) {
+    public ErrorResponse(HttpStatusCode httpStatus, String error, String message, HttpServletRequest httpServletRequest, Object rootCause) {
         this();
         this.httpStatus = httpStatus;
         this.status = httpStatus.value();
         this.error = error;
         this.message = message;
         this.path = httpServletRequest.getRequestURI();
-        this.errorDetails = errorDetails;
+        this.rootCause = rootCause;
     }
+
 }

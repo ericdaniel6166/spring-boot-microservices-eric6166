@@ -30,6 +30,7 @@ public final class Const {
     public static final String DEFAULT_DATE_TIME_PATTERN = " yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"; //change
     public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_PATTERN); //change
     public static final String SPLIT_REGEX_DOT = "\\.";
+    public static final String FIELD_ERROR = "error";
 
     private Const() {
         throw new IllegalStateException("Utility class");

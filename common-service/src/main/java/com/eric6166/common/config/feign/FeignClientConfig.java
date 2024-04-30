@@ -1,5 +1,6 @@
 package com.eric6166.common.config.feign;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Logger;
 import feign.RequestInterceptor;
 import feign.auth.BasicAuthRequestInterceptor;
@@ -20,8 +21,8 @@ public class FeignClientConfig {
     }
 
     @Bean
-    public ErrorDecoder errorDecoder() {
-        return new CustomErrorDecoder();
+    public ErrorDecoder errorDecoder(ObjectMapper objectMapper) {
+        return new CustomErrorDecoder(objectMapper);
     }
 
     @Bean

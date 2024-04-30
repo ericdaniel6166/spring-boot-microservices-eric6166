@@ -1,26 +1,22 @@
 package com.eric6166.common.exception;
 
-import com.eric6166.base.exception.ErrorDetail;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 
-import java.util.List;
-
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class AppException extends Exception {
 
+    Object rootCause;
     String error;
 
     HttpStatus httpStatus;
 
     int status;
-
-    List<ErrorDetail> errorDetails;
 
     public AppException(HttpStatus httpStatus, String message) {
         super(message);
@@ -36,12 +32,12 @@ public class AppException extends Exception {
         this.status = httpStatus.value();
     }
 
-    public AppException(HttpStatus httpStatus, String error, String message, List<ErrorDetail> errorDetails) {
+    public AppException(HttpStatus httpStatus, String error, String message, Object rootCause) {
         super(message);
         this.error = error;
-        this.errorDetails = errorDetails;
         this.httpStatus = httpStatus;
         this.status = httpStatus.value();
+        this.rootCause = rootCause;
     }
 
     public AppException(Throwable cause) {
