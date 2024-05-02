@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.HandlerMethod;
@@ -37,6 +38,7 @@ public class RestExceptionHandler {
 
     private static final String KEY_COMMON_FIELD = "%s.%s";
     private static final String KEY_FIELD_TEMPLATE = "%s.%s.%s";
+    private static final String KEY_OBJECT_TEMPLATE = "%s.%s";
     private static final String KEY_FIELD_TEMPLATE_PROPERTY_PATH = "%s.%s";
     private static final String KEY_COMMON_GENERAL_FIELD = String.format(KEY_COMMON_FIELD, BaseConst.COMMON, BaseConst.GENERAL_FIELD);
 
@@ -126,6 +128,8 @@ public class RestExceptionHandler {
             for (var error : e.getAllErrors()) {
                 if (error instanceof FieldError fieldError) {
                     errorDetails.add(buildErrorDetail(fieldError, apiClassName));
+                } else {
+                    errorDetails.add(buildErrorDetail(error, apiClassName));
                 }
             }
             var errorResponse = appExceptionUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR, errorDetails);
@@ -138,6 +142,20 @@ public class RestExceptionHandler {
         } finally {
             span.finish();
         }
+    }
+
+    private ErrorDetail buildErrorDetail(ObjectError objectError, String apiClassName) {
+        var messageTemplate = buildMessageTemplate(objectError);
+        var object = objectError.getObjectName();
+        var keyObject = String.format(KEY_OBJECT_TEMPLATE, apiClassName, object);
+        var msg = messageTemplate;
+        if (messageTemplate.contains(BaseConst.PLACEHOLDER_0)) {
+            var keyCommonObject = String.format(KEY_OBJECT_TEMPLATE, BaseConst.COMMON, object);
+            var model = buildModel(keyObject, keyCommonObject);
+            msg = formatMsg(messageTemplate, model);
+        }
+        return new ValidationErrorDetail(null, null, keyObject, object, null, StringUtils.capitalize(msg));
+
     }
 
     private ErrorDetail buildErrorDetail(FieldError fieldError, String apiClassName) {
@@ -153,19 +171,20 @@ public class RestExceptionHandler {
         return new ValidationErrorDetail(keyField, field, null, fieldError.getRejectedValue(), StringUtils.capitalize(msg));
     }
 
-    private String buildMessageTemplate(FieldError fieldError) {
+    private String buildMessageTemplate(ObjectError objectError) {
         var messageTemplate = StringUtils.EMPTY;
-        if (ObjectUtils.isNotEmpty(fieldError.getCodes())) {
-            for (var code : fieldError.getCodes()) {
+        if (ObjectUtils.isNotEmpty(objectError.getCodes())) {
+            for (var code : objectError.getCodes()) {
                 try {
                     messageTemplate = messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
                     break;
                 } catch (NoSuchMessageException ignored) {
+                    //
                 }
             }
         }
         if (StringUtils.isBlank(messageTemplate)) {
-            messageTemplate = fieldError.getDefaultMessage();
+            messageTemplate = objectError.getDefaultMessage();
         }
         return messageTemplate;
     }
@@ -183,6 +202,7 @@ public class RestExceptionHandler {
                 model = messageSource.getMessage(key, null, LocaleContextHolder.getLocale());
                 break;
             } catch (NoSuchMessageException ignored) {
+                //
             }
         }
         if (StringUtils.isBlank(model)) {

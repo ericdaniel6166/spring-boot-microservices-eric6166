@@ -49,6 +49,12 @@
             <groupId>io.zipkin.reporter2</groupId>
             <artifactId>zipkin-reporter</artifactId>
         </dependency>
+        <!--        @ValidPassword, password rule-->
+        <dependency>
+            <groupId>org.passay</groupId>
+            <artifactId>passay</artifactId>
+            <version>${passay.version}</version>
+        </dependency>
     </dependencies>
 
 
