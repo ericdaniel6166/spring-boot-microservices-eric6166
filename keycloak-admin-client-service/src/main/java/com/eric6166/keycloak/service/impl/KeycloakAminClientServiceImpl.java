@@ -33,6 +33,17 @@ public class KeycloakAminClientServiceImpl implements KeycloakAminClientService 
     }
 
     private RealmResource getRealm() {
+//        RealmResource realm = keycloak.realm(keycloakAdminClientProps.getRealm());
+//        realm.groups().groups("CUSTOMER", 0, 1).stream().findFirst().get();
+//        realm.users().searchByEmail("customer1@customer1.com", true).stream().findFirst().get();
+//        realm.users().searchByUsername("customer1", true).stream().findFirst().get();
+//        realm.users().userProfile(); //null
+//        realm.getAdminEvents(); //403
+//        realm.getDefaultDefaultClientScopes(); //403
+//        realm.getClientSessionStats(); //403
+//        realm.getEvents(); //403
+//        realm.users().list();
+//        realm.users().searchByFirstName("customer", true); //exact
         return keycloak.realm(keycloakAdminClientProps.getRealm());
     }
 
