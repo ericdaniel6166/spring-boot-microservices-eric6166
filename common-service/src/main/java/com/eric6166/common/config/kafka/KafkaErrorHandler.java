@@ -10,7 +10,7 @@ import org.springframework.kafka.listener.MessageListenerContainer;
 public class KafkaErrorHandler implements CommonErrorHandler {
     @Override
     public boolean handleOne(Exception thrownException, ConsumerRecord<?, ?> record, Consumer<?, ?> consumer, MessageListenerContainer container) {
-        log.debug("Kafka error handler for message: {}", record.value().toString()); // comment // for local testing
+        log.debug("Kafka error handler for message: {}", record.value()); // comment // for local testing
         return CommonErrorHandler.super.handleOne(thrownException, record, consumer, container);
     }
 

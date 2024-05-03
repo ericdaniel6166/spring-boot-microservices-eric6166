@@ -134,6 +134,21 @@ services:
       zookeeper:
         condition: service_started
 
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis
+    restart: always
+    command:
+      - "redis-server"
+      - "--save 20 1"
+      - "--loglevel warning"
+    ports:
+      - "6379:6379"
+    networks:
+      - internal-network
+    volumes:
+      - cache-data:/data
+
 networks:
   internal-network:
 
@@ -141,8 +156,8 @@ volumes:
   postgres-keycloak-data:
   postgres-inventory-data:
   postgres-user-data:
+  cache-data:
 #  postgres-order-data:
 #  postgres-payment-data:
 #  activemq-data:
 #  activemq-log:
-#  cache:

@@ -12,6 +12,7 @@ public final class SecurityConst {
     public static final String EMAIL = "email";
     public static final String SCOPE = "scope";
     public static final String EMAIL_VERIFIED = "email_verified";
+    public static final String SESSION_ID = "sid";
     public static final String NAME = "name";
     public static final String FAMILY_NAME = "family_name";
     public static final String GIVEN_NAME = "given_name";

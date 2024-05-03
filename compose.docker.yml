@@ -134,6 +134,21 @@ services:
       zookeeper:
         condition: service_started
 
+  redis:
+    image: redis:7.2-alpine
+    container_name: redis
+    restart: always
+    command:
+      - "redis-server"
+      - "--save 20 1"
+      - "--loglevel warning"
+    ports:
+      - "6379:6379"
+    networks:
+      - internal-network
+    volumes:
+      - cache-data:/data
+
   discovery-service:
     container_name: discovery-service
     build:
@@ -204,10 +219,10 @@ services:
         condition: service_started
       kafka:
         condition: service_started
+      redis:
+        condition: service_healthy
   #      activemq:
   #        condition: service_started
-  #      redis:
-  #        condition: service_healthy
 
   user-service:
     container_name: user-service
@@ -235,10 +250,10 @@ services:
         condition: service_started
       kafka:
         condition: service_started
+      redis:
+        condition: service_healthy
 #      activemq:
 #        condition: service_started
-#      redis:
-#        condition: service_healthy
 
 networks:
   internal-network:
@@ -247,8 +262,8 @@ volumes:
   postgres-keycloak-data:
   postgres-inventory-data:
   postgres-user-data:
+  cache-data:
 #  postgres-order-data:
 #  postgres-payment-data:
 #  activemq-data:
 #  activemq-log:
-#  cache:

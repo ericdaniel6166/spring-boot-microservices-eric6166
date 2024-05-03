@@ -11,5 +11,10 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class MessageResponse {
+    Long id;
     String message;
+
+    public MessageResponse(String message) {
+        this.message = message;
+    }
 }

@@ -16,5 +16,4 @@ public class AppEvent {
     Object payload;
     String uuid;
 
-
 }
