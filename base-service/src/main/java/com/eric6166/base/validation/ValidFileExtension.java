@@ -13,15 +13,13 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(
-        validatedBy = {EnumStringValidator.class}
+        validatedBy = {FileExtensionValidator.class}
 )
-public @interface ValidEnumString {
+public @interface ValidFileExtension {
 
-    Class<? extends Enum<?>> value();
+    String[] extensions() default {};
 
-    boolean caseSensitive() default true;
-
-    String message() default "";
+    String message() default "{constraints.ValidFileExtension.message}";
 
     Class<?>[] groups() default {};
 

@@ -22,10 +22,6 @@ public @interface ValidCollectionString {
 
     String message() default "";
 
-    String messageCode() default "";
-
-    String[] messageParams() default {};
-
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};

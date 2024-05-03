@@ -55,6 +55,21 @@
             <artifactId>passay</artifactId>
             <version>${passay.version}</version>
         </dependency>
+<!--        mime types validator-->
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>${tika.version}</version>
+        </dependency>
+        <!--        vault-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-starter-vault-config</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.cloud</groupId>-->
+<!--            <artifactId>spring-cloud-vault-config-databases</artifactId>-->
+<!--        </dependency>-->
     </dependencies>
 
 

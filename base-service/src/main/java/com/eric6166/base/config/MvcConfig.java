@@ -1,6 +1,7 @@
 package com.eric6166.base.config;
 
 import com.eric6166.base.utils.BaseConst;
+import org.apache.tika.Tika;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.LocaleResolver;
@@ -33,4 +34,9 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(localeChangeInterceptor());
     }
 
+    // mime types validator
+    @Bean
+    public Tika tika() {
+        return new Tika();
+    }
 }

@@ -1,10 +1,13 @@
 package com.eric6166.base.validation;
 
-import com.eric6166.base.utils.AppValidationUtils;
+import com.eric6166.base.utils.BaseConst;
+import com.eric6166.base.utils.BaseMessageConst;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 
 import java.util.List;
 import java.util.stream.Stream;
@@ -12,13 +15,11 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class EnumStringValidator implements ConstraintValidator<ValidEnumString, String> {
 
-    final AppValidationUtils appValidationUtils;
+    final MessageSource messageSource;
 
     List<String> valueList;
     boolean caseSensitive;
     String message;
-    String messageCode;
-    String[] messageParams;
 
     @Override
     public void initialize(ValidEnumString constraintAnnotation) {
@@ -27,8 +28,6 @@ public class EnumStringValidator implements ConstraintValidator<ValidEnumString,
                 .toList();
         caseSensitive = constraintAnnotation.caseSensitive();
         message = constraintAnnotation.message();
-        messageCode = constraintAnnotation.messageCode();
-        messageParams = constraintAnnotation.messageParams();
     }
 
     @Override
@@ -42,7 +41,13 @@ public class EnumStringValidator implements ConstraintValidator<ValidEnumString,
         } else {
             isValid = valueList.contains(s.toUpperCase());
         }
-        return appValidationUtils.handleConstrainsValidValue(constraintValidatorContext, isValid, message, messageParams, messageCode, valueList.toString());
+        if (!isValid) {
+            constraintValidatorContext.disableDefaultConstraintViolation();
+            String message = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_VALUE,
+                    new String[]{BaseConst.PLACEHOLDER_0, valueList.toString()}, LocaleContextHolder.getLocale());
+            constraintValidatorContext.buildConstraintViolationWithTemplate(message).addConstraintViolation();
+        }
+        return isValid;
     }
 
 

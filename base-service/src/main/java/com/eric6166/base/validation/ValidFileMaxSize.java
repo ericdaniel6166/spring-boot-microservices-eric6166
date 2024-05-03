@@ -13,15 +13,13 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(
-        validatedBy = {EnumStringValidator.class}
+        validatedBy = {FileMaxSizeValidator.class}
 )
-public @interface ValidEnumString {
+public @interface ValidFileMaxSize {
 
-    Class<? extends Enum<?>> value();
+    long maxSize() default Long.MAX_VALUE; // MB
 
-    boolean caseSensitive() default true;
-
-    String message() default "";
+    String message() default "{constraints.ValidFileMaxSize.message}";
 
     Class<?>[] groups() default {};
 

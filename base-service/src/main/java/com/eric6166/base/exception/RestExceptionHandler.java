@@ -24,6 +24,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.text.MessageFormat;
@@ -168,7 +169,8 @@ public class RestExceptionHandler {
             var model = buildModel(keyField, keyCommonField);
             msg = formatMsg(messageTemplate, model);
         }
-        return new ValidationErrorDetail(keyField, field, null, fieldError.getRejectedValue(), StringUtils.capitalize(msg));
+        var rejectedValue = fieldError.getRejectedValue() instanceof MultipartFile ? null : fieldError.getRejectedValue();
+        return new ValidationErrorDetail(keyField, field, null, rejectedValue, StringUtils.capitalize(msg));
     }
 
     private String buildMessageTemplate(ObjectError objectError) {

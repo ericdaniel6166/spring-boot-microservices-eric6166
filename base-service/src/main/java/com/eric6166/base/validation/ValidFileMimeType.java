@@ -13,15 +13,13 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(
-        validatedBy = {EnumStringValidator.class}
+        validatedBy = {FileMimeTypeValidator.class}
 )
-public @interface ValidEnumString {
+public @interface ValidFileMimeType {
 
-    Class<? extends Enum<?>> value();
+    String[] mimeTypes() default {};
 
-    boolean caseSensitive() default true;
-
-    String message() default "";
+    String message() default "{constraints.ValidFileMimeType.message}";
 
     Class<?>[] groups() default {};
 
