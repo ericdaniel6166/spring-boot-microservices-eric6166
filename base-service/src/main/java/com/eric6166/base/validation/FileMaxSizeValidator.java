@@ -17,7 +17,7 @@ public class FileMaxSizeValidator implements ConstraintValidator<ValidFileMaxSiz
 
     @Override
     public boolean isValid(MultipartFile file, ConstraintValidatorContext constraintValidatorContext) {
-        if (file.isEmpty()) {
+        if (file == null || file.isEmpty()) {
             return true;
         }
         return maxSize * 1024 * 1024 >= file.getSize();

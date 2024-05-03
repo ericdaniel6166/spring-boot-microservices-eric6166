@@ -24,7 +24,7 @@ public class FileMimeTypeValidator implements ConstraintValidator<ValidFileMimeT
     @SneakyThrows
     @Override
     public boolean isValid(MultipartFile file, ConstraintValidatorContext constraintValidatorContext) {
-        if (file.isEmpty()) {
+        if (file == null || file.isEmpty()) {
             return true;
         }
         return mimeTypes.contains(tika.detect(file.getInputStream()));

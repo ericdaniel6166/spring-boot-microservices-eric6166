@@ -20,7 +20,7 @@ public class FileExtensionValidator implements ConstraintValidator<ValidFileExte
 
     @Override
     public boolean isValid(MultipartFile file, ConstraintValidatorContext constraintValidatorContext) {
-        if (file.isEmpty()) {
+        if (file == null || file.isEmpty()) {
             return true;
         }
         return extensions.contains(FilenameUtils.getExtension(file.getOriginalFilename()));
