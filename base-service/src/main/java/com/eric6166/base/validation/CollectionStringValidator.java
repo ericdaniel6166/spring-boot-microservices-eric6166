@@ -9,7 +9,6 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class CollectionStringValidator implements ConstraintValidator<ValidColle
     @Override
     public void initialize(ValidCollectionString constraintAnnotation) {
         caseSensitive = constraintAnnotation.caseSensitive();
-        valueList = Arrays.asList(constraintAnnotation.values());
+        valueList = List.of(constraintAnnotation.values());
         message = constraintAnnotation.message();
     }
 
