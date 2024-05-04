@@ -34,6 +34,34 @@ public final class BaseConst {
     public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_PATTERN); //change
     public static final String SPLIT_REGEX_DOT = "\\.";
     public static final String FIELD_ERROR = "error";
+    //document
+    public static final String MIME_TYPE_DOCX = "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+    public static final String MIME_TYPE_PPTX = "application/vnd.openxmlformats-officedocument.presentationml.presentation";
+    public static final String MIME_TYPE_XLSX = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    public static final String MIME_TYPE_DOC = "application/msword";
+    public static final String MIME_TYPE_XLS = "application/vnd.ms-excel";
+    public static final String MIME_TYPE_PPT = "application/vnd.ms-powerpoint";
+    public static final String MIME_TYPE_PDF = "application/pdf";
+    public static final String MIME_TYPE_ZIP = "application/zip";
+    //audio
+    public static final String MIME_TYPE_WAV = "audio/vnd.wave";
+    public static final String MIME_TYPE_MP3 = "audio/audio/mpeg";
+    //image
+    public static final String MIME_TYPE_TIFF = "image/tiff";
+    public static final String MIME_TYPE_SVG = "image/svg+xml";
+    public static final String MIME_TYPE_GIF = "image/gif";
+    public static final String MIME_TYPE_BMP = "image/bmp";
+    public static final String MIME_TYPE_PNG = "image/png";
+    public static final String MIME_TYPE_JPG = "image/jpeg";
+    //other
+    public static final String MIME_TYPE_XML = "application/xml";
+    public static final String MIME_TYPE_TXT = "text/plain";
+    public static final String MIME_TYPE_HTML = "text/html";
+
+    //extension
+    public static final String EXTENSION_PDF = "pdf";
+    public static final String EXTENSION_DOCX = "docx";
+    public static final String EXTENSION_DOC = "doc";
 
     private BaseConst() {
         throw new IllegalStateException("Utility class");

@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -23,7 +24,11 @@ public class FileExtensionValidator implements ConstraintValidator<ValidFileExte
         if (file == null || file.isEmpty()) {
             return true;
         }
-        return extensions.contains(FilenameUtils.getExtension(file.getOriginalFilename()));
+        var extension = FilenameUtils.getExtension(file.getOriginalFilename());
+        if (StringUtils.isBlank(extension)) {
+            return false;
+        }
+        return extensions.contains(extension.toLowerCase());
 
     }
 

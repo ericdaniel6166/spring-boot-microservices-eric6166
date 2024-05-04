@@ -61,6 +61,11 @@
             <artifactId>tika-core</artifactId>
             <version>${tika.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-parsers-standard-package</artifactId>
+            <version>${tika.version}</version>
+        </dependency>
         <!--        vault-->
 <!--        <dependency>-->
 <!--            <groupId>org.springframework.cloud</groupId>-->
