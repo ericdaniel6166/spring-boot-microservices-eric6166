@@ -15,16 +15,25 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.BucketAlreadyExistsException;
 import software.amazon.awssdk.services.s3.model.BucketAlreadyOwnedByYouException;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.CreateBucketResponse;
 import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
+import software.amazon.awssdk.services.s3.model.DeleteBucketResponse;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectResponse;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.IOException;
@@ -44,7 +53,7 @@ public class S3ServiceImpl implements S3Service {
         try (var ws = tracer.withSpanInScope(span)) {
 
         } catch (RuntimeException e) {
-//            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -53,11 +62,49 @@ public class S3ServiceImpl implements S3Service {
     }
 
     @Override
-    public void uploadObject(String bucket, String key, MultipartFile file) throws IOException, AppException {
+    public ResponseInputStream<GetObjectResponse> getObject(String bucket, String key) {
+        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("getObject").start();
+        try (var ws = tracer.withSpanInScope(span)) {
+            return s3Client.getObject(GetObjectRequest.builder()
+                    .bucket(bucket)
+                    .key(key)
+                    .build());
+        } catch (RuntimeException e) {
+            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            span.error(e);
+            throw e;
+        } finally {
+            span.finish();
+        }
+    }
+
+    @Override
+    public ListObjectsV2Response listObject(String bucket) {
+        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("listObject").start();
+        try (var ws = tracer.withSpanInScope(span)) {
+            try {
+                return s3Client.listObjectsV2(ListObjectsV2Request.builder()
+                        .bucket(bucket)
+                        .build());
+            } catch (Exception e) {
+                log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+                throw e;
+            }
+        } catch (RuntimeException e) {
+            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            span.error(e);
+            throw e;
+        } finally {
+            span.finish();
+        }
+    }
+
+    @Override
+    public PutObjectResponse uploadObject(String bucket, String key, MultipartFile file) throws IOException, AppException {
         Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("uploadObject").start();
         try (var ws = tracer.withSpanInScope(span)) {
             try {
-                s3Client.putObject(PutObjectRequest.builder()
+                return s3Client.putObject(PutObjectRequest.builder()
                                 .bucket(bucket)
                                 .key(key)
                                 .contentLength(file.getSize())
@@ -76,16 +123,29 @@ public class S3ServiceImpl implements S3Service {
         }
     }
 
+    //deleting multiple Objects
+    //deleteObjects
+
+    //listBuckets
+    //listObjectsV2Paginator
+
+    //copy,
+    //copyObject
+    //rename (destination = source (bucket + key))
+    //moving = copy + delete
+
+    //getObjectAttributes
+
     @Override
-    public void deleteObject(String bucket, String key) throws AppException {
+    public DeleteObjectResponse deleteObject(String bucket, String key) throws AppException {
         Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("deleteObject").start();
         try (var ws = tracer.withSpanInScope(span)) {
             try {
-                s3Client.deleteObject(DeleteObjectRequest.builder()
+                return s3Client.deleteObject(DeleteObjectRequest.builder()
                         .bucket(bucket)
                         .key(key)
                         .build());
-            }catch (NoSuchBucketException e) {
+            } catch (NoSuchBucketException e) {
                 throw AWSExceptionUtils.buildAppException(e, bucket);
             }
         } catch (RuntimeException e) {
@@ -98,11 +158,11 @@ public class S3ServiceImpl implements S3Service {
     }
 
     @Override
-    public void deleteBucket(String bucket) throws AppException {
+    public DeleteBucketResponse deleteBucket(String bucket) throws AppException {
         Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("deleteBucket").start();
         try (var ws = tracer.withSpanInScope(span)) {
             try {
-                s3Client.deleteBucket(DeleteBucketRequest.builder()
+                return s3Client.deleteBucket(DeleteBucketRequest.builder()
                         .bucket(bucket)
                         .build());
             } catch (NoSuchBucketException e) {
@@ -127,11 +187,11 @@ public class S3ServiceImpl implements S3Service {
 
 
     @Override
-    public void createBucket(String bucket) throws AppException {
+    public CreateBucketResponse createBucket(String bucket) throws AppException {
         Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("createBucket").start();
         try (var ws = tracer.withSpanInScope(span)) {
             try {
-                s3Client.createBucket(CreateBucketRequest.builder()
+                return s3Client.createBucket(CreateBucketRequest.builder()
                         .bucket(bucket)
                         .build());
             } catch (BucketAlreadyOwnedByYouException e) {

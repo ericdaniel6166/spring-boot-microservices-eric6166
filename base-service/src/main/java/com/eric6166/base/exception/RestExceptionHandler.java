@@ -18,9 +18,11 @@ import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.HandlerMethod;
@@ -82,6 +84,16 @@ public class RestExceptionHandler {
             span.finish();
         }
     }
+
+    @ExceptionHandler({HttpMessageNotReadableException.class,
+            ServletRequestBindingException.class,
+//            InvalidDataAccessApiUsageException.class
+    })
+    public ResponseEntity<Object> handleBadRequestException(Exception e) {
+        var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.BAD_REQUEST, e);
+        return baseUtils.buildResponseExceptionEntity(errorResponse);
+    }
+
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException e, HandlerMethod handlerMethod) {
