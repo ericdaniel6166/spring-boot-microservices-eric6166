@@ -11,79 +11,23 @@
 
     <packaging>jar</packaging>
 
-    <artifactId>base-service</artifactId>
+    <artifactId>aws-service</artifactId>
     <version>${project.parent.version}</version>
 
-    <name>base-service</name>
-    <description>base-service</description>
+    <name>aws-service</name>
+    <description>aws-service</description>
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>com.eric6166</groupId>
+            <artifactId>base-service</artifactId>
+            <version>${project.parent.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
-        <!--        brave, zipkin-reporter, zipkin-sender-okhttp3, and zipkin-reporter-brave-->
-        <!--        https://www.baeldung.com/java-brave-->
-        <dependency>
-            <groupId>io.zipkin.brave</groupId>
-            <artifactId>brave</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.zipkin.reporter2</groupId>
-            <artifactId>zipkin-reporter-brave</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>io.zipkin.reporter2</groupId>
-            <artifactId>zipkin-reporter</artifactId>
-        </dependency>
-        <!--        @ValidPassword, password rule-->
-        <dependency>
-            <groupId>org.passay</groupId>
-            <artifactId>passay</artifactId>
-            <version>${passay.version}</version>
-        </dependency>
-        <!--        mime types validator-->
-        <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-core</artifactId>
-            <version>${tika.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tika</groupId>
-            <artifactId>tika-parsers-standard-package</artifactId>
-            <version>${tika.version}</version>
-        </dependency>
-        <!--        Apache Commons IO library contains utility classes, stream implementations, file filters, file comparators, endian transformation classes, etc-->
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commons-io.version}</version>
-        </dependency>
-        <!--        vault-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.springframework.cloud</groupId>-->
-        <!--            <artifactId>spring-cloud-starter-vault-config</artifactId>-->
-        <!--        </dependency>-->
-        <!--        <dependency>-->
-        <!--            <groupId>org.springframework.cloud</groupId>-->
-        <!--            <artifactId>spring-cloud-vault-config-databases</artifactId>-->
-        <!--        </dependency>-->
-
     </dependencies>
-
 
     <build>
         <plugins>

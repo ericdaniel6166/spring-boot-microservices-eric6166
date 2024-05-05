@@ -29,7 +29,7 @@ public class SecurityRestExceptionHandler {
         String rootCause = BaseUtils.getRootCauseMessage(e);
         log.debug("e: {} , rootCause: {}", e.getClass().getName(), rootCause); // comment // for local testing
         ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.name(),
-                HttpStatus.FORBIDDEN.getReasonPhrase(), httpServletRequest, rootCause);
+                HttpStatus.FORBIDDEN.getReasonPhrase(), httpServletRequest.getRequestURI(), rootCause);
         return baseUtils.buildResponseExceptionEntity(errorResponse);
     }
 }

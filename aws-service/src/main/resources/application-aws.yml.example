@@ -1,0 +1,10 @@
+cloud:
+  aws:
+    enabled: true
+    credentials:
+      access-key: ACCESS_KEY
+      secret-key: SECRET_KEY
+    region: AWS_REGION
+    s3:
+      enabled: true
+      bucket-default: BUCKET_NAME

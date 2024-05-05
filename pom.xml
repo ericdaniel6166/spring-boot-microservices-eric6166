@@ -21,6 +21,7 @@
         <module>jpa-service</module>
         <module>security-service</module>
         <module>keycloak-admin-client-service</module>
+        <module>aws-service</module>
     </modules>
 
 
@@ -31,6 +32,7 @@
         <java.version>17</java.version>
         <spring-boot-starter-parent.version>3.1.11</spring-boot-starter-parent.version>
         <spring.cloud-version>2022.0.5</spring.cloud-version>
+        <spring-cloud-aws-dependencies.version>3.1.1</spring-cloud-aws-dependencies.version>
         <opentelemetry-bom.version>1.37.0</opentelemetry-bom.version>
         <keycloak-adapter-bom.version>24.0.3</keycloak-adapter-bom.version>
         <keycloak-admin-client.version>24.0.3</keycloak-admin-client.version>
@@ -44,6 +46,7 @@
         <opentelemetry-logback-1.0.version>0.16.1</opentelemetry-logback-1.0.version>
         <passay.version>1.6.3</passay.version>
         <tika.version>2.9.2</tika.version>
+        <commons-io.version>2.15.1</commons-io.version>
     </properties>
 
     <dependencyManagement>
@@ -73,6 +76,13 @@
                 <groupId>io.zipkin.brave</groupId>
                 <artifactId>brave-bom</artifactId>
                 <version>${brave.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.awspring.cloud</groupId>
+                <artifactId>spring-cloud-aws-dependencies</artifactId>
+                <version>${spring-cloud-aws-dependencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

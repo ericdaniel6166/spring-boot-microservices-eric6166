@@ -70,7 +70,8 @@ public class RestExceptionHandler {
         Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleAppException").start();
         try (var ws = tracer.withSpanInScope(span)) {
             span.error(e);
-            var errorResponse = appExceptionUtils.buildErrorResponse(e.getHttpStatus(), e.getError(), e.getMessage(), e.getRootCause());
+            var errorResponse = appExceptionUtils.buildErrorResponse(e.getHttpStatus(), e.getError(),
+                    StringUtils.capitalize(e.getMessage()), e.getRootCause());
             log.debug("e: {}", e.getClass().getName());
             span.tag("handleAppException errorResponse", errorResponse.toString());
             return baseUtils.buildResponseExceptionEntity(errorResponse);
