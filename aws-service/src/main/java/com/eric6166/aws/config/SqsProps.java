@@ -12,10 +12,9 @@
 //@Getter
 //@Setter
 //@Configuration
-//@ConditionalOnProperty(name = "cloud.aws.s3.enabled", havingValue = "true")
-//@ConfigurationProperties(prefix = "cloud.aws.s3")
-//public class S3Props {
+//@ConditionalOnProperty(name = "cloud.aws.sqs.enabled", havingValue = "true")
+//@ConfigurationProperties(prefix = "cloud.aws.sqs")
+//public class SqsProps {
 //
-//    String bucketDefault;
 //
 //}
