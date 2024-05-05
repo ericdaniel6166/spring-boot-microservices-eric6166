@@ -8,3 +8,5 @@ cloud:
     s3:
       enabled: true
       bucket-default: BUCKET_NAME
+    sqs:
+      enabled: true

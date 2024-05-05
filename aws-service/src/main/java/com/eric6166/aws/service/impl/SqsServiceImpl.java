@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
+import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
+import software.amazon.awssdk.services.sqs.model.DeleteQueueResponse;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlResponse;
 import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
@@ -34,6 +36,29 @@ public class SqsServiceImpl implements SqsService {
         Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("test").start();
         try (var ws = tracer.withSpanInScope(span)) {
 
+        } catch (RuntimeException e) {
+            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            span.error(e);
+            throw e;
+        } finally {
+            span.finish();
+        }
+    }
+
+    //listQueues
+
+    //sendMessage
+    //sendMessageBatch
+//    receiveMessage
+    //deleteMessage
+
+    @Override
+    public DeleteQueueResponse deleteQueue(String queueUrl) {
+        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("test").start();
+        try (var ws = tracer.withSpanInScope(span)) {
+            return sqsClient.deleteQueue(DeleteQueueRequest.builder()
+                    .queueUrl(queueUrl)
+                    .build());
         } catch (RuntimeException e) {
             log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);

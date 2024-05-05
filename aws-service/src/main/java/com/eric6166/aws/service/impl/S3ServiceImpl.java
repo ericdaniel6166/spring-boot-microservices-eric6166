@@ -35,6 +35,7 @@ import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 import java.io.IOException;
 
@@ -46,6 +47,7 @@ import java.io.IOException;
 public class S3ServiceImpl implements S3Service {
 
     S3Client s3Client;
+    S3Presigner s3Presigner;
     Tracer tracer;
 
     void test() {
@@ -60,6 +62,45 @@ public class S3ServiceImpl implements S3Service {
             span.finish();
         }
     }
+
+    //deleting multiple Objects
+    //deleteObjects
+
+    //listBuckets
+    //listObjectsV2Paginator
+
+    //copy,
+    //copyObject
+    //rename (destination = source (bucket + key))
+    //moving = copy + delete
+
+    //getObjectAttributes
+
+    //get object URL
+//            s3Client.utilities().getUrl()
+
+    //GetObjectContentType
+//    .headObject
+
+    //https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/javav2/example_code/s3/src/main/java/com/example/s3/ManagingObjectTags.java
+//    PutObjectRequest putOb = PutObjectRequest.builder()
+//            .bucket(bucketName)
+//            .key(objectKey)
+//            .tagging(allTags)
+//            .build();
+
+    //getObjectAsBytes
+    //.getObject(objectRequest, ResponseTransformer.toBytes());
+    //getObjectTagging
+
+//    https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/javav2/example_code/s3/src/main/java/com/example/s3/ParseUri.java
+//            s3Client.utilities().parseUri(s3ObjectUrl) // 'https://s3.us-west-1.amazonaws.com/myBucket/resources/doc.txt?versionId=abc123&partNumber=77&partNumber=88'.
+
+    //https://github.com/awsdocs/aws-doc-sdk-examples/blob/main/javav2/example_code/s3/src/main/java/com/example/s3/S3ZipExample.java
+    //S3 zip
+
+//    S3Presigner
+//            s3Presigner.presignGetObject()
 
     @Override
     public ResponseInputStream<GetObjectResponse> getObject(String bucket, String key) {
@@ -87,7 +128,6 @@ public class S3ServiceImpl implements S3Service {
                         .bucket(bucket)
                         .build());
             } catch (Exception e) {
-                log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
                 throw e;
             }
         } catch (RuntimeException e) {
@@ -123,18 +163,6 @@ public class S3ServiceImpl implements S3Service {
         }
     }
 
-    //deleting multiple Objects
-    //deleteObjects
-
-    //listBuckets
-    //listObjectsV2Paginator
-
-    //copy,
-    //copyObject
-    //rename (destination = source (bucket + key))
-    //moving = copy + delete
-
-    //getObjectAttributes
 
     @Override
     public DeleteObjectResponse deleteObject(String bucket, String key) throws AppException {
@@ -204,7 +232,6 @@ public class S3ServiceImpl implements S3Service {
                 throw e;
             }
         } catch (RuntimeException e) {
-
             log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
