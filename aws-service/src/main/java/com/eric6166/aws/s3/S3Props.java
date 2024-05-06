@@ -1,4 +1,4 @@
-package com.eric6166.aws.config;
+package com.eric6166.aws.s3;
 
 import lombok.AccessLevel;
 import lombok.Getter;

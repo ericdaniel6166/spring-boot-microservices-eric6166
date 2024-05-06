@@ -31,6 +31,7 @@ public class SqsProps {
         @Setter
         @FieldDefaults(level = AccessLevel.PRIVATE)
         public static class Queue {
+
             Standard standard;
             Fifo fifo;
 
@@ -38,6 +39,7 @@ public class SqsProps {
             @Setter
             @FieldDefaults(level = AccessLevel.PRIVATE)
             public static class Standard {
+
                 String name;
             }
 
@@ -45,7 +47,9 @@ public class SqsProps {
             @Setter
             @FieldDefaults(level = AccessLevel.PRIVATE)
             public static class Fifo {
+
                 String name;
+                String messageGroupId;
             }
         }
     }

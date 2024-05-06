@@ -21,6 +21,7 @@ public class ValidPasswordValidator implements ConstraintValidator<ValidPassword
 
     @Override
     public void initialize(ValidPassword constraintAnnotation) {
+        //
     }
 
     @Override

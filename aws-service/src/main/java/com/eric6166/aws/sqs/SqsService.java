@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.sqs.SqsClient;
@@ -47,10 +48,11 @@ public class SqsService {
 
     public Collection<SendMessageBatchRequestEntry> buildSendMessageBatchRequestEntry(SqsMessages messages) {
         var delaySeconds = messages.getDelaySeconds();
-        return messages.getSqsMessages().stream().map(o -> buildSendMessageBatchRequestEntry(o, delaySeconds)).collect(Collectors.toList());
+        var messageGroupId = messages.getMessageGroupId();
+        return messages.getSqsMessages().stream().map(o -> buildSendMessageBatchRequestEntry(o, delaySeconds, messageGroupId)).collect(Collectors.toList());
     }
 
-    public SendMessageBatchRequestEntry buildSendMessageBatchRequestEntry(SqsMessage message, Integer delaySeconds) {
+    public SendMessageBatchRequestEntry buildSendMessageBatchRequestEntry(SqsMessage message, Integer delaySeconds, String messageGroupId) {
         Integer inputDelaySeconds;
         if (message.getDelaySeconds() != null) {
             inputDelaySeconds = message.getDelaySeconds();
@@ -59,10 +61,19 @@ public class SqsService {
         } else {
             inputDelaySeconds = sqsProps.getTemplate().getDelaySeconds();
         }
+        String inputMessageGroupId;
+        if (StringUtils.isNotBlank(message.getMessageGroupId())) {
+            inputMessageGroupId = message.getMessageGroupId();
+        } else if (StringUtils.isNotBlank(messageGroupId)) {
+            inputMessageGroupId = messageGroupId;
+        } else {
+            inputMessageGroupId = sqsProps.getTemplate().getQueue().getFifo().getMessageGroupId();
+        }
         return SendMessageBatchRequestEntry.builder()
                 .messageBody(message.getMessageBody())
                 .id(message.getId())
                 .delaySeconds(inputDelaySeconds)
+                .messageGroupId(inputMessageGroupId)
                 .build();
     }
 

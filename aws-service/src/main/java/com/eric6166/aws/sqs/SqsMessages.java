@@ -8,5 +8,7 @@ public interface SqsMessages {
 
     Integer getDelaySeconds();
 
+    String getMessageGroupId();
+
 }
 

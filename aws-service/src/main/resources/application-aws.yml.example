@@ -8,9 +8,15 @@ cloud:
     s3:
       enabled: true
       template:
-        bucket: s3-bucket-eric6166
+        bucket:
+          name: s3-bucket-eric6166
     sqs:
       enabled: true
       template:
+        queue:
+          standard:
+            name: sqs-queue-standard-eric6166
+          fifo:
+            name: sqs-queue-fifo-eric6166.fifo
         delay-seconds: 0
         max-number-of-messages: 10
