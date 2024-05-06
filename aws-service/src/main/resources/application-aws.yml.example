@@ -2,11 +2,15 @@ cloud:
   aws:
     enabled: true
     credentials:
-      access-key: ACCESS_KEY
-      secret-key: SECRET_KEY
+      access-key: ACCESS_KEY # this is for local testing, pls use AWS Secret Manager
+      secret-key: SECRET_KEY # this is for local testing, pls use AWS Secret Manager
     region: AWS_REGION
     s3:
       enabled: true
-      bucket-default: BUCKET_NAME
+      template:
+        bucket: s3-bucket-eric6166
     sqs:
       enabled: true
+      template:
+        delay-seconds: 0
+        max-number-of-messages: 10

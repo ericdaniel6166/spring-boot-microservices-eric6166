@@ -1,5 +1,6 @@
-package com.eric6166.aws.config;
+package com.eric6166.aws.s3;
 
+import com.eric6166.aws.config.AWSProps;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

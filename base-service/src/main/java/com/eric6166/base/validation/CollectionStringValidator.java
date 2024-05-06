@@ -18,6 +18,7 @@ public class CollectionStringValidator implements ConstraintValidator<ValidColle
     final MessageSource messageSource;
 
     List<String> valueList;
+    List<String> upperCaseValueList;
     boolean caseSensitive;
     String message;
 
@@ -25,6 +26,7 @@ public class CollectionStringValidator implements ConstraintValidator<ValidColle
     public void initialize(ValidCollectionString constraintAnnotation) {
         caseSensitive = constraintAnnotation.caseSensitive();
         valueList = List.of(constraintAnnotation.values());
+        upperCaseValueList = valueList.stream().map(String::toUpperCase).toList();
         message = constraintAnnotation.message();
     }
 
@@ -37,7 +39,7 @@ public class CollectionStringValidator implements ConstraintValidator<ValidColle
         if (caseSensitive) {
             isValid = valueList.containsAll(s);
         } else {
-            isValid = valueList.containsAll(s.stream().map(String::toUpperCase).toList());
+            isValid = upperCaseValueList.containsAll(s.stream().map(String::toUpperCase).toList());
         }
         if (!isValid) {
             constraintValidatorContext.disableDefaultConstraintViolation();

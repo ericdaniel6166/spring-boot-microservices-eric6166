@@ -11,7 +11,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
-import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
 
 @RequiredArgsConstructor
 @Component
@@ -46,12 +45,27 @@ public final class AWSExceptionUtils {
                 awsErrorDetails.errorMessage(), null, null, e.requestId(), e.extendedRequestId());
     }
 
+    public static String buildErrorMessage(AwsServiceException e, String resource) {
+        var httpStatus = HttpStatus.valueOf(e.statusCode());
+        String errorMessage ;
+        switch (httpStatus) {
+            case MOVED_PERMANENTLY -> errorMessage = String.format("%s is not available", resource);
+            default -> errorMessage = e.awsErrorDetails().errorMessage();
+        }
+        return errorMessage;
+    }
+
     public static AppException buildAppException(AwsServiceException awsServiceException, AppException appException) {
         return buildAppException(awsServiceException, appException.getHttpStatus(), appException.getHttpStatus().name(), appException.getMessage());
     }
 
-    public static AppException buildAppException(NoSuchBucketException e, String bucket) {
-        return buildAppException(e, new AppNotFoundException(String.format("bucket with name '%s'", bucket)));
+    public static AppException buildAppException(AwsServiceException e) {
+        var httpStatus = HttpStatus.valueOf(e.statusCode());
+        return buildAppException(e, httpStatus, httpStatus.name(), e.awsErrorDetails().errorMessage());
+    }
+
+    public static AppException buildAppNotFoundException(AwsServiceException e, String resource) {
+        return buildAppException(e, new AppNotFoundException(resource));
     }
 
 

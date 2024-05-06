@@ -12,17 +12,28 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 @Configuration
-@ConditionalOnProperty(name = "cloud.aws.enabled", havingValue = "true")
-@ConfigurationProperties(prefix = "cloud.aws")
-public class AWSProps {
+@ConditionalOnProperty(name = "cloud.aws.s3.enabled", havingValue = "true")
+@ConfigurationProperties(prefix = "cloud.aws.s3")
+public class S3Props {
 
-    Credentials credentials;
-    String region;
+    Template template;
 
     @Getter
     @Setter
-    public static class Credentials {
-        String accessKey; // this is for local testing, pls use AWS Secret Manager
-        String secretKey; // this is for local testing, pls use AWS Secret Manager
+    @FieldDefaults(level = AccessLevel.PRIVATE)
+    public static class Template {
+        Bucket bucket;
+
+        @Getter
+        @Setter
+        @FieldDefaults(level = AccessLevel.PRIVATE)
+        public static class Bucket {
+            String name;
+
+
+        }
+
+
     }
+
 }

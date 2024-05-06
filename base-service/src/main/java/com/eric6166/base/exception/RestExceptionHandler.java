@@ -232,7 +232,7 @@ public class RestExceptionHandler {
         try (var ws = tracer.withSpanInScope(span)) {
             span.error(e);
             var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e);
-            log.debug("e: {}", e.getClass().getName()); // comment // for local testing
+            log.info("e: {}", e.getClass().getName()); // comment // for local testing
             span.tag("handleException errorResponse", errorResponse.toString());
             return baseUtils.buildResponseExceptionEntity(errorResponse);
         } catch (RuntimeException exception) {

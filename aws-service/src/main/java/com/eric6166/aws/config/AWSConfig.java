@@ -24,8 +24,8 @@ public class AWSConfig {
         var credentials = awsProps.getCredentials();
         if (credentials != null && StringUtils.isNotBlank(credentials.getAccessKey())) {
             return () -> AwsBasicCredentials.create(
-                    credentials.getAccessKey(),
-                    credentials.getSecretKey());
+                    credentials.getAccessKey(), // this is for local testing, pls use AWS Secret Manager
+                    credentials.getSecretKey()); // this is for local testing, pls use AWS Secret Manager
         } else {
             return DefaultCredentialsProvider.create();
         }

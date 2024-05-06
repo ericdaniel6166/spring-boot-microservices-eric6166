@@ -1,9 +1,8 @@
-package com.eric6166.aws.service.impl;
+package com.eric6166.aws.s3;
 
 import brave.Span;
 import brave.Tracer;
 import brave.propagation.TraceContextOrSamplingFlags;
-import com.eric6166.aws.service.S3Service;
 import com.eric6166.aws.utils.AWSExceptionUtils;
 import com.eric6166.base.exception.AppBadRequestException;
 import com.eric6166.base.exception.AppException;
@@ -13,8 +12,9 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -39,12 +39,12 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 import java.io.IOException;
 
-@Service
+@Component
 @Slf4j
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @ConditionalOnProperty(name = "cloud.aws.s3.enabled", havingValue = "true")
-public class S3ServiceImpl implements S3Service {
+public class S3Service {
 
     S3Client s3Client;
     S3Presigner s3Presigner;
@@ -102,33 +102,17 @@ public class S3ServiceImpl implements S3Service {
 //    S3Presigner
 //            s3Presigner.presignGetObject()
 
-    @Override
-    public ResponseInputStream<GetObjectResponse> getObject(String bucket, String key) {
+
+    public ResponseInputStream<GetObjectResponse> getObject(String bucket, String key) throws AppException {
         Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("getObject").start();
         try (var ws = tracer.withSpanInScope(span)) {
-            return s3Client.getObject(GetObjectRequest.builder()
-                    .bucket(bucket)
-                    .key(key)
-                    .build());
-        } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
-            span.error(e);
-            throw e;
-        } finally {
-            span.finish();
-        }
-    }
-
-    @Override
-    public ListObjectsV2Response listObject(String bucket) {
-        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("listObject").start();
-        try (var ws = tracer.withSpanInScope(span)) {
             try {
-                return s3Client.listObjectsV2(ListObjectsV2Request.builder()
+                return s3Client.getObject(GetObjectRequest.builder()
                         .bucket(bucket)
+                        .key(key)
                         .build());
-            } catch (Exception e) {
-                throw e;
+            } catch (NoSuchBucketException e) {
+                throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("bucket with name '%s'", bucket));
             }
         } catch (RuntimeException e) {
             log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
@@ -139,7 +123,25 @@ public class S3ServiceImpl implements S3Service {
         }
     }
 
-    @Override
+    public ListObjectsV2Response listObject(String bucket) throws AppException {
+        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("listObject").start();
+        try (var ws = tracer.withSpanInScope(span)) {
+            try {
+                return s3Client.listObjectsV2(ListObjectsV2Request.builder()
+                        .bucket(bucket)
+                        .build());
+            } catch (NoSuchBucketException e) {
+                throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("bucket with name '%s'", bucket));
+            }
+        } catch (RuntimeException e) {
+            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            span.error(e);
+            throw e;
+        } finally {
+            span.finish();
+        }
+    }
+
     public PutObjectResponse uploadObject(String bucket, String key, MultipartFile file) throws IOException, AppException {
         Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("uploadObject").start();
         try (var ws = tracer.withSpanInScope(span)) {
@@ -152,7 +154,10 @@ public class S3ServiceImpl implements S3Service {
                                 .build(),
                         RequestBody.fromInputStream(file.getInputStream(), file.getSize()));
             } catch (NoSuchBucketException e) {
-                throw AWSExceptionUtils.buildAppException(e, bucket);
+                throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("bucket with name '%s'", bucket));
+            } catch (S3Exception e) {
+                throw AWSExceptionUtils.buildAppException(e, new AppBadRequestException(
+                        AWSExceptionUtils.buildErrorMessage(e, String.format("bucket with name '%s'", bucket))));
             }
         } catch (RuntimeException e) {
             log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
@@ -163,8 +168,6 @@ public class S3ServiceImpl implements S3Service {
         }
     }
 
-
-    @Override
     public DeleteObjectResponse deleteObject(String bucket, String key) throws AppException {
         Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("deleteObject").start();
         try (var ws = tracer.withSpanInScope(span)) {
@@ -174,7 +177,10 @@ public class S3ServiceImpl implements S3Service {
                         .key(key)
                         .build());
             } catch (NoSuchBucketException e) {
-                throw AWSExceptionUtils.buildAppException(e, bucket);
+                throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("bucket with name '%s'", bucket));
+            } catch (S3Exception e) {
+                throw AWSExceptionUtils.buildAppException(e, new AppBadRequestException(
+                        AWSExceptionUtils.buildErrorMessage(e, String.format("bucket with name '%s'", bucket))));
             }
         } catch (RuntimeException e) {
             log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
@@ -185,7 +191,6 @@ public class S3ServiceImpl implements S3Service {
         }
     }
 
-    @Override
     public DeleteBucketResponse deleteBucket(String bucket) throws AppException {
         Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("deleteBucket").start();
         try (var ws = tracer.withSpanInScope(span)) {
@@ -194,15 +199,10 @@ public class S3ServiceImpl implements S3Service {
                         .bucket(bucket)
                         .build());
             } catch (NoSuchBucketException e) {
-                throw AWSExceptionUtils.buildAppException(e, bucket);
+                throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("bucket with name '%s'", bucket));
             } catch (S3Exception e) {
-                var httpStatus = HttpStatus.valueOf(e.statusCode());
-                var errorMessage = httpStatus.getReasonPhrase();
-                switch (httpStatus) {
-                    case MOVED_PERMANENTLY -> errorMessage = String.format("bucket with name '%s' is not available", bucket);
-                    default -> errorMessage = e.awsErrorDetails().errorMessage();
-                }
-                throw AWSExceptionUtils.buildAppException(e, new AppBadRequestException(errorMessage));
+                throw AWSExceptionUtils.buildAppException(e, new AppBadRequestException(
+                        AWSExceptionUtils.buildErrorMessage(e, String.format("bucket with name '%s'", bucket))));
             }
         } catch (RuntimeException e) {
             span.error(e);
@@ -213,8 +213,6 @@ public class S3ServiceImpl implements S3Service {
         }
     }
 
-
-    @Override
     public CreateBucketResponse createBucket(String bucket) throws AppException {
         Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("createBucket").start();
         try (var ws = tracer.withSpanInScope(span)) {
@@ -240,7 +238,6 @@ public class S3ServiceImpl implements S3Service {
         }
     }
 
-    @Override
     public boolean isBucketExisted(String bucket) {
         Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("isBucketExisted").start();
         try (var ws = tracer.withSpanInScope(span)) {
