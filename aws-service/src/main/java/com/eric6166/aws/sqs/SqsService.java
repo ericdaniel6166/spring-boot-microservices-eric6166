@@ -5,6 +5,7 @@ import brave.Span;
 import brave.Tracer;
 import brave.propagation.TraceContextOrSamplingFlags;
 import com.eric6166.aws.utils.AWSExceptionUtils;
+import com.eric6166.aws.utils.AwsConst;
 import com.eric6166.base.exception.AppException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import software.amazon.awssdk.services.sqs.model.DeleteQueueResponse;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlResponse;
 import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
+import software.amazon.awssdk.services.sqs.model.QueueDeletedRecentlyException;
 import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
@@ -46,13 +48,13 @@ public class SqsService {
     SqsClient sqsClient;
     SqsProps sqsProps;
 
-    public Collection<SendMessageBatchRequestEntry> buildSendMessageBatchRequestEntry(SqsMessages messages) {
+    public Collection<SendMessageBatchRequestEntry> buildSendMessageBatchRequestEntry(SqsMessages messages, boolean fifoQueue) {
         var delaySeconds = messages.getDelaySeconds();
         var messageGroupId = messages.getMessageGroupId();
-        return messages.getSqsMessages().stream().map(o -> buildSendMessageBatchRequestEntry(o, delaySeconds, messageGroupId)).collect(Collectors.toList());
+        return messages.getSqsMessages().stream().map(o -> buildSendMessageBatchRequestEntry(o, delaySeconds, messageGroupId, fifoQueue)).collect(Collectors.toList());
     }
 
-    public SendMessageBatchRequestEntry buildSendMessageBatchRequestEntry(SqsMessage message, Integer delaySeconds, String messageGroupId) {
+    public SendMessageBatchRequestEntry buildSendMessageBatchRequestEntry(SqsMessage message, Integer delaySeconds, String messageGroupId, boolean fifoQueue) {
         Integer inputDelaySeconds;
         if (message.getDelaySeconds() != null) {
             inputDelaySeconds = message.getDelaySeconds();
@@ -62,7 +64,9 @@ public class SqsService {
             inputDelaySeconds = sqsProps.getTemplate().getDelaySeconds();
         }
         String inputMessageGroupId;
-        if (StringUtils.isNotBlank(message.getMessageGroupId())) {
+        if (!fifoQueue) {
+            inputMessageGroupId = null;
+        } else if (StringUtils.isNotBlank(message.getMessageGroupId())) {
             inputMessageGroupId = message.getMessageGroupId();
         } else if (StringUtils.isNotBlank(messageGroupId)) {
             inputMessageGroupId = messageGroupId;
@@ -78,7 +82,8 @@ public class SqsService {
     }
 
     public SendMessageBatchResponse sendBatchMessageByQueueUrl(String queueUrl, SqsMessages messages) throws AppException {
-        return sendBatchMessageByQueueUrlAndRequestEntries(queueUrl, buildSendMessageBatchRequestEntry(messages));
+        boolean fifoQueue = StringUtils.endsWith(queueUrl, AwsConst.SQS_SUFFIX_FIFO);
+        return sendBatchMessageByQueueUrlAndRequestEntries(queueUrl, buildSendMessageBatchRequestEntry(messages, fifoQueue));
     }
 
     public SendMessageBatchResponse sendBatchMessageByQueueName(String queueName, SqsMessages messages) throws AppException {
@@ -105,15 +110,25 @@ public class SqsService {
         }
     }
 
-    public SendMessageResponse sendMessageByQueueUrl(String queueUrl, String message, Integer delaySeconds) throws AppException {
+    public SendMessageResponse sendMessageByQueueUrl(String queueUrl, String message, Integer delaySeconds, String messageGroupId) throws AppException {
         Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("sendMessageByQueueUrl").start();
         try (var ws = tracer.withSpanInScope(span)) {
             try {
                 var inputDelaySeconds = delaySeconds == null ? sqsProps.getTemplate().getDelaySeconds() : delaySeconds;
+                boolean fifoQueue = StringUtils.endsWith(queueUrl, AwsConst.SQS_SUFFIX_FIFO);
+                String inputMessageGroupId;
+                if (!fifoQueue) {
+                    inputMessageGroupId = null;
+                } else if (StringUtils.isNotBlank(messageGroupId)) {
+                    inputMessageGroupId = messageGroupId;
+                } else {
+                    inputMessageGroupId = sqsProps.getTemplate().getQueue().getFifo().getMessageGroupId();
+                }
                 return sqsClient.sendMessage(SendMessageRequest.builder()
                         .queueUrl(queueUrl)
                         .messageBody(message)
                         .delaySeconds(inputDelaySeconds)
+                        .messageGroupId(inputMessageGroupId)
                         .build()
                 );
             } catch (QueueDoesNotExistException e) {
@@ -128,8 +143,8 @@ public class SqsService {
         }
     }
 
-    public SendMessageResponse sendMessageByQueueName(String queueName, String message, Integer delaySeconds) throws AppException {
-        return sendMessageByQueueUrl(getQueueUrl(queueName).queueUrl(), message, delaySeconds);
+    public SendMessageResponse sendMessageByQueueName(String queueName, String message, Integer delaySeconds, String messageGroupId) throws AppException {
+        return sendMessageByQueueUrl(getQueueUrl(queueName).queueUrl(), message, delaySeconds, messageGroupId);
     }
 
     public DeleteQueueResponse deleteQueueByQueueName(String queueName) throws AppException {
@@ -175,13 +190,17 @@ public class SqsService {
         }
     }
 
-    public CreateQueueResponse createQueue(String queueName, Map<QueueAttributeName, String> attributes) {
+    public CreateQueueResponse createQueue(String queueName, Map<QueueAttributeName, String> attributes) throws AppException {
         Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("createQueue").start();
         try (var ws = tracer.withSpanInScope(span)) {
-            return sqsClient.createQueue(CreateQueueRequest.builder()
-                    .queueName(queueName)
-                    .attributes(attributes)
-                    .build());
+            try {
+                return sqsClient.createQueue(CreateQueueRequest.builder()
+                        .queueName(queueName)
+                        .attributes(attributes)
+                        .build());
+            } catch (QueueDeletedRecentlyException e) {
+                throw AWSExceptionUtils.buildAppException(e);
+            }
         } catch (RuntimeException e) {
             log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
