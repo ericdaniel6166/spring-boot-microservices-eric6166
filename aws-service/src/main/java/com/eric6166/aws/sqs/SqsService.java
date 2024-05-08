@@ -34,6 +34,7 @@ import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 import software.amazon.awssdk.services.sqs.model.SqsException;
 
 import java.util.Collection;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -197,6 +198,16 @@ public class SqsService {
             span.finish();
         }
     }
+
+    public CreateQueueResponse createQueue(String queueName) throws AppException {
+        Map<QueueAttributeName, String> queueAttributes = new EnumMap<>(QueueAttributeName.class);
+        if (StringUtils.endsWith(queueName, AwsConst.SQS_SUFFIX_FIFO)) {
+            queueAttributes.put(QueueAttributeName.FIFO_QUEUE, Boolean.TRUE.toString());
+            queueAttributes.put(QueueAttributeName.CONTENT_BASED_DEDUPLICATION, Boolean.TRUE.toString());
+        }
+        return createQueue(queueName, queueAttributes);
+    }
+
 
     public CreateQueueResponse createQueue(String queueName, Map<QueueAttributeName, String> attributes) throws AppException {
         Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("createQueue").start();

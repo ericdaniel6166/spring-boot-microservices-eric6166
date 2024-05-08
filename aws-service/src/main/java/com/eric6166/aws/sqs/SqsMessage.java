@@ -6,8 +6,12 @@ public interface SqsMessage {
 
     String getId();
 
-    String getMessageGroupId();
+    default String getMessageGroupId() {
+        return null;
+    }
 
-    Integer getDelaySeconds();
+    default Integer getDelaySeconds() {
+        return null;
+    }
 
 }

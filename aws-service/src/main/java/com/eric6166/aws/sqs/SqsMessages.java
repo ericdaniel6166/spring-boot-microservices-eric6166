@@ -6,9 +6,13 @@ public interface SqsMessages {
 
     Collection<SqsMessage> getSqsMessages();
 
-    Integer getDelaySeconds();
+    default Integer getDelaySeconds() {
+        return null;
+    }
 
-    String getMessageGroupId();
+    default String getMessageGroupId() {
+        return null;
+    }
 
 }
 
