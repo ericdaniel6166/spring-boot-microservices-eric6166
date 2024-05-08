@@ -1,7 +1,6 @@
 package com.eric6166.aws.sqs;
 
 
-import brave.Span;
 import brave.Tracer;
 import brave.propagation.TraceContextOrSamplingFlags;
 import com.eric6166.aws.utils.AWSExceptionUtils;
@@ -17,12 +16,16 @@ import org.springframework.stereotype.Component;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageBatchRequest;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageBatchRequestEntry;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageBatchResponse;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageRequest;
+import software.amazon.awssdk.services.sqs.model.DeleteMessageResponse;
 import software.amazon.awssdk.services.sqs.model.DeleteQueueRequest;
 import software.amazon.awssdk.services.sqs.model.DeleteQueueResponse;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlRequest;
 import software.amazon.awssdk.services.sqs.model.GetQueueUrlResponse;
 import software.amazon.awssdk.services.sqs.model.QueueAttributeName;
-import software.amazon.awssdk.services.sqs.model.QueueDeletedRecentlyException;
 import software.amazon.awssdk.services.sqs.model.QueueDoesNotExistException;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageRequest;
 import software.amazon.awssdk.services.sqs.model.ReceiveMessageResponse;
@@ -49,13 +52,13 @@ public class SqsService {
     SqsClient sqsClient;
     SqsProps sqsProps;
 
-    private Collection<SendMessageBatchRequestEntry> buildSendMessageBatchRequestEntry(SqsMessages messages, boolean fifoQueue) {
+    private Collection<SendMessageBatchRequestEntry> buildSendMessageBatchRequestEntries(SqsSendMessages messages, boolean fifoQueue) {
         var delaySeconds = messages.getDelaySeconds();
         var messageGroupId = messages.getMessageGroupId();
         return messages.getSqsMessages().stream().map(o -> buildSendMessageBatchRequestEntry(o, delaySeconds, messageGroupId, fifoQueue)).collect(Collectors.toList());
     }
 
-    private SendMessageBatchRequestEntry buildSendMessageBatchRequestEntry(SqsMessage message, Integer delaySeconds, String messageGroupId, boolean fifoQueue) {
+    private SendMessageBatchRequestEntry buildSendMessageBatchRequestEntry(SqsSendMessage message, Integer delaySeconds, String messageGroupId, boolean fifoQueue) {
         Integer inputDelaySeconds;
         if (message.getDelaySeconds() != null) {
             inputDelaySeconds = message.getDelaySeconds();
@@ -72,7 +75,7 @@ public class SqsService {
         } else if (StringUtils.isNotBlank(messageGroupId)) {
             inputMessageGroupId = messageGroupId;
         } else {
-            inputMessageGroupId = sqsProps.getTemplate().getQueue().getFifo().getMessageGroupId();
+            inputMessageGroupId = sqsProps.getTemplate().getMessageGroupId();
         }
         return SendMessageBatchRequestEntry.builder()
                 .messageBody(message.getMessageBody())
@@ -82,17 +85,16 @@ public class SqsService {
                 .build();
     }
 
-    public SendMessageBatchResponse sendBatchMessageByQueueUrl(String queueUrl, SqsMessages messages) throws AppException {
-        boolean fifoQueue = StringUtils.endsWith(queueUrl, AwsConst.SQS_SUFFIX_FIFO);
-        return sendBatchMessageByQueueUrlAndRequestEntries(queueUrl, buildSendMessageBatchRequestEntry(messages, fifoQueue));
+    public SendMessageBatchResponse sendBatchMessageByQueueUrl(String queueUrl, SqsSendMessages messages) throws AppException {
+        return sendBatchMessageByQueueUrlAndEntries(queueUrl, buildSendMessageBatchRequestEntries(messages, StringUtils.endsWith(queueUrl, AwsConst.SQS_SUFFIX_FIFO)));
     }
 
-    public SendMessageBatchResponse sendBatchMessageByQueueName(String queueName, SqsMessages messages) throws AppException {
+    public SendMessageBatchResponse sendBatchMessageByQueueName(String queueName, SqsSendMessages messages) throws AppException {
         return sendBatchMessageByQueueUrl(getQueueUrl(queueName).queueUrl(), messages);
     }
 
-    public SendMessageBatchResponse sendBatchMessageByQueueUrlAndRequestEntries(String queueUrl, Collection<SendMessageBatchRequestEntry> entries) throws AppException {
-        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("sendBatchMessageByQueueUrlAndRequestEntries").start();
+    public SendMessageBatchResponse sendBatchMessageByQueueUrlAndEntries(String queueUrl, Collection<SendMessageBatchRequestEntry> entries) throws AppException {
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("sendBatchMessageByQueueUrlAndRequestEntries").start();
         try (var ws = tracer.withSpanInScope(span)) {
             try {
                 return sqsClient.sendMessageBatch(SendMessageBatchRequest.builder()
@@ -101,6 +103,8 @@ public class SqsService {
                         .build());
             } catch (QueueDoesNotExistException e) {
                 throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueUrl '%s'", queueUrl));
+            } catch (SqsException e) {
+                throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
             log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
@@ -112,7 +116,7 @@ public class SqsService {
     }
 
     public SendMessageResponse sendMessageByQueueUrl(String queueUrl, String message, Integer delaySeconds, String messageGroupId) throws AppException {
-        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("sendMessageByQueueUrl").start();
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("sendMessageByQueueUrl").start();
         try (var ws = tracer.withSpanInScope(span)) {
             try {
                 var inputDelaySeconds = delaySeconds == null ? sqsProps.getTemplate().getDelaySeconds() : delaySeconds;
@@ -123,7 +127,7 @@ public class SqsService {
                 } else if (StringUtils.isNotBlank(messageGroupId)) {
                     inputMessageGroupId = messageGroupId;
                 } else {
-                    inputMessageGroupId = sqsProps.getTemplate().getQueue().getFifo().getMessageGroupId();
+                    inputMessageGroupId = sqsProps.getTemplate().getMessageGroupId();
                 }
                 return sqsClient.sendMessage(SendMessageRequest.builder()
                         .queueUrl(queueUrl)
@@ -134,6 +138,8 @@ public class SqsService {
                 );
             } catch (QueueDoesNotExistException e) {
                 throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueUrl '%s'", queueUrl));
+            } catch (SqsException e) {
+                throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
             log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
@@ -161,7 +167,7 @@ public class SqsService {
     }
 
     public DeleteQueueResponse deleteQueueByQueueUrl(String queueUrl) throws AppException {
-        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("deleteQueueByQueueUrl").start();
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("deleteQueueByQueueUrl").start();
         try (var ws = tracer.withSpanInScope(span)) {
             try {
                 return sqsClient.deleteQueue(DeleteQueueRequest.builder()
@@ -170,6 +176,8 @@ public class SqsService {
 
             } catch (QueueDoesNotExistException e) {
                 throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueUrl '%s'", queueUrl));
+            } catch (SqsException e) {
+                throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
             log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
@@ -181,7 +189,7 @@ public class SqsService {
     }
 
     public GetQueueUrlResponse getQueueUrl(String queueName) throws AppException {
-        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("getQueueUrl").start();
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("getQueueUrl").start();
         try (var ws = tracer.withSpanInScope(span)) {
             try {
                 return sqsClient.getQueueUrl(GetQueueUrlRequest.builder()
@@ -189,6 +197,8 @@ public class SqsService {
                         .build());
             } catch (QueueDoesNotExistException e) {
                 throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueName '%s'", queueName));
+            } catch (SqsException e) {
+                throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
             log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
@@ -210,14 +220,14 @@ public class SqsService {
 
 
     public CreateQueueResponse createQueue(String queueName, Map<QueueAttributeName, String> attributes) throws AppException {
-        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("createQueue").start();
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("createQueue").start();
         try (var ws = tracer.withSpanInScope(span)) {
             try {
                 return sqsClient.createQueue(CreateQueueRequest.builder()
                         .queueName(queueName)
                         .attributes(attributes)
                         .build());
-            } catch (QueueDeletedRecentlyException e) {
+            } catch (SqsException e) {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
@@ -230,7 +240,7 @@ public class SqsService {
     }
 
     public ReceiveMessageResponse receiveMessageByQueueUrl(String queueUrl, Integer maxNumberOfMessages) throws AppException {
-        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("receiveMessageByQueueUrl").start();
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("receiveMessageByQueueUrl").start();
         try (var ws = tracer.withSpanInScope(span)) {
             try {
                 var inputMaxNumberOfMessages = maxNumberOfMessages == null ? sqsProps.getTemplate().getMaxNumberOfMessages() : maxNumberOfMessages;
@@ -256,8 +266,77 @@ public class SqsService {
         return receiveMessageByQueueUrl(getQueueUrl(queueName).queueUrl(), maxNumberOfMessages);
     }
 
+    public DeleteMessageBatchResponse deleteMessageBatchByQueueName(String queueName, SqsDeleteMessages messages) throws AppException {
+        return deleteMessageBatchByQueueUrl(getQueueUrl(queueName).queueUrl(), messages);
+    }
+
+    private DeleteMessageBatchResponse deleteMessageBatchByQueueUrl(String queueUrl, SqsDeleteMessages messages) throws AppException {
+        return deleteMessageBatchByQueueUrlAndEntries(queueUrl, buildDeleteMessageBatchRequestEntries(messages));
+    }
+
+    private Collection<DeleteMessageBatchRequestEntry> buildDeleteMessageBatchRequestEntries(SqsDeleteMessages messages) {
+        return messages.getSqsDeleteMessages().stream().map(this::buildDeleteMessageBatchRequestEntry).toList();
+    }
+
+    private DeleteMessageBatchRequestEntry buildDeleteMessageBatchRequestEntry(SqsDeleteMessage message) {
+        return DeleteMessageBatchRequestEntry.builder()
+                .receiptHandle(message.getReceiptHandle())
+                .id(message.getId())
+                .build();
+    }
+
+    public DeleteMessageBatchResponse deleteMessageBatchByQueueUrlAndEntries(String queueUrl, Collection<DeleteMessageBatchRequestEntry> entries) throws AppException {
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("deleteMessageBatchByQueueUrlAndEntries").start();
+        try (var ws = tracer.withSpanInScope(span)) {
+            try {
+                return sqsClient.deleteMessageBatch(DeleteMessageBatchRequest.builder()
+                        .queueUrl(queueUrl)
+                        .entries(entries)
+                        .build());
+            } catch (QueueDoesNotExistException e) {
+                throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueUrl '%s'", queueUrl));
+            } catch (SqsException e) {
+                throw AWSExceptionUtils.buildAppException(e);
+            }
+        } catch (RuntimeException e) {
+            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            span.error(e);
+            throw e;
+        } finally {
+            span.finish();
+        }
+
+    }
+
+    public DeleteMessageResponse deleteMessageByQueueName(String queueName, String receiptHandle) throws AppException {
+        return deleteMessageByQueueUrl(getQueueUrl(queueName).queueUrl(), receiptHandle);
+    }
+
+    public DeleteMessageResponse deleteMessageByQueueUrl(String queueUrl, String receiptHandle) throws AppException {
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("deleteMessageByQueueUrl").start();
+        try (var ws = tracer.withSpanInScope(span)) {
+            try {
+                return sqsClient.deleteMessage(DeleteMessageRequest.builder()
+                        .queueUrl(queueUrl)
+                        .receiptHandle(receiptHandle)
+                        .build());
+            } catch (QueueDoesNotExistException e) {
+                throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueUrl '%s'", queueUrl));
+            } catch (SqsException e) {
+                throw AWSExceptionUtils.buildAppException(e);
+            }
+        } catch (RuntimeException e) {
+            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            span.error(e);
+            throw e;
+        } finally {
+            span.finish();
+        }
+
+    }
+
     void test() {
-        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("test").start();
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("test").start();
         try (var ws = tracer.withSpanInScope(span)) {
 
         } catch (RuntimeException e) {
@@ -268,6 +347,7 @@ public class SqsService {
             span.finish();
         }
     }
+
 
     //listQueues
     //deleteMessage

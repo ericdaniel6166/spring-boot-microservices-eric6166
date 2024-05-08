@@ -1,6 +1,5 @@
 package com.eric6166.base.exception;
 
-import brave.Span;
 import brave.Tracer;
 import brave.propagation.TraceContextOrSamplingFlags;
 import com.eric6166.base.utils.BaseConst;
@@ -52,7 +51,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Object> handleResponseStatusException(ResponseStatusException e) {
-        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleResponseStatusException").start();
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleResponseStatusException").start();
         try (var ws = tracer.withSpanInScope(span)) {
             span.error(e);
             var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.valueOf(e.getStatusCode().value()), e);
@@ -69,7 +68,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(AppException.class)
     public ResponseEntity<Object> handleAppException(AppException e) {
-        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleAppException").start();
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleAppException").start();
         try (var ws = tracer.withSpanInScope(span)) {
             span.error(e);
             var errorResponse = appExceptionUtils.buildErrorResponse(e.getHttpStatus(), e.getError(),
@@ -97,7 +96,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException e, HandlerMethod handlerMethod) {
-        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleConstraintViolationException").start();
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleConstraintViolationException").start();
         try (var ws = tracer.withSpanInScope(span)) {
             span.error(e);
             List<ErrorDetail> errorDetails = new ArrayList<>();
@@ -134,7 +133,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(BindException.class)
     public ResponseEntity<Object> handleBindException(BindException e, HandlerMethod handlerMethod) {
-        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleBindException").start();
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleBindException").start();
         try (var ws = tracer.withSpanInScope(span)) {
             span.error(e);
             List<ErrorDetail> errorDetails = new ArrayList<>();
@@ -228,7 +227,7 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleException(Exception e) {
-        Span span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleException").start();
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleException").start();
         try (var ws = tracer.withSpanInScope(span)) {
             span.error(e);
             var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e);

@@ -2,10 +2,13 @@ package com.eric6166.base.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class FileMaxSizeValidator implements ConstraintValidator<ValidFileMaxSize, MultipartFile> {
 
     long maxSize;

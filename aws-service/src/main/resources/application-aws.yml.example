@@ -18,5 +18,6 @@ cloud:
             name: sqs-queue-standard-eric6166
           fifo:
             name: sqs-queue-fifo-eric6166.fifo
+            messageGroupId: sqs-message-group-id-eric6166
         delay-seconds: 0
         max-number-of-messages: 10

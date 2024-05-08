@@ -12,9 +12,10 @@ import org.springframework.context.annotation.Configuration;
 @Getter
 @Setter
 @Configuration
-@ConditionalOnProperty(name = "spring.cache.type", havingValue = "redis")
-@ConfigurationProperties(prefix = "spring.cache.redis")
-public class RedisCacheProps {
-    Long timeToLive;
+@ConditionalOnProperty(name = "spring.data.redis.enabled", havingValue = "true")
+@ConfigurationProperties(prefix = "spring.data.redis")
+public class RedisProps {
+    String host;
+    Integer port;
 
 }

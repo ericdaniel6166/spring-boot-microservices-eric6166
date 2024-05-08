@@ -2,9 +2,9 @@ package com.eric6166.aws.sqs;
 
 import java.util.Collection;
 
-public interface SqsMessages {
+public interface SqsSendMessages {
 
-    Collection<SqsMessage> getSqsMessages();
+    Collection<SqsSendMessage> getSqsMessages();
 
     default Integer getDelaySeconds() {
         return null;

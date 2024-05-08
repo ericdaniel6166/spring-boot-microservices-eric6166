@@ -1,7 +1,9 @@
 package com.eric6166.aws.utils;
 
 import com.eric6166.aws.dto.AWSErrorResponse;
+import com.eric6166.base.exception.AppBadRequestException;
 import com.eric6166.base.exception.AppException;
+import com.eric6166.base.exception.AppInternalServiceException;
 import com.eric6166.base.exception.AppNotFoundException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -45,23 +47,20 @@ public final class AWSExceptionUtils {
                 awsErrorDetails.errorMessage(), null, null, e.requestId(), e.extendedRequestId());
     }
 
-    public static String buildErrorMessage(AwsServiceException e, String resource) {
-        var httpStatus = HttpStatus.valueOf(e.statusCode());
-        String errorMessage ;
-        switch (httpStatus) {
-            case MOVED_PERMANENTLY -> errorMessage = String.format("%s is not available", resource);
-            default -> errorMessage = e.awsErrorDetails().errorMessage();
-        }
-        return errorMessage;
-    }
-
     public static AppException buildAppException(AwsServiceException awsServiceException, AppException appException) {
         return buildAppException(awsServiceException, appException.getHttpStatus(), appException.getHttpStatus().name(), appException.getMessage());
     }
 
     public static AppException buildAppException(AwsServiceException e) {
+        return buildAppException(e, StringUtils.EMPTY);
+    }
+
+    public static AppException buildAppException(AwsServiceException e, String errorMessage) {
         var httpStatus = HttpStatus.valueOf(e.statusCode());
-        return buildAppException(e, httpStatus, httpStatus.name(), e.awsErrorDetails().errorMessage());
+        if (httpStatus.is5xxServerError()) {
+            return buildAppException(e, new AppInternalServiceException(errorMessage));
+        }
+        return buildAppException(e, new AppBadRequestException(errorMessage));
     }
 
     public static AppException buildAppNotFoundException(AwsServiceException e, String resource) {

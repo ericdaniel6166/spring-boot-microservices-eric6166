@@ -10,7 +10,6 @@ import org.passay.LengthRule;
 import org.passay.PasswordData;
 import org.passay.PasswordValidator;
 import org.passay.Rule;
-import org.passay.RuleResult;
 import org.passay.WhitespaceRule;
 
 import java.util.ArrayList;
@@ -36,8 +35,8 @@ public class ValidPasswordValidator implements ConstraintValidator<ValidPassword
         rules.add(new CharacterRule(EnglishCharacterData.LowerCase, 1));
         rules.add(new CharacterRule(EnglishCharacterData.Digit, 1));
         rules.add(new CharacterRule(EnglishCharacterData.Special, 1));
-        PasswordValidator validator = new PasswordValidator(rules);
-        final RuleResult result = validator.validate(new PasswordData(password));
+        var validator = new PasswordValidator(rules);
+        final var result = validator.validate(new PasswordData(password));
         return result.isValid();
     }
 

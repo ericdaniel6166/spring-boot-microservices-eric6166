@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 
 @RequiredArgsConstructor
-public class PasswordMatchesValidator implements ConstraintValidator<PasswordMatches, Object> {
+public class PasswordMatchesValidator implements ConstraintValidator<PasswordMatches, PasswordDto> {
 
     @Override
     public void initialize(PasswordMatches constraintAnnotation) {
@@ -15,11 +15,8 @@ public class PasswordMatchesValidator implements ConstraintValidator<PasswordMat
     }
 
     @Override
-    public boolean isValid(Object object, ConstraintValidatorContext constraintValidatorContext) {
-        if (object instanceof PasswordDto passwordDto) {
-            return StringUtils.equals(passwordDto.getPassword(), passwordDto.getConfirmPassword());
-        }
-        return false;
+    public boolean isValid(PasswordDto password, ConstraintValidatorContext constraintValidatorContext) {
+        return StringUtils.equals(password.getPassword(), password.getConfirmPassword());
     }
 
 

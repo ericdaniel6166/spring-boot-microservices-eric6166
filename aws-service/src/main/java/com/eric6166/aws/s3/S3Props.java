@@ -23,6 +23,7 @@ public class S3Props {
     @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class Template {
         Bucket bucket;
+        Long signatureDuration;
 
         @Getter
         @Setter

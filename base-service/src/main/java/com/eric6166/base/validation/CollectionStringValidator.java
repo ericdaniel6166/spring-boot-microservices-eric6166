@@ -4,8 +4,11 @@ import com.eric6166.base.utils.BaseConst;
 import com.eric6166.base.utils.BaseMessageConst;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
@@ -13,9 +16,10 @@ import java.util.Collection;
 import java.util.List;
 
 @RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class CollectionStringValidator implements ConstraintValidator<ValidCollectionString, Collection<String>> {
 
-    final MessageSource messageSource;
+    private final MessageSource messageSource;
 
     List<String> valueList;
     List<String> upperCaseValueList;
@@ -41,7 +45,7 @@ public class CollectionStringValidator implements ConstraintValidator<ValidColle
         } else {
             isValid = upperCaseValueList.containsAll(s.stream().map(String::toUpperCase).toList());
         }
-        if (!isValid) {
+        if (!isValid && StringUtils.isBlank(message)) {
             constraintValidatorContext.disableDefaultConstraintViolation();
             var message = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_VALUE,
                     new String[]{BaseConst.PLACEHOLDER_0, valueList.toString()}, LocaleContextHolder.getLocale());
