@@ -26,7 +26,7 @@ public class SqsProps {
         Queue queue;
         Integer delaySeconds;
         Integer maxNumberOfMessages;
-        String messageGroupId;
+
 
         @Getter
         @Setter
@@ -50,6 +50,7 @@ public class SqsProps {
             public static class Fifo {
 
                 String name;
+                String messageGroupId;
             }
         }
     }

@@ -8,6 +8,8 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
+import java.time.Duration;
+
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Setter
@@ -23,7 +25,7 @@ public class S3Props {
     @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class Template {
         Bucket bucket;
-        Long signatureDuration;
+        Long signatureDurationMinute;
 
         @Getter
         @Setter
@@ -34,7 +36,9 @@ public class S3Props {
 
         }
 
-
+        public Duration getSignatureDuration() {
+            return Duration.ofMinutes(signatureDurationMinute);
+        }
     }
 
 }

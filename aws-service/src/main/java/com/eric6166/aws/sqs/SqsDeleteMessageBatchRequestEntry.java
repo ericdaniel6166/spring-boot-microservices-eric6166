@@ -1,6 +1,6 @@
 package com.eric6166.aws.sqs;
 
-public interface SqsDeleteMessage {
+public interface SqsDeleteMessageBatchRequestEntry {
 
     String getReceiptHandle();
 

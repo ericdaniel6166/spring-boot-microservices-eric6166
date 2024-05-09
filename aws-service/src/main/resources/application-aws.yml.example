@@ -10,6 +10,7 @@ cloud:
       template:
         bucket:
           name: s3-bucket-eric6166
+        signature-duration-minute: 10 # minute
     sqs:
       enabled: true
       template:
@@ -18,6 +19,6 @@ cloud:
             name: sqs-queue-standard-eric6166
           fifo:
             name: sqs-queue-fifo-eric6166.fifo
-            messageGroupId: sqs-message-group-id-eric6166
+            message-group-id: sqs-message-group-id-eric6166
         delay-seconds: 0
         max-number-of-messages: 10

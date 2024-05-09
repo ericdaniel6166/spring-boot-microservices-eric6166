@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
+import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.services.sqs.SqsClient;
 import software.amazon.awssdk.services.sqs.model.CreateQueueRequest;
 import software.amazon.awssdk.services.sqs.model.CreateQueueResponse;
@@ -34,7 +35,6 @@ import software.amazon.awssdk.services.sqs.model.SendMessageBatchRequestEntry;
 import software.amazon.awssdk.services.sqs.model.SendMessageBatchResponse;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
 import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
-import software.amazon.awssdk.services.sqs.model.SqsException;
 
 import java.util.Collection;
 import java.util.EnumMap;
@@ -52,13 +52,13 @@ public class SqsService {
     SqsClient sqsClient;
     SqsProps sqsProps;
 
-    private Collection<SendMessageBatchRequestEntry> buildSendMessageBatchRequestEntries(SqsSendMessages messages, boolean fifoQueue) {
+    private Collection<SendMessageBatchRequestEntry> buildSendMessageBatchRequestEntries(SqsSendMessageBatchRequestEntries messages, boolean fifoQueue) {
         var delaySeconds = messages.getDelaySeconds();
         var messageGroupId = messages.getMessageGroupId();
-        return messages.getSqsMessages().stream().map(o -> buildSendMessageBatchRequestEntry(o, delaySeconds, messageGroupId, fifoQueue)).collect(Collectors.toList());
+        return messages.getSqsSendMessageBatchRequestEntries().stream().map(o -> buildSendMessageBatchRequestEntry(o, delaySeconds, messageGroupId, fifoQueue)).collect(Collectors.toList());
     }
 
-    private SendMessageBatchRequestEntry buildSendMessageBatchRequestEntry(SqsSendMessage message, Integer delaySeconds, String messageGroupId, boolean fifoQueue) {
+    private SendMessageBatchRequestEntry buildSendMessageBatchRequestEntry(SqsSendMessageBatchRequestEntry message, Integer delaySeconds, String messageGroupId, boolean fifoQueue) {
         Integer inputDelaySeconds;
         if (message.getDelaySeconds() != null) {
             inputDelaySeconds = message.getDelaySeconds();
@@ -75,7 +75,7 @@ public class SqsService {
         } else if (StringUtils.isNotBlank(messageGroupId)) {
             inputMessageGroupId = messageGroupId;
         } else {
-            inputMessageGroupId = sqsProps.getTemplate().getMessageGroupId();
+            inputMessageGroupId = sqsProps.getTemplate().getQueue().getFifo().getMessageGroupId();
         }
         return SendMessageBatchRequestEntry.builder()
                 .messageBody(message.getMessageBody())
@@ -85,11 +85,11 @@ public class SqsService {
                 .build();
     }
 
-    public SendMessageBatchResponse sendBatchMessageByQueueUrl(String queueUrl, SqsSendMessages messages) throws AppException {
+    public SendMessageBatchResponse sendBatchMessageByQueueUrl(String queueUrl, SqsSendMessageBatchRequestEntries messages) throws AppException {
         return sendBatchMessageByQueueUrlAndEntries(queueUrl, buildSendMessageBatchRequestEntries(messages, StringUtils.endsWith(queueUrl, AwsConst.SQS_SUFFIX_FIFO)));
     }
 
-    public SendMessageBatchResponse sendBatchMessageByQueueName(String queueName, SqsSendMessages messages) throws AppException {
+    public SendMessageBatchResponse sendBatchMessageByQueueName(String queueName, SqsSendMessageBatchRequestEntries messages) throws AppException {
         return sendBatchMessageByQueueUrl(getQueueUrl(queueName).queueUrl(), messages);
     }
 
@@ -103,7 +103,7 @@ public class SqsService {
                         .build());
             } catch (QueueDoesNotExistException e) {
                 throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueUrl '%s'", queueUrl));
-            } catch (SqsException e) {
+            } catch (AwsServiceException e) {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
@@ -127,7 +127,7 @@ public class SqsService {
                 } else if (StringUtils.isNotBlank(messageGroupId)) {
                     inputMessageGroupId = messageGroupId;
                 } else {
-                    inputMessageGroupId = sqsProps.getTemplate().getMessageGroupId();
+                    inputMessageGroupId = sqsProps.getTemplate().getQueue().getFifo().getMessageGroupId();
                 }
                 return sqsClient.sendMessage(SendMessageRequest.builder()
                         .queueUrl(queueUrl)
@@ -138,7 +138,7 @@ public class SqsService {
                 );
             } catch (QueueDoesNotExistException e) {
                 throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueUrl '%s'", queueUrl));
-            } catch (SqsException e) {
+            } catch (AwsServiceException e) {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
@@ -176,7 +176,7 @@ public class SqsService {
 
             } catch (QueueDoesNotExistException e) {
                 throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueUrl '%s'", queueUrl));
-            } catch (SqsException e) {
+            } catch (AwsServiceException e) {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
@@ -197,7 +197,7 @@ public class SqsService {
                         .build());
             } catch (QueueDoesNotExistException e) {
                 throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueName '%s'", queueName));
-            } catch (SqsException e) {
+            } catch (AwsServiceException e) {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
@@ -218,7 +218,6 @@ public class SqsService {
         return createQueue(queueName, queueAttributes);
     }
 
-
     public CreateQueueResponse createQueue(String queueName, Map<QueueAttributeName, String> attributes) throws AppException {
         var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("createQueue").start();
         try (var ws = tracer.withSpanInScope(span)) {
@@ -227,7 +226,7 @@ public class SqsService {
                         .queueName(queueName)
                         .attributes(attributes)
                         .build());
-            } catch (SqsException e) {
+            } catch (AwsServiceException e) {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
@@ -237,6 +236,10 @@ public class SqsService {
         } finally {
             span.finish();
         }
+    }
+
+    public ReceiveMessageResponse receiveMessageByQueueUrl(String queueUrl) throws AppException {
+        return receiveMessageByQueueUrl(queueUrl, null);
     }
 
     public ReceiveMessageResponse receiveMessageByQueueUrl(String queueUrl, Integer maxNumberOfMessages) throws AppException {
@@ -250,7 +253,7 @@ public class SqsService {
                         .build());
             } catch (QueueDoesNotExistException e) {
                 throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueUrl '%s'", queueUrl));
-            } catch (SqsException e) {
+            } catch (AwsServiceException e) {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
@@ -262,23 +265,27 @@ public class SqsService {
         }
     }
 
+    public ReceiveMessageResponse receiveMessageByQueueName(String queueName) throws AppException {
+        return receiveMessageByQueueName(queueName, null);
+    }
+
     public ReceiveMessageResponse receiveMessageByQueueName(String queueName, Integer maxNumberOfMessages) throws AppException {
         return receiveMessageByQueueUrl(getQueueUrl(queueName).queueUrl(), maxNumberOfMessages);
     }
 
-    public DeleteMessageBatchResponse deleteMessageBatchByQueueName(String queueName, SqsDeleteMessages messages) throws AppException {
+    public DeleteMessageBatchResponse deleteMessageBatchByQueueName(String queueName, SqsDeleteMessageBatchRequestEntries messages) throws AppException {
         return deleteMessageBatchByQueueUrl(getQueueUrl(queueName).queueUrl(), messages);
     }
 
-    private DeleteMessageBatchResponse deleteMessageBatchByQueueUrl(String queueUrl, SqsDeleteMessages messages) throws AppException {
+    private DeleteMessageBatchResponse deleteMessageBatchByQueueUrl(String queueUrl, SqsDeleteMessageBatchRequestEntries messages) throws AppException {
         return deleteMessageBatchByQueueUrlAndEntries(queueUrl, buildDeleteMessageBatchRequestEntries(messages));
     }
 
-    private Collection<DeleteMessageBatchRequestEntry> buildDeleteMessageBatchRequestEntries(SqsDeleteMessages messages) {
-        return messages.getSqsDeleteMessages().stream().map(this::buildDeleteMessageBatchRequestEntry).toList();
+    private Collection<DeleteMessageBatchRequestEntry> buildDeleteMessageBatchRequestEntries(SqsDeleteMessageBatchRequestEntries messages) {
+        return messages.getSqsDeleteMessageBatchRequestEntries().stream().map(this::buildDeleteMessageBatchRequestEntry).toList();
     }
 
-    private DeleteMessageBatchRequestEntry buildDeleteMessageBatchRequestEntry(SqsDeleteMessage message) {
+    private DeleteMessageBatchRequestEntry buildDeleteMessageBatchRequestEntry(SqsDeleteMessageBatchRequestEntry message) {
         return DeleteMessageBatchRequestEntry.builder()
                 .receiptHandle(message.getReceiptHandle())
                 .id(message.getId())
@@ -295,7 +302,7 @@ public class SqsService {
                         .build());
             } catch (QueueDoesNotExistException e) {
                 throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueUrl '%s'", queueUrl));
-            } catch (SqsException e) {
+            } catch (AwsServiceException e) {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
@@ -322,7 +329,7 @@ public class SqsService {
                         .build());
             } catch (QueueDoesNotExistException e) {
                 throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueUrl '%s'", queueUrl));
-            } catch (SqsException e) {
+            } catch (AwsServiceException e) {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
