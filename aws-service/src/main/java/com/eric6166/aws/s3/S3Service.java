@@ -24,10 +24,13 @@ import software.amazon.awssdk.services.s3.model.CopyObjectRequest;
 import software.amazon.awssdk.services.s3.model.CopyObjectResponse;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.CreateBucketResponse;
+import software.amazon.awssdk.services.s3.model.Delete;
 import software.amazon.awssdk.services.s3.model.DeleteBucketRequest;
 import software.amazon.awssdk.services.s3.model.DeleteBucketResponse;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.DeleteObjectResponse;
+import software.amazon.awssdk.services.s3.model.DeleteObjectsRequest;
+import software.amazon.awssdk.services.s3.model.DeleteObjectsResponse;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.GetUrlRequest;
@@ -35,14 +38,19 @@ import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
 import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
 import software.amazon.awssdk.services.s3.model.NoSuchBucketException;
+import software.amazon.awssdk.services.s3.model.ObjectIdentifier;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 import java.io.IOException;
 import java.time.Duration;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Stream;
 
 @Component
 @Slf4j
@@ -50,6 +58,7 @@ import java.time.Duration;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @ConditionalOnProperty(name = "cloud.aws.s3.enabled", havingValue = "true")
 public class S3Service {
+
 
     S3Client s3Client;
     S3Presigner s3Presigner;
@@ -77,7 +86,6 @@ public class S3Service {
             span.finish();
         }
     }
-
 
     public ResponseInputStream<GetObjectResponse> getObject(String bucket, String key) throws AppException {
         var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("getObject").start();
@@ -151,6 +159,64 @@ public class S3Service {
         }
     }
 
+    public CopyObjectResponse renameObject(String bucket, String oldKey, String newKey) throws AppException {
+        var response = copyObject(bucket, oldKey, bucket, newKey);
+        deleteObject(bucket, oldKey);
+        return response;
+    }
+
+    public CopyObjectResponse moveObject(String sourceBucket, String sourceKey, String destinationBucket, String destinationKey) throws AppException {
+        var response = copyObject(sourceBucket, sourceKey, destinationBucket, destinationKey);
+        deleteObject(sourceBucket, sourceKey);
+        return response;
+    }
+
+    public CopyObjectResponse copyObject(String sourceBucket, String sourceKey, String destinationBucket, String destinationKey) throws AppException {
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("copyObject").start();
+        try (var ws = tracer.withSpanInScope(span)) {
+            try {
+                return s3Client.copyObject(CopyObjectRequest.builder()
+                        .sourceBucket(sourceBucket)
+                        .sourceKey(sourceKey)
+                        .destinationBucket(destinationBucket)
+                        .destinationKey(destinationKey)
+                        .build());
+            } catch (AwsServiceException e) {
+                throw AWSExceptionUtils.buildAppException(e);
+            }
+        } catch (RuntimeException e) {
+            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            span.error(e);
+            throw e;
+        } finally {
+            span.finish();
+        }
+    }
+
+    public PresignedGetObjectRequest presignGetObject(String bucket, String key, Duration signatureDuration) throws AppException {
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("presignGetObject").start();
+        try (var ws = tracer.withSpanInScope(span)) {
+            try {
+                var inputSignatureDuration = signatureDuration == null ? s3Props.getTemplate().getSignatureDuration() : signatureDuration;
+                return s3Presigner.presignGetObject(GetObjectPresignRequest.builder()
+                        .signatureDuration(inputSignatureDuration)
+                        .getObjectRequest(GetObjectRequest.builder()
+                                .bucket(bucket)
+                                .key(key)
+                                .build())
+                        .build());
+            } catch (AwsServiceException e) {
+                throw AWSExceptionUtils.buildAppException(e);
+            }
+        } catch (RuntimeException e) {
+            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            span.error(e);
+            throw e;
+        } finally {
+            span.finish();
+        }
+    }
+
     public DeleteObjectResponse deleteObject(String bucket, String key) throws AppException {
         var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("deleteObject").start();
         try (var ws = tracer.withSpanInScope(span)) {
@@ -162,6 +228,43 @@ public class S3Service {
             } catch (NoSuchBucketException e) {
                 throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("bucket with name '%s'", bucket));
             } catch (AwsServiceException e) {
+                throw AWSExceptionUtils.buildAppException(e);
+            }
+        } catch (RuntimeException e) {
+            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            span.error(e);
+            throw e;
+        } finally {
+            span.finish();
+        }
+    }
+
+    public DeleteObjectsResponse deleteObjects(String bucket, String... keys) throws AppException {
+        return deleteObjects(bucket, Arrays.stream(keys));
+    }
+
+    public DeleteObjectsResponse deleteObjects(String bucket, Collection<String> keys) throws AppException {
+        return deleteObjects(bucket, keys.stream());
+    }
+
+    public DeleteObjectsResponse deleteObjects(String bucket, Stream<String> keys) throws AppException {
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("deleteObject").start();
+        try (var ws = tracer.withSpanInScope(span)) {
+            try {
+                var objects = keys
+                        .map(key -> ObjectIdentifier.builder()
+                                .key(key)
+                                .build())
+                        .toList();
+                return s3Client.deleteObjects(DeleteObjectsRequest.builder()
+                        .bucket(bucket)
+                        .delete(Delete.builder()
+                                .objects(objects)
+                                .build())
+                        .build());
+            } catch (NoSuchBucketException e) {
+                throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("bucket with name '%s'", bucket));
+            } catch (S3Exception e) {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
@@ -221,42 +324,6 @@ public class S3Service {
         }
     }
 
-    public CopyObjectResponse renameObject(String bucket, String oldKey, String newKey) throws AppException {
-        var response = copyObject(bucket, oldKey, bucket, newKey);
-        deleteObject(bucket, oldKey);
-        return response;
-    }
-
-    public CopyObjectResponse moveObject(String sourceBucket, String sourceKey, String destinationBucket, String destinationKey) throws AppException {
-        var response = copyObject(sourceBucket, sourceKey, destinationBucket, destinationKey);
-        deleteObject(sourceBucket, sourceKey);
-        return response;
-    }
-
-
-    public CopyObjectResponse copyObject(String sourceBucket, String sourceKey, String destinationBucket, String destinationKey) throws AppException {
-        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("copyObject").start();
-        try (var ws = tracer.withSpanInScope(span)) {
-            try {
-                return s3Client.copyObject(CopyObjectRequest.builder()
-                        .sourceBucket(sourceBucket)
-                        .sourceKey(sourceKey)
-                        .destinationBucket(destinationBucket)
-                        .destinationKey(destinationKey)
-                        .build());
-            } catch (AwsServiceException e) {
-                throw AWSExceptionUtils.buildAppException(e);
-            }
-        } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
-            span.error(e);
-            throw e;
-        } finally {
-            span.finish();
-        }
-    }
-
-
     public boolean isBucketExisted(String bucket) {
         var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("isBucketExisted").start();
         try (var ws = tracer.withSpanInScope(span)) {
@@ -277,30 +344,6 @@ public class S3Service {
                 }
             }
             return isBucketExisted;
-        } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
-            span.error(e);
-            throw e;
-        } finally {
-            span.finish();
-        }
-    }
-
-    public PresignedGetObjectRequest presignGetObject(String bucket, String key, Duration signatureDuration) throws AppException {
-        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("presignGetObject").start();
-        try (var ws = tracer.withSpanInScope(span)) {
-            try {
-                var inputSignatureDuration = signatureDuration == null ? s3Props.getTemplate().getSignatureDuration() : signatureDuration;
-                return s3Presigner.presignGetObject(GetObjectPresignRequest.builder()
-                        .signatureDuration(inputSignatureDuration)
-                        .getObjectRequest(GetObjectRequest.builder()
-                                .bucket(bucket)
-                                .key(key)
-                                .build())
-                        .build());
-            } catch (AwsServiceException e) {
-                throw AWSExceptionUtils.buildAppException(e);
-            }
         } catch (RuntimeException e) {
             log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
