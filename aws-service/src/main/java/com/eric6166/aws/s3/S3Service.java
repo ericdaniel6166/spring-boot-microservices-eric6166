@@ -65,6 +65,27 @@ public class S3Service {
     S3Props s3Props;
     Tracer tracer;
 
+    public ListObjectsV2Response listObject(String bucket) throws AppException {
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("listObject").start();
+        try (var ws = tracer.withSpanInScope(span)) {
+            try {
+                return s3Client.listObjectsV2(ListObjectsV2Request.builder()
+                        .bucket(bucket)
+                        .build());
+            } catch (NoSuchBucketException e) {
+                throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("bucket with name '%s'", bucket));
+            } catch (AwsServiceException e) {
+                throw AWSExceptionUtils.buildAppException(e);
+            }
+        } catch (RuntimeException e) {
+            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            span.error(e);
+            throw e;
+        } finally {
+            span.finish();
+        }
+    }
+
     public ResponseBytes<GetObjectResponse> getObjectAsBytes(String bucket, String key) throws AppException {
         var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("getObjectAsBytes").start();
         try (var ws = tracer.withSpanInScope(span)) {
@@ -98,27 +119,6 @@ public class S3Service {
                 return s3Client.getObject(GetObjectRequest.builder()
                         .bucket(bucket)
                         .key(key)
-                        .build());
-            } catch (NoSuchBucketException e) {
-                throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("bucket with name '%s'", bucket));
-            } catch (AwsServiceException e) {
-                throw AWSExceptionUtils.buildAppException(e);
-            }
-        } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
-            span.error(e);
-            throw e;
-        } finally {
-            span.finish();
-        }
-    }
-
-    public ListObjectsV2Response listObject(String bucket) throws AppException {
-        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("listObject").start();
-        try (var ws = tracer.withSpanInScope(span)) {
-            try {
-                return s3Client.listObjectsV2(ListObjectsV2Request.builder()
-                        .bucket(bucket)
                         .build());
             } catch (NoSuchBucketException e) {
                 throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("bucket with name '%s'", bucket));
