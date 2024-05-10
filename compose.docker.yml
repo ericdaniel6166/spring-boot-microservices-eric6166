@@ -220,7 +220,7 @@ services:
       kafka:
         condition: service_started
       redis:
-        condition: service_healthy
+        condition: service_started
   #      activemq:
   #        condition: service_started
 
@@ -251,7 +251,7 @@ services:
       kafka:
         condition: service_started
       redis:
-        condition: service_healthy
+        condition: service_started
 #      activemq:
 #        condition: service_started
 

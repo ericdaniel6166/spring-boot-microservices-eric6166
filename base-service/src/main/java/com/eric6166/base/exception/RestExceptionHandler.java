@@ -89,8 +89,19 @@ public class RestExceptionHandler {
 //            InvalidDataAccessApiUsageException.class
     })
     public ResponseEntity<Object> handleBadRequestException(Exception e) {
-        var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.BAD_REQUEST, e);
-        return baseUtils.buildResponseExceptionEntity(errorResponse);
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleBadRequestException").start();
+        try (var ws = tracer.withSpanInScope(span)) {
+            span.error(e);
+            var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.BAD_REQUEST, e);
+            log.info("e: {}", e.getClass().getName()); // comment // for local testing
+            span.tag("handleBadRequestException errorResponse", errorResponse.toString());
+            return baseUtils.buildResponseExceptionEntity(errorResponse);
+        } catch (RuntimeException exception) {
+            span.error(exception);
+            throw exception;
+        } finally {
+            span.finish();
+        }
     }
 
 
