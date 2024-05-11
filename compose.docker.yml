@@ -148,6 +148,11 @@ services:
       - internal-network
     volumes:
       - cache-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
 
   discovery-service:
     container_name: discovery-service
@@ -220,7 +225,7 @@ services:
       kafka:
         condition: service_started
       redis:
-        condition: service_started
+        condition: service_healthy
   #      activemq:
   #        condition: service_started
 
@@ -251,7 +256,7 @@ services:
       kafka:
         condition: service_started
       redis:
-        condition: service_started
+        condition: service_healthy
 #      activemq:
 #        condition: service_started
 

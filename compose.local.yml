@@ -148,6 +148,11 @@ services:
       - internal-network
     volumes:
       - cache-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
 
 networks:
   internal-network:
