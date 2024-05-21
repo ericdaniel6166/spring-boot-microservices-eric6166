@@ -46,7 +46,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @ConditionalOnProperty(name = "cloud.aws.sqs.enabled", havingValue = "true")
-public class SqsService {
+public class AppSqsClient {
 
     Tracer tracer;
     SqsClient sqsClient;
@@ -107,7 +107,7 @@ public class SqsService {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -142,7 +142,7 @@ public class SqsService {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -180,7 +180,7 @@ public class SqsService {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -201,7 +201,7 @@ public class SqsService {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -230,7 +230,7 @@ public class SqsService {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -257,7 +257,7 @@ public class SqsService {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -306,7 +306,7 @@ public class SqsService {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -333,7 +333,7 @@ public class SqsService {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -347,7 +347,7 @@ public class SqsService {
         try (var ws = tracer.withSpanInScope(span)) {
 
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {

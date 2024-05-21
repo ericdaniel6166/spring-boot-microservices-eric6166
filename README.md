@@ -7,9 +7,9 @@
 - [AWS Cloud](https://aws.amazon.com/), using AWS SDK for Java 2.x
   - S3, SQS, etc
 - [Apache Kafka](https://kafka.apache.org/), distributed and fault-tolerant stream processing system.
-- [Spring Cloud Netflix Eureka](https://spring.io/projects/spring-cloud-netflix), service discovery,
+- [Spring Cloud Netflix Eureka](https://spring.io/projects/spring-cloud-netflix), discovery service,
   allows services to find and communicate with each other without hard-coding the hostname and port
-- [Spring Cloud Gateway](https://spring.io/projects/spring-cloud-gateway), api gateway, provide a simple, yet effective
+- [Spring Cloud Gateway](https://spring.io/projects/spring-cloud-gateway), gateway service, provide a simple, yet effective
   way to route to APIs and provide cross-cutting concerns to them such as: security, monitoring/metrics, and resiliency.
 - [Spring Data Redis](https://docs.spring.io/spring-data/redis/reference/redis/redis-cache.html), provides an implementation of Spring Framework’s Cache Abstraction
 - [Spring Integration](https://docs.spring.io/spring-integration/reference/mqtt.html), provides inbound and outbound channel adapters to support the Message Queueing Telemetry Transport (MQTT) protocol.
@@ -84,7 +84,7 @@ make down
 # Docker compose up
 make local-up
 
-# Start discovery-server, api-gateway, user-service
+# Start discovery-service-eric6166, gateway-service-eric6166, user-service-eric6166
 
 # Start microservice   
 

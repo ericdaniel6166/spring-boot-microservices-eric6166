@@ -1,7 +1,5 @@
-package com.eric6166.keycloak.service.impl;
+package com.eric6166.keycloak.config;
 
-import com.eric6166.keycloak.config.KeycloakAdminClientProps;
-import com.eric6166.keycloak.service.KeycloakAminClientService;
 import jakarta.ws.rs.core.Response;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -13,21 +11,21 @@ import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.GroupRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Service
+@Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @Slf4j
 @ConditionalOnProperty(name = "keycloak-admin-client.enabled", havingValue = "true")
-public class KeycloakAminClientServiceImpl implements KeycloakAminClientService {
+public class KeycloakAminClient {
 
     Keycloak keycloak;
     KeycloakAdminClientProps keycloakAdminClientProps;
 
-    @Override
+
     public Optional<UserRepresentation> searchUserByUsername(String username) {
         return getUsersResource().searchByUsername(username, true).stream().findFirst();
     }
@@ -47,8 +45,9 @@ public class KeycloakAminClientServiceImpl implements KeycloakAminClientService 
         return keycloak.realm(keycloakAdminClientProps.getRealm());
     }
 
-    @Override
+
     public Optional<UserRepresentation> searchUserByEmail(String email) {
+        log.info("KeycloakServiceImpl.searchUserByEmail"); // comment // for local testing
         return getUsersResource().searchByEmail(email, true).stream().findFirst();
 
     }
@@ -57,15 +56,15 @@ public class KeycloakAminClientServiceImpl implements KeycloakAminClientService 
         return getRealm().users();
     }
 
-    @Override
+
     public Optional<GroupRepresentation> searchGroupByName(String name) {
-        log.debug("KeycloakServiceImpl.searchGroupByName"); // comment // for local testing
+        log.info("KeycloakServiceImpl.searchGroupByName"); // comment // for local testing
         return getRealm().groups().groups(name, 0, 1).stream().findFirst();
     }
 
-    @Override
+
     public Response createUser(UserRepresentation user) {
-        log.debug("KeycloakServiceImpl.createUser"); // comment // for local testing
+        log.info("KeycloakServiceImpl.createUser"); // comment // for local testing
         return getUsersResource().create(user);
     }
 }

@@ -9,9 +9,8 @@ public class AppInternalServiceException extends AppException {
         super(HttpStatus.INTERNAL_SERVER_ERROR, StringUtils.isNotBlank(message) ? message : HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
     }
 
-    public AppInternalServiceException() {
-        super(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase());
+    public AppInternalServiceException(Object rootCause) {
+        super(HttpStatus.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR.name(), HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase(), rootCause);
     }
-
 
 }

@@ -63,7 +63,7 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @ConditionalOnProperty(name = "cloud.aws.s3.enabled", havingValue = "true")
-public class S3Service {
+public class AppS3Client {
 
 
     S3Client s3Client;
@@ -84,7 +84,7 @@ public class S3Service {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -106,7 +106,7 @@ public class S3Service {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -128,7 +128,7 @@ public class S3Service {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -137,7 +137,7 @@ public class S3Service {
     }
 
     public GetObjectAttributesResponse getObjectAttributes(String bucket, String key) throws AppException {
-        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("getObject").start();
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("getObjectAttributes").start();
         try (var ws = tracer.withSpanInScope(span)) {
             try {
                 return s3Client.getObjectAttributes(GetObjectAttributesRequest.builder()
@@ -150,7 +150,7 @@ public class S3Service {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -159,7 +159,7 @@ public class S3Service {
     }
 
     public GetObjectTaggingResponse getObjectTagging(String bucket, String key) throws AppException {
-        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("getObject").start();
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("getObjectTagging").start();
         try (var ws = tracer.withSpanInScope(span)) {
             try {
                 return s3Client.getObjectTagging(GetObjectTaggingRequest.builder()
@@ -172,7 +172,7 @@ public class S3Service {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -181,7 +181,7 @@ public class S3Service {
     }
 
     public URL getUrl(String bucket, String key) throws AppException {
-        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("getObject").start();
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("getUrl").start();
         try (var ws = tracer.withSpanInScope(span)) {
             try {
                 return s3Client.utilities().getUrl(GetUrlRequest.builder()
@@ -194,7 +194,7 @@ public class S3Service {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -203,7 +203,7 @@ public class S3Service {
     }
 
     public S3Uri parseUri(String uri) throws AppException {
-        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("getObject").start();
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("parseUri").start();
         try (var ws = tracer.withSpanInScope(span)) {
             try {
                 return s3Client.utilities().parseUri(URI.create(uri));
@@ -211,7 +211,7 @@ public class S3Service {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -236,7 +236,7 @@ public class S3Service {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -270,7 +270,7 @@ public class S3Service {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -294,7 +294,7 @@ public class S3Service {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -316,7 +316,7 @@ public class S3Service {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -333,7 +333,7 @@ public class S3Service {
     }
 
     public DeleteObjectsResponse deleteObjects(String bucket, Stream<String> keys) throws AppException {
-        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("deleteObject").start();
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("deleteObjects").start();
         try (var ws = tracer.withSpanInScope(span)) {
             try {
                 var objects = keys
@@ -353,7 +353,7 @@ public class S3Service {
                 throw AWSExceptionUtils.buildAppException(e);
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -375,7 +375,7 @@ public class S3Service {
             }
         } catch (RuntimeException e) {
             span.error(e);
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             throw e;
         } finally {
             span.finish();
@@ -401,7 +401,7 @@ public class S3Service {
                 throw e;
             }
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -430,7 +430,7 @@ public class S3Service {
             }
             return isBucketExisted;
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {
@@ -443,7 +443,7 @@ public class S3Service {
         try (var ws = tracer.withSpanInScope(span)) {
 
         } catch (RuntimeException e) {
-            log.debug("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             span.error(e);
             throw e;
         } finally {

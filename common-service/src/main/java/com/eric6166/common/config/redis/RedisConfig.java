@@ -4,7 +4,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -16,20 +15,18 @@ import org.springframework.data.redis.core.RedisTemplate;
 @ConditionalOnProperty(name = "spring.data.redis.enabled", havingValue = "true")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@EnableCaching
 public class RedisConfig {
 
     RedisProps redisProps;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(new RedisStandaloneConfiguration(redisProps.getHost(), redisProps.getPort()));
+        return new LettuceConnectionFactory(new RedisStandaloneConfiguration(redisProps.getHostname(), redisProps.getPort()));
     }
 
 
     @Bean
-    RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
-
+    public RedisTemplate<Object, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
         RedisTemplate<Object, Object> template = new RedisTemplate<>();
         template.setConnectionFactory(redisConnectionFactory());
         return template;

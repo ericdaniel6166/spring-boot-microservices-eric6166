@@ -167,11 +167,6 @@ services:
       - internal-network
     expose:
       - "8761"
-    healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
-      interval: 15s
-      timeout: 5s
-      retries: 5
     depends_on:
       zipkin:
         condition: service_started

@@ -19,7 +19,6 @@ public @interface ValidPassword {
 
     String message() default "{constraints.ValidPassword.message}";
 
-
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};

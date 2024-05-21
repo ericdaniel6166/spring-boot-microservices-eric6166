@@ -1,5 +1,6 @@
 package com.eric6166.security.exception;
 
+import com.eric6166.base.exception.AppExceptionUtils;
 import com.eric6166.base.exception.ErrorResponse;
 import com.eric6166.base.utils.BaseUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,13 +24,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class SecurityRestExceptionHandler {
 
     BaseUtils baseUtils;
+    AppExceptionUtils appExceptionUtils;
 
     @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException e, HttpServletRequest httpServletRequest) {
-        String rootCause = BaseUtils.getRootCauseMessage(e);
-        log.debug("e: {} , rootCause: {}", e.getClass().getName(), rootCause); // comment // for local testing
-        ErrorResponse errorResponse = new ErrorResponse(HttpStatus.FORBIDDEN, HttpStatus.FORBIDDEN.name(),
-                HttpStatus.FORBIDDEN.getReasonPhrase(), httpServletRequest.getRequestURI(), rootCause);
+    public ResponseEntity<Object> handleAccessDeniedException(AccessDeniedException e) {
+        var rootCause = BaseUtils.getRootCauseMessage(e);
+        log.info("e: {} , rootCause: {}", e.getClass().getName(), rootCause); // comment // for local testing
+        var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.FORBIDDEN, e);
         return baseUtils.buildResponseExceptionEntity(errorResponse);
     }
 }

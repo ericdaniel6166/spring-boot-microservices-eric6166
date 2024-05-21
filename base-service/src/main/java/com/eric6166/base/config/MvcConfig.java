@@ -34,10 +34,6 @@ public class MvcConfig implements WebMvcConfigurer {
         registry.addInterceptor(localeChangeInterceptor());
     }
 
-    // mime types validator
-    @Bean
-    public Tika tika() {
-        return new Tika();
-    }
+
 
 }

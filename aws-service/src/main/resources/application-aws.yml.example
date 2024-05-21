@@ -2,15 +2,15 @@ cloud:
   aws:
     enabled: true
     credentials:
-      access-key: ACCESS_KEY # this is for local testing, pls use AWS Secret Manager
-      secret-key: SECRET_KEY # this is for local testing, pls use AWS Secret Manager
+      access-key: AWS_ACCESS_KEY # this is for local testing, pls use AWS Secret Manager
+      secret-key: AWS_SECRET_KEY # this is for local testing, pls use AWS Secret Manager
     region: AWS_REGION
     s3:
       enabled: true
       template:
         bucket:
           name: s3-bucket-eric6166
-        signature-duration-minute: 10 # minute
+        signature-duration-minutes: 10 # minutes
     sqs:
       enabled: true
       template:

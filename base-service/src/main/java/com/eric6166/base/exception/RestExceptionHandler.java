@@ -38,11 +38,10 @@ import java.util.List;
 @Slf4j
 public class RestExceptionHandler {
 
-    private static final String KEY_COMMON_FIELD = "%s.%s";
+    private static final String KEY_COMMON_FIELD_TEMPLATE = "%s.%s";
     private static final String KEY_FIELD_TEMPLATE = "%s.%s.%s";
     private static final String KEY_OBJECT_TEMPLATE = "%s.%s";
     private static final String KEY_FIELD_TEMPLATE_PROPERTY_PATH = "%s.%s";
-    private static final String KEY_COMMON_GENERAL_FIELD = String.format(KEY_COMMON_FIELD, BaseConst.COMMON, BaseConst.GENERAL_FIELD);
 
     MessageSource messageSource;
     BaseUtils baseUtils;
@@ -55,8 +54,8 @@ public class RestExceptionHandler {
         try (var ws = tracer.withSpanInScope(span)) {
             span.error(e);
             var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.valueOf(e.getStatusCode().value()), e);
-            log.debug("e: {}", e.getClass().getName()); // comment // for local testing
             span.tag("handleResponseStatusException errorResponse", errorResponse.toString());
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             return baseUtils.buildResponseExceptionEntity(errorResponse);
         } catch (RuntimeException exception) {
             span.error(exception);
@@ -73,8 +72,8 @@ public class RestExceptionHandler {
             span.error(e);
             var errorResponse = appExceptionUtils.buildErrorResponse(e.getHttpStatus(), e.getError(),
                     StringUtils.capitalize(e.getMessage()), e.getRootCause());
-            log.debug("e: {}", e.getClass().getName());
             span.tag("handleAppException errorResponse", errorResponse.toString());
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             return baseUtils.buildResponseExceptionEntity(errorResponse);
         } catch (RuntimeException exception) {
             span.error(exception);
@@ -93,8 +92,8 @@ public class RestExceptionHandler {
         try (var ws = tracer.withSpanInScope(span)) {
             span.error(e);
             var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.BAD_REQUEST, e);
-            log.info("e: {}", e.getClass().getName()); // comment // for local testing
             span.tag("handleBadRequestException errorResponse", errorResponse.toString());
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             return baseUtils.buildResponseExceptionEntity(errorResponse);
         } catch (RuntimeException exception) {
             span.error(exception);
@@ -116,7 +115,6 @@ public class RestExceptionHandler {
                 errorDetails.add(buildErrorDetail(constraintViolation, apiClassName));
             }
             var errorResponse = appExceptionUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR, errorDetails);
-            log.debug("e: {}", e.getClass().getName()); // comment // for local testing
             span.tag("handleConstraintViolationException errorResponse", errorResponse.toString());
             return baseUtils.buildResponseExceptionEntity(errorResponse);
         } catch (RuntimeException exception) {
@@ -135,7 +133,7 @@ public class RestExceptionHandler {
         var messageTemplate = constraintViolation.getMessage();
         var msg = messageTemplate;
         if (messageTemplate.contains(BaseConst.PLACEHOLDER_0)) {
-            var keyCommonField = String.format(KEY_COMMON_FIELD, BaseConst.COMMON, field);
+            var keyCommonField = String.format(KEY_COMMON_FIELD_TEMPLATE, BaseConst.COMMON, field);
             var model = buildModel(keyField, keyCommonField);
             msg = formatMsg(messageTemplate, model);
         }
@@ -149,15 +147,14 @@ public class RestExceptionHandler {
             span.error(e);
             List<ErrorDetail> errorDetails = new ArrayList<>();
             var apiClassName = handlerMethod.getBeanType().getSimpleName();
-            for (var error : e.getAllErrors()) {
-                if (error instanceof FieldError fieldError) {
+            for (var objectError : e.getAllErrors()) {
+                if (objectError instanceof FieldError fieldError) {
                     errorDetails.add(buildErrorDetail(fieldError, apiClassName));
                 } else {
-                    errorDetails.add(buildErrorDetail(error, apiClassName));
+                    errorDetails.add(buildErrorDetail(objectError, apiClassName));
                 }
             }
             var errorResponse = appExceptionUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR, errorDetails);
-            log.debug("e: {}", e.getClass().getName()); // comment // for local testing
             span.tag("handleBindException errorResponse", errorResponse.toString());
             return baseUtils.buildResponseExceptionEntity(errorResponse);
         } catch (RuntimeException exception) {
@@ -188,7 +185,7 @@ public class RestExceptionHandler {
         var keyField = String.format(KEY_FIELD_TEMPLATE, apiClassName, fieldError.getObjectName(), field);
         var msg = messageTemplate;
         if (messageTemplate.contains(BaseConst.PLACEHOLDER_0)) {
-            var keyCommonField = String.format(KEY_COMMON_FIELD, BaseConst.COMMON, field);
+            var keyCommonField = String.format(KEY_COMMON_FIELD_TEMPLATE, BaseConst.COMMON, field);
             var model = buildModel(keyField, keyCommonField);
             msg = formatMsg(messageTemplate, model);
         }
@@ -221,7 +218,7 @@ public class RestExceptionHandler {
 
     private String buildModel(String keyField, String keyCommonField) {
         var model = StringUtils.EMPTY;
-        List<String> keyFieldList = List.of(keyField, keyCommonField);
+        var keyFieldList = List.of(keyField, keyCommonField);
         for (var key : keyFieldList) {
             try {
                 model = messageSource.getMessage(key, null, LocaleContextHolder.getLocale());
@@ -231,7 +228,7 @@ public class RestExceptionHandler {
             }
         }
         if (StringUtils.isBlank(model)) {
-            model = messageSource.getMessage(KEY_COMMON_GENERAL_FIELD, null, LocaleContextHolder.getLocale()); // uncomment
+            model = messageSource.getMessage(String.format(KEY_COMMON_FIELD_TEMPLATE, BaseConst.COMMON, BaseConst.GENERAL_FIELD), null, LocaleContextHolder.getLocale()); // uncomment
         }
         return model;
     }
@@ -242,8 +239,8 @@ public class RestExceptionHandler {
         try (var ws = tracer.withSpanInScope(span)) {
             span.error(e);
             var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e);
-            log.info("e: {}", e.getClass().getName()); // comment // for local testing
             span.tag("handleException errorResponse", errorResponse.toString());
+            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             return baseUtils.buildResponseExceptionEntity(errorResponse);
         } catch (RuntimeException exception) {
             span.error(exception);

@@ -1,4 +1,4 @@
-package com.eric6166.common.config.redis;
+package com.eric6166.common.config.cache;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;

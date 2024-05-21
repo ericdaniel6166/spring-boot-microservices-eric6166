@@ -31,7 +31,7 @@ public class FileMimeTypeValidator implements ConstraintValidator<ValidFileMimeT
         if (file == null || file.isEmpty()) {
             return true;
         }
-        String detect = tika.detect(TikaInputStream.get(file.getInputStream()));
+        var detect = tika.detect(TikaInputStream.get(file.getInputStream()));
         return mimeTypes.contains(detect);
 
     }

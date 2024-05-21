@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnProperty(name = "spring.data.redis.enabled", havingValue = "true")
 @ConfigurationProperties(prefix = "spring.data.redis")
 public class RedisProps {
-    String host;
+    String hostname;
     Integer port;
 
 }

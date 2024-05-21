@@ -46,7 +46,7 @@ public class EnumStringValidator implements ConstraintValidator<ValidEnumString,
         }
         if (!isValid && StringUtils.isBlank(message)) {
             constraintValidatorContext.disableDefaultConstraintViolation();
-            String message = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_VALUE,
+            var message = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_VALUE,
                     new String[]{BaseConst.PLACEHOLDER_0, valueList.toString()}, LocaleContextHolder.getLocale());
             constraintValidatorContext.buildConstraintViolationWithTemplate(message).addConstraintViolation();
         }

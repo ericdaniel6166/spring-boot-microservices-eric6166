@@ -1,6 +1,10 @@
 package com.eric6166.common.config.feign;
 
+import com.eric6166.base.exception.AppBadRequestException;
 import com.eric6166.base.exception.AppException;
+import com.eric6166.base.exception.AppExceptionUtils;
+import com.eric6166.base.exception.AppInternalServiceException;
+import com.eric6166.base.exception.ErrorResponse;
 import com.eric6166.base.utils.BaseConst;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;
@@ -12,6 +16,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -23,13 +28,16 @@ public class CustomErrorDecoder implements ErrorDecoder {
     @Override
     public Exception decode(String methodKey, Response response) {
         Object rootCause = null;
+        var httpStatus = HttpStatus.valueOf(response.status());
         if (response.body() != null) {
             var reader = response.body();
-            var jsonNode = objectMapper.readTree(reader.asReader(Charset.defaultCharset()));
+            var jsonNode = objectMapper.readTree(reader.asReader(StandardCharsets.UTF_8));
             var errorJsonNode = jsonNode.findValue(BaseConst.FIELD_ERROR);
             rootCause = errorJsonNode == null || errorJsonNode.isTextual() ? jsonNode : errorJsonNode;
         }
-        var httpStatus = HttpStatus.valueOf(response.status());
-        return new AppException(httpStatus, httpStatus.name(), response.reason(), rootCause);
+        if (httpStatus.is5xxServerError()) {
+            return new AppInternalServiceException(rootCause);
+        }
+        return new AppBadRequestException(rootCause);
     }
 }

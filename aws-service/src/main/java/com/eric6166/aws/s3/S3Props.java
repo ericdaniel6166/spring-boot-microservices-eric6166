@@ -25,7 +25,7 @@ public class S3Props {
     @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class Template {
         Bucket bucket;
-        Long signatureDurationMinute;
+        Long signatureDurationMinutes;
 
         @Getter
         @Setter
@@ -33,11 +33,10 @@ public class S3Props {
         public static class Bucket {
             String name;
 
-
         }
 
         public Duration getSignatureDuration() {
-            return Duration.ofMinutes(signatureDurationMinute);
+            return Duration.ofMinutes(signatureDurationMinutes);
         }
     }
 

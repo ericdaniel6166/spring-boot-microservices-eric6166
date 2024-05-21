@@ -2,19 +2,16 @@ package com.eric6166.base.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.experimental.FieldDefaults;
 
-@Getter
-@Setter
+@Data
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
+@Builder
 public class MessageResponse {
     Long id;
     String message;
 
-    public MessageResponse(String message) {
-        this.message = message;
-    }
 }

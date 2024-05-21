@@ -9,8 +9,8 @@ public class AppBadRequestException extends AppException {
         super(HttpStatus.BAD_REQUEST, StringUtils.isNotBlank(message) ? message : HttpStatus.BAD_REQUEST.getReasonPhrase());
     }
 
-    public AppBadRequestException() {
-        super(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.getReasonPhrase());
+    public AppBadRequestException(Object rootCause) {
+        super(HttpStatus.BAD_REQUEST, HttpStatus.BAD_REQUEST.name(), HttpStatus.BAD_REQUEST.getReasonPhrase(), rootCause);
     }
 
 }

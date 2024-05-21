@@ -8,5 +8,8 @@ public class AppValidationException extends AppException {
         super(ErrorCode.VALIDATION_ERROR.getHttpStatus(), ErrorCode.VALIDATION_ERROR.name(), ErrorCode.VALIDATION_ERROR.getReasonPhrase(), errorDetails);
     }
 
+    public AppValidationException(String message) {
+        super(ErrorCode.VALIDATION_ERROR.getHttpStatus(), message);
+    }
 
 }
