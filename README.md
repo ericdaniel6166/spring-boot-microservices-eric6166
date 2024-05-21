@@ -66,7 +66,7 @@
 ```bash
 127.0.0.1   keycloak
 ```
-##### Run command in spring-boot-microservices directory
+##### Run command in spring-boot-microservices-eric6166 directory
 
 - Docker environment
 
