@@ -31,5 +31,9 @@ public class BaseUtils {
         return new ResponseEntity<>(new AppResponse<>(errorResponse), errorResponse.getHttpStatus());
     }
 
+    public static ResponseEntity<Object> buildFallBackMethodResponseExceptionEntity(ErrorResponse errorResponse) {
+        return new ResponseEntity<>(new AppResponse<>(errorResponse), errorResponse.getHttpStatus());
+    }
+
 
 }

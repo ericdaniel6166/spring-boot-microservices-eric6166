@@ -30,6 +30,10 @@ public final class AppExceptionUtils {
         return new ErrorResponse(httpStatus, error, message, httpServletRequest.getRequestURI(), rootCause);
     }
 
+    public static ErrorResponse buildFallBackMethodErrorResponse(HttpStatus httpStatus) {
+        return new ErrorResponse(httpStatus, httpStatus.name(), httpStatus.getReasonPhrase(), null, null);
+    }
+
     public ErrorResponse buildErrorResponse(ErrorCode errorCode, Object rootCause) {
         log.info("error: {}, errorMessage: {}, rootCause: {}", errorCode.name(), errorCode.getReasonPhrase(), rootCause);
         return new ErrorResponse(errorCode.getHttpStatus(), errorCode.name(), errorCode.getReasonPhrase(),
