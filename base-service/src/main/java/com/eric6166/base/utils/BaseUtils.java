@@ -20,7 +20,7 @@ public class BaseUtils {
 
     AppTraceIdContext appTraceIdContext;
 
-    public static String getRootCauseMessage(Exception e) {
+    public static String getRootCauseMessage(Throwable e) {
         return ExceptionUtils.getRootCause(e).getMessage();
     }
 
@@ -28,10 +28,6 @@ public class BaseUtils {
         if (ObjectUtils.isNotEmpty(appTraceIdContext)) {
             errorResponse.setTraceId(appTraceIdContext.getTraceId());
         }
-        return new ResponseEntity<>(new AppResponse<>(errorResponse), errorResponse.getHttpStatus());
-    }
-
-    public static ResponseEntity<Object> buildFallBackMethodResponseExceptionEntity(ErrorResponse errorResponse) {
         return new ResponseEntity<>(new AppResponse<>(errorResponse), errorResponse.getHttpStatus());
     }
 

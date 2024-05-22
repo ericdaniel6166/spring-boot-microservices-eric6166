@@ -4,6 +4,7 @@ import brave.Tracer;
 import brave.propagation.TraceContextOrSamplingFlags;
 import com.eric6166.base.utils.BaseConst;
 import com.eric6166.base.utils.BaseUtils;
+import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.AccessLevel;
@@ -31,6 +32,7 @@ import org.springframework.web.server.ResponseStatusException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletionException;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
@@ -64,6 +66,7 @@ public class RestExceptionHandler {
             span.finish();
         }
     }
+
 
     @ExceptionHandler(AppException.class)
     public ResponseEntity<Object> handleAppException(AppException e) {
@@ -233,13 +236,29 @@ public class RestExceptionHandler {
         return model;
     }
 
-    @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleException(Exception e) {
-        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleException").start();
+    @ExceptionHandler(CallNotPermittedException.class)
+    public ResponseEntity<Object> handleCallNotPermittedException(CallNotPermittedException e) {
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handle the exception when the CircuitBreaker is open").start();
+        try (var ws = tracer.withSpanInScope(span)) {
+            span.error(e);
+            var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.SERVICE_UNAVAILABLE, e);
+            log.info("handle the exception when the CircuitBreaker is open, e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+            return baseUtils.buildResponseExceptionEntity(errorResponse);
+        } catch (RuntimeException exception) {
+            span.error(exception);
+            throw exception;
+        } finally {
+            span.finish();
+        }
+    }
+
+    @ExceptionHandler(Throwable.class)
+    public ResponseEntity<Object> handleThrowable(Throwable e) {
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleThrowable").start();
         try (var ws = tracer.withSpanInScope(span)) {
             span.error(e);
             var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e);
-            span.tag("handleException errorResponse", errorResponse.toString());
+            span.tag("handleThrowable errorResponse", errorResponse.toString());
             log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
             return baseUtils.buildResponseExceptionEntity(errorResponse);
         } catch (RuntimeException exception) {
@@ -248,6 +267,14 @@ public class RestExceptionHandler {
         } finally {
             span.finish();
         }
+    }
+
+    @ExceptionHandler(CompletionException.class)
+    public ResponseEntity<Object> handleCompletionException(CompletionException e) {
+        if (e.getCause() instanceof AppException appException) {
+            return handleAppException(appException);
+        }
+        return handleThrowable(e.getCause());
     }
 
 }

@@ -36,7 +36,7 @@ public class CustomErrorDecoder implements ErrorDecoder {
             rootCause = errorJsonNode == null || errorJsonNode.isTextual() ? jsonNode : errorJsonNode;
         }
         if (httpStatus.is5xxServerError()) {
-            return new AppInternalServiceException(rootCause);
+            return new AppException(httpStatus, httpStatus.name(), httpStatus.getReasonPhrase(), rootCause);
         }
         return new AppBadRequestException(rootCause);
     }

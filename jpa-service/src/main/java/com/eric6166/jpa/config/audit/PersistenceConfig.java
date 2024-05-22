@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @Configuration
 @EnableJpaAuditing(auditorAwareRef = "auditorAware")
-@ConditionalOnClass(name = "org.springframework.data.jpa.repository.JpaRepository")
+//@ConditionalOnClass(name = "org.springframework.data.jpa.repository.JpaRepository")
 public class PersistenceConfig {
 
     @Bean
