@@ -52,17 +52,16 @@ public class AppSqsClient {
     SqsClient sqsClient;
     SqsProps sqsProps;
 
-    private Collection<SendMessageBatchRequestEntry> buildSendMessageBatchRequestEntries(SqsSendMessageBatchRequestEntries messages, boolean fifoQueue) {
-        var delaySeconds = messages.getDelaySeconds();
-        var messageGroupId = messages.getMessageGroupId();
-        return messages.getSqsSendMessageBatchRequestEntries().stream().map(o -> buildSendMessageBatchRequestEntry(o, delaySeconds, messageGroupId, fifoQueue)).collect(Collectors.toList());
+    private Collection<SendMessageBatchRequestEntry> buildSendMessageBatchRequestEntries(SqsSendMessageBatchRequestEntries messages,
+             Integer delaySeconds, String messageGroupId, boolean fifoQueue) {
+        return messages.getSqsSendMessageBatchRequestEntries().stream().map(o ->
+                buildSendMessageBatchRequestEntry(o, delaySeconds, messageGroupId, fifoQueue)).collect(Collectors.toList());
     }
 
-    private SendMessageBatchRequestEntry buildSendMessageBatchRequestEntry(SqsSendMessageBatchRequestEntry message, Integer delaySeconds, String messageGroupId, boolean fifoQueue) {
+    private SendMessageBatchRequestEntry buildSendMessageBatchRequestEntry(SqsSendMessageBatchRequestEntry message,
+               Integer delaySeconds, String messageGroupId, boolean fifoQueue) {
         Integer inputDelaySeconds;
-        if (message.getDelaySeconds() != null) {
-            inputDelaySeconds = message.getDelaySeconds();
-        } else if (delaySeconds != null) {
+        if (delaySeconds != null) {
             inputDelaySeconds = delaySeconds;
         } else {
             inputDelaySeconds = sqsProps.getTemplate().getDelaySeconds();
@@ -70,8 +69,6 @@ public class AppSqsClient {
         String inputMessageGroupId;
         if (!fifoQueue) {
             inputMessageGroupId = null;
-        } else if (StringUtils.isNotBlank(message.getMessageGroupId())) {
-            inputMessageGroupId = message.getMessageGroupId();
         } else if (StringUtils.isNotBlank(messageGroupId)) {
             inputMessageGroupId = messageGroupId;
         } else {
@@ -85,16 +82,19 @@ public class AppSqsClient {
                 .build();
     }
 
-    public SendMessageBatchResponse sendBatchMessageByQueueUrl(String queueUrl, SqsSendMessageBatchRequestEntries messages) throws AppException {
-        return sendBatchMessageByQueueUrlAndEntries(queueUrl, buildSendMessageBatchRequestEntries(messages, StringUtils.endsWith(queueUrl, AwsConst.SQS_SUFFIX_FIFO)));
+    public SendMessageBatchResponse sendMessageBatchByQueueUrl(String queueUrl, Integer delaySeconds, String messageGroupId,
+                SqsSendMessageBatchRequestEntries messages) throws AppException {
+        return sendMessageBatchByQueueUrlAndEntries(queueUrl, buildSendMessageBatchRequestEntries(messages, delaySeconds,
+                messageGroupId, StringUtils.endsWith(queueUrl, AwsConst.SQS_SUFFIX_FIFO)));
     }
 
-    public SendMessageBatchResponse sendBatchMessageByQueueName(String queueName, SqsSendMessageBatchRequestEntries messages) throws AppException {
-        return sendBatchMessageByQueueUrl(getQueueUrl(queueName).queueUrl(), messages);
+    public SendMessageBatchResponse sendMessageBatchByQueueName(String queueName, Integer delaySeconds, String messageGroupId,
+                SqsSendMessageBatchRequestEntries messages) throws AppException {
+        return sendMessageBatchByQueueUrl(getQueueUrl(queueName).queueUrl(), delaySeconds, messageGroupId, messages);
     }
 
-    public SendMessageBatchResponse sendBatchMessageByQueueUrlAndEntries(String queueUrl, Collection<SendMessageBatchRequestEntry> entries) throws AppException {
-        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("sendBatchMessageByQueueUrlAndRequestEntries").start();
+    public SendMessageBatchResponse sendMessageBatchByQueueUrlAndEntries(String queueUrl, Collection<SendMessageBatchRequestEntry> entries) throws AppException {
+        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("sendMessageBatchByQueueUrlAndEntries").start();
         try (var ws = tracer.withSpanInScope(span)) {
             try {
                 return sqsClient.sendMessageBatch(SendMessageBatchRequest.builder()

@@ -6,13 +6,5 @@ public interface SqsSendMessageBatchRequestEntries {
 
     Collection<SqsSendMessageBatchRequestEntry> getSqsSendMessageBatchRequestEntries();
 
-    default Integer getDelaySeconds() {
-        return null;
-    }
-
-    default String getMessageGroupId() {
-        return null;
-    }
-
 }
 
