@@ -54,6 +54,15 @@
             <groupId>io.micrometer</groupId>
             <artifactId>micrometer-observation</artifactId>
         </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>io.micrometer</groupId>-->
+        <!--            <artifactId>micrometer-tracing-integration-test</artifactId>-->
+        <!--        </dependency>-->
+        <!--        <dependency>-->
+        <!--            <groupId>io.micrometer</groupId>-->
+        <!--            <artifactId>micrometer-tracing-test</artifactId>-->
+        <!--        </dependency>-->
+
 
         <!--        <dependency>-->
         <!--            <groupId>io.zipkin.reporter2</groupId>-->
