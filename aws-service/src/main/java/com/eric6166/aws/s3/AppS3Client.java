@@ -409,7 +409,7 @@ public class AppS3Client {
         }
     }
 
-    public boolean isBucketExisted(String bucket) {
+    public boolean isBucketExisted(String bucket) throws AppException {
         var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("isBucketExisted").start();
         try (var ws = tracer.withSpanInScope(span)) {
             boolean isBucketExisted = false;
@@ -425,7 +425,7 @@ public class AppS3Client {
                     case MOVED_PERMANENTLY -> {
                         //
                     }
-                    default -> throw e;
+                    default -> throw AWSExceptionUtils.buildAppException(e);
                 }
             }
             return isBucketExisted;

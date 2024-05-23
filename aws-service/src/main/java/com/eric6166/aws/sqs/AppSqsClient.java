@@ -52,13 +52,13 @@ public class AppSqsClient {
     SqsClient sqsClient;
     SqsProps sqsProps;
 
-    private Collection<SendMessageBatchRequestEntry> buildSendMessageBatchRequestEntries(SqsSendMessageBatchRequestEntries messages,
+    private Collection<SendMessageBatchRequestEntry> buildSendMessageBatchRequestEntries(SqsSendMessageBatchRequestEntries entries,
              Integer delaySeconds, String messageGroupId, boolean fifoQueue) {
-        return messages.getSqsSendMessageBatchRequestEntries().stream().map(o ->
-                buildSendMessageBatchRequestEntry(o, delaySeconds, messageGroupId, fifoQueue)).collect(Collectors.toList());
+        return entries.getSqsSendMessageBatchRequestEntries().stream().map(entry ->
+                buildSendMessageBatchRequestEntry(entry, delaySeconds, messageGroupId, fifoQueue)).collect(Collectors.toList());
     }
 
-    private SendMessageBatchRequestEntry buildSendMessageBatchRequestEntry(SqsSendMessageBatchRequestEntry message,
+    private SendMessageBatchRequestEntry buildSendMessageBatchRequestEntry(SqsSendMessageBatchRequestEntry entry,
                Integer delaySeconds, String messageGroupId, boolean fifoQueue) {
         Integer inputDelaySeconds;
         if (delaySeconds != null) {
@@ -75,22 +75,22 @@ public class AppSqsClient {
             inputMessageGroupId = sqsProps.getTemplate().getQueue().getFifo().getMessageGroupId();
         }
         return SendMessageBatchRequestEntry.builder()
-                .messageBody(message.getMessageBody())
-                .id(message.getId())
+                .messageBody(entry.getMessageBody())
+                .id(entry.getId())
                 .delaySeconds(inputDelaySeconds)
                 .messageGroupId(inputMessageGroupId)
                 .build();
     }
 
     public SendMessageBatchResponse sendMessageBatchByQueueUrl(String queueUrl, Integer delaySeconds, String messageGroupId,
-                SqsSendMessageBatchRequestEntries messages) throws AppException {
-        return sendMessageBatchByQueueUrlAndEntries(queueUrl, buildSendMessageBatchRequestEntries(messages, delaySeconds,
+                SqsSendMessageBatchRequestEntries entries) throws AppException {
+        return sendMessageBatchByQueueUrlAndEntries(queueUrl, buildSendMessageBatchRequestEntries(entries, delaySeconds,
                 messageGroupId, StringUtils.endsWith(queueUrl, AwsConst.SQS_SUFFIX_FIFO)));
     }
 
     public SendMessageBatchResponse sendMessageBatchByQueueName(String queueName, Integer delaySeconds, String messageGroupId,
-                SqsSendMessageBatchRequestEntries messages) throws AppException {
-        return sendMessageBatchByQueueUrl(getQueueUrl(queueName).queueUrl(), delaySeconds, messageGroupId, messages);
+                SqsSendMessageBatchRequestEntries entries) throws AppException {
+        return sendMessageBatchByQueueUrl(getQueueUrl(queueName).queueUrl(), delaySeconds, messageGroupId, entries);
     }
 
     public SendMessageBatchResponse sendMessageBatchByQueueUrlAndEntries(String queueUrl, Collection<SendMessageBatchRequestEntry> entries) throws AppException {
