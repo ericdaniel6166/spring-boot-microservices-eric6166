@@ -1,6 +1,6 @@
 package com.eric6166.common.config.jackson;
 
-import com.eric6166.base.utils.BaseConst;
+import com.eric6166.base.utils.AppDateUtils;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,13 +28,13 @@ public class JacksonConfig {
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        objectMapper.setDateFormat(new SimpleDateFormat(BaseConst.DEFAULT_DATE_TIME_PATTERN));
+        objectMapper.setDateFormat(new SimpleDateFormat(AppDateUtils.DEFAULT_DATE_TIME_PATTERN));
 
         JavaTimeModule javaTimeModule = new JavaTimeModule();
-        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(BaseConst.DEFAULT_DATE_TIME_FORMATTER));
-        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(BaseConst.DEFAULT_DATE_TIME_FORMATTER));
-        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(BaseConst.DEFAULT_DATE_FORMATTER));
-        javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(BaseConst.DEFAULT_DATE_FORMATTER));
+        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(AppDateUtils.DEFAULT_DATE_TIME_FORMATTER));
+        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(AppDateUtils.DEFAULT_DATE_TIME_FORMATTER));
+        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(AppDateUtils.DEFAULT_DATE_FORMATTER));
+        javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(AppDateUtils.DEFAULT_DATE_FORMATTER));
 
         objectMapper.registerModule(javaTimeModule);
 
