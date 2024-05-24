@@ -7,7 +7,7 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
-public final class AppDateUtils {
+public final class DateTimeUtils {
 
     public static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd"; //change
     public static final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE; //change
@@ -18,13 +18,12 @@ public final class AppDateUtils {
     public static final String DEFAULT_TIME_ZONE_ID_STRING = "UTC"; //change
     public static final ZoneId DEFAULT_ZONE_ID = ZoneId.of(DEFAULT_TIME_ZONE_ID_STRING); //change
 
-    private AppDateUtils() {
+    private DateTimeUtils() {
         throw new IllegalStateException("Utility class");
     }
 
     public static LocalDateTime toLocalDateTime(String dateTime, String pattern) {
         try {
-
             return LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern(pattern));
         } catch (DateTimeException e) {
             throw new IllegalArgumentException(String.format("the text cannot be parse, dateTime '%s', pattern '%s'", dateTime, pattern));

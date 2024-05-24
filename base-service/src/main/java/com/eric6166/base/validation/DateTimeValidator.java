@@ -1,6 +1,6 @@
 package com.eric6166.base.validation;
 
-import com.eric6166.base.utils.AppDateUtils;
+import com.eric6166.base.utils.DateTimeUtils;
 import com.eric6166.base.utils.BaseMessageConst;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -35,8 +35,8 @@ public class DateTimeValidator implements ConstraintValidator<ValidDateTime, Str
         }
         boolean isValid = true;
         switch (flag) {
-            case DATE -> isValid = AppDateUtils.toOptionalLocalDate(date, pattern).isPresent();
-            case DATE_TIME -> isValid = AppDateUtils.toOptionalLocalDateTime(date, pattern).isPresent();
+            case DATE -> isValid = DateTimeUtils.toOptionalLocalDate(date, pattern).isPresent();
+            case DATE_TIME -> isValid = DateTimeUtils.toOptionalLocalDateTime(date, pattern).isPresent();
             default -> {
             }
         }
@@ -53,6 +53,6 @@ public class DateTimeValidator implements ConstraintValidator<ValidDateTime, Str
             }
             constraintValidatorContext.buildConstraintViolationWithTemplate(msg).addConstraintViolation();
         }
-        return AppDateUtils.toOptionalLocalDate(date, pattern).isPresent();
+        return isValid;
     }
 }
