@@ -35,10 +35,10 @@ public class NumberValidator implements ConstraintValidator<ValidNumber, String>
         boolean isValid = true;
 
         switch (flag) {
-            case IS_CREATABLE -> isValid = NumberUtils.isCreatable(numberStr);
-            case IS_PARSEABLE -> isValid = NumberUtils.isParsable(numberStr);
-            case IS_DIGITS -> isValid = NumberUtils.isDigits(numberStr);
-            case IS_INTEGER -> isValid = NumberUtils.isParsable(numberStr) && !numberStr.contains(".");
+            case CREATABLE -> isValid = NumberUtils.isCreatable(numberStr);
+            case PARSEABLE -> isValid = NumberUtils.isParsable(numberStr);
+            case DIGITS -> isValid = NumberUtils.isDigits(numberStr);
+            case INTEGER -> isValid = NumberUtils.isParsable(numberStr) && !numberStr.contains(".");
             default -> {
             }
         }
@@ -52,11 +52,11 @@ public class NumberValidator implements ConstraintValidator<ValidNumber, String>
         constraintValidatorContext.disableDefaultConstraintViolation();
         var msg = StringUtils.EMPTY;
         switch (flag) {
-            case IS_CREATABLE, IS_PARSEABLE -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_NUMBER,
+            case CREATABLE, PARSEABLE -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_NUMBER,
                     null, LocaleContextHolder.getLocale());
-            case IS_DIGITS -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_NUMBER_DIGITS,
+            case DIGITS -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_NUMBER_DIGITS,
                     null, LocaleContextHolder.getLocale());
-            case IS_INTEGER -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_NUMBER_INTEGER,
+            case INTEGER -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_NUMBER_INTEGER,
                     null, LocaleContextHolder.getLocale());
             default -> {
             }

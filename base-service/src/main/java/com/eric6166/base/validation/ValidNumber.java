@@ -27,10 +27,10 @@ public @interface ValidNumber {
 
     enum Flag {
         NOT_VALIDATE,
-        IS_CREATABLE,
-        IS_PARSEABLE,
-        IS_DIGITS,
-        IS_INTEGER,
+        CREATABLE, // valid Java number
+        PARSEABLE, // Hexadecimal and scientific notations are not considered parsable
+        DIGITS, // contains only digit characters
+        INTEGER,
 
     }
 }
