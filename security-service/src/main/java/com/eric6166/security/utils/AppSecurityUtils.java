@@ -1,6 +1,6 @@
 package com.eric6166.security.utils;
 
-import com.eric6166.base.utils.BaseConst;
+import com.eric6166.base.utils.AppDateUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -127,16 +127,16 @@ public class AppSecurityUtils {
     }
 
     public static LocalDateTime getExpiresAt() {
-        return LocalDateTime.ofInstant(getJwt().getExpiresAt(), BaseConst.DEFAULT_ZONE_ID);
+        return LocalDateTime.ofInstant(getJwt().getExpiresAt(), AppDateUtils.DEFAULT_ZONE_ID);
     }
 
     public static LocalDateTime getIssuedAt() {
-        return LocalDateTime.ofInstant(getJwt().getIssuedAt(), BaseConst.DEFAULT_ZONE_ID);
+        return LocalDateTime.ofInstant(getJwt().getIssuedAt(), AppDateUtils.DEFAULT_ZONE_ID);
     }
 
     public static LocalDateTime getNotBefore() {
         try {
-            return LocalDateTime.ofInstant(getJwt().getNotBefore(), BaseConst.DEFAULT_ZONE_ID);
+            return LocalDateTime.ofInstant(getJwt().getNotBefore(), AppDateUtils.DEFAULT_ZONE_ID);
         } catch (NullPointerException ignored) {
             return null;
         }

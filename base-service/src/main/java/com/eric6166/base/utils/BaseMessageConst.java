@@ -20,8 +20,6 @@ public final class BaseMessageConst {
     public static final String MSG_ERR_CONSTRAINS_PASSWORD_MATCHES = "constraints.PasswordMatches.message";
     public static final String MSG_ERR_CONSTRAINS_VALID_PASSWORD = "constraints.ValidPassword.message";
 
-//    public static final String MSG_ERR_CONSTRAINS_VALID_DATE_TIME_MESSAGE = "{" +MSG_ERR_CONSTRAINS_VALID_DATE_TIME+ "}";
-//    public static final String MSG_ERR_CONSTRAINS_VALID_DATE_MESSAGE = "{" +MSG_ERR_CONSTRAINS_VALID_DATE+ "}";
     public static final String MSG_ERR_CONSTRAINS_VALID_FILE_EXTENSION_MESSAGE = "{" +MSG_ERR_CONSTRAINS_VALID_FILE_EXTENSION+ "}";
     public static final String MSG_ERR_CONSTRAINS_VALID_FILE_MIME_TYPE_MESSAGE = "{" +MSG_ERR_CONSTRAINS_VALID_FILE_MIME_TYPE+ "}";
     public static final String MSG_ERR_CONSTRAINS_VALID_FILE_MAX_SIZE_MESSAGE = "{" +MSG_ERR_CONSTRAINS_VALID_FILE_MAX_SIZE+ "}";

@@ -13,9 +13,9 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(
-        validatedBy = {DateValidator.class}
+        validatedBy = {DateTimeValidator.class}
 )
-public @interface ValidDate {
+public @interface ValidDateTime {
 
     Flag flag() default Flag.NOT_CHECK;
 

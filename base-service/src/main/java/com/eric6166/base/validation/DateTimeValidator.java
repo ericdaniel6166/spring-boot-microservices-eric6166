@@ -13,16 +13,16 @@ import org.springframework.context.i18n.LocaleContextHolder;
 
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class DateValidator implements ConstraintValidator<ValidDate, String> {
+public class DateTimeValidator implements ConstraintValidator<ValidDateTime, String> {
 
     private final MessageSource messageSource;
 
     String pattern;
     String message;
-    ValidDate.Flag flag;
+    ValidDateTime.Flag flag;
 
     @Override
-    public void initialize(ValidDate constraintAnnotation) {
+    public void initialize(ValidDateTime constraintAnnotation) {
         pattern = constraintAnnotation.pattern();
         flag = constraintAnnotation.flag();
         message = constraintAnnotation.message();
