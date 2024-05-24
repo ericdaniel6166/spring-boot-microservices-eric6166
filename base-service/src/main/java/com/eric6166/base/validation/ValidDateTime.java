@@ -31,6 +31,7 @@ public @interface ValidDateTime {
         NOT_VALIDATE,
         LOCAL_DATE,
         LOCAL_DATE_TIME,
+        LOCAL_TIME,
 
     }
 }

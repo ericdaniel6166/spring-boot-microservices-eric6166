@@ -13,6 +13,7 @@ public final class BaseMessageConst {
     public static final String MSG_ERR_CONSTRAINS_VALID_NUMBER_INTEGER = "constraints.ValidNumberInteger.message";
     public static final String MSG_ERR_CONSTRAINS_VALID_DATE_TIME = "constraints.ValidDateTime.message";
     public static final String MSG_ERR_CONSTRAINS_VALID_DATE = "constraints.ValidDate.message";
+    public static final String MSG_ERR_CONSTRAINS_VALID_TIME = "constraints.ValidTime.message";
     public static final String MSG_ERR_CONSTRAINS_VALID_FILE_EXTENSION = "constraints.ValidFileExtension.message";
     public static final String MSG_ERR_CONSTRAINS_VALID_FILE_MIME_TYPE = "constraints.ValidFileMimeType.message";
     public static final String MSG_ERR_CONSTRAINS_VALID_FILE_MAX_SIZE = "constraints.ValidFileMaxSize.message";

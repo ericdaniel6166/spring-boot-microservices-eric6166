@@ -37,6 +37,7 @@ public class DateTimeValidator implements ConstraintValidator<ValidDateTime, Str
         switch (flag) {
             case LOCAL_DATE -> isValid = DateTimeUtils.toOptionalLocalDate(date, pattern).isPresent();
             case LOCAL_DATE_TIME -> isValid = DateTimeUtils.toOptionalLocalDateTime(date, pattern).isPresent();
+            case LOCAL_TIME -> isValid = DateTimeUtils.toOptionalLocalTime(date, pattern).isPresent();
             default -> {
             }
         }
@@ -53,6 +54,8 @@ public class DateTimeValidator implements ConstraintValidator<ValidDateTime, Str
             case LOCAL_DATE -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_DATE,
                     null, LocaleContextHolder.getLocale());
             case LOCAL_DATE_TIME -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_DATE_TIME,
+                    null, LocaleContextHolder.getLocale());
+            case LOCAL_TIME -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_TIME,
                     null, LocaleContextHolder.getLocale());
             default -> {
             }
