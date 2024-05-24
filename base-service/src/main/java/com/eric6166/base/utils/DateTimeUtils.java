@@ -114,5 +114,21 @@ public final class DateTimeUtils {
         }
     }
 
+    public static String toString(LocalTime time, String pattern) {
+        try {
+            return time.format(DateTimeFormatter.ofPattern(pattern));
+        } catch (DateTimeException e) {
+            throw new IllegalArgumentException(String.format("the time cannot be formatted, time '%s', pattern '%s'", time, pattern));
+        }
+    }
+
+    public static Optional<String> toOptionalString(LocalTime time, String pattern) {
+        try {
+            return Optional.of(toString(time, pattern));
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
+        }
+    }
+
 
 }
