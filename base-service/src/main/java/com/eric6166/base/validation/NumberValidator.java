@@ -38,7 +38,7 @@ public class NumberValidator implements ConstraintValidator<ValidNumber, String>
             case CREATABLE -> isValid = NumberUtils.isCreatable(numberStr);
             case PARSEABLE -> isValid = NumberUtils.isParsable(numberStr);
             case DIGITS -> isValid = NumberUtils.isDigits(numberStr);
-            case INTEGER -> isValid = NumberUtils.isParsable(numberStr) && !numberStr.contains(".");
+            case BIG_INTEGER -> isValid = NumberUtils.isParsable(numberStr) && !numberStr.contains(".");
             default -> {
             }
         }
@@ -56,7 +56,7 @@ public class NumberValidator implements ConstraintValidator<ValidNumber, String>
                     null, LocaleContextHolder.getLocale());
             case DIGITS -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_NUMBER_DIGITS,
                     null, LocaleContextHolder.getLocale());
-            case INTEGER -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_NUMBER_INTEGER,
+            case BIG_INTEGER -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_NUMBER_BIG_INTEGER,
                     null, LocaleContextHolder.getLocale());
             default -> {
             }

@@ -10,7 +10,7 @@ public final class BaseMessageConst {
     public static final String MSG_ERR_CONSTRAINS_VALID_VALUE = "constraints.ValidValue.message";
     public static final String MSG_ERR_CONSTRAINS_VALID_NUMBER = "constraints.ValidNumber.message";
     public static final String MSG_ERR_CONSTRAINS_VALID_NUMBER_DIGITS = "constraints.ValidNumberDigits.message";
-    public static final String MSG_ERR_CONSTRAINS_VALID_NUMBER_INTEGER = "constraints.ValidNumberInteger.message";
+    public static final String MSG_ERR_CONSTRAINS_VALID_NUMBER_BIG_INTEGER = "constraints.ValidNumberBigInteger.message";
     public static final String MSG_ERR_CONSTRAINS_VALID_DATE_TIME = "constraints.ValidDateTime.message";
     public static final String MSG_ERR_CONSTRAINS_VALID_DATE = "constraints.ValidDate.message";
     public static final String MSG_ERR_CONSTRAINS_VALID_TIME = "constraints.ValidTime.message";

@@ -30,7 +30,7 @@ public @interface ValidNumber {
         CREATABLE, // valid Java number
         PARSEABLE, // Hexadecimal and scientific notations are not considered parsable
         DIGITS, // contains only digit characters
-        INTEGER,
+        BIG_INTEGER,
 
     }
 }
