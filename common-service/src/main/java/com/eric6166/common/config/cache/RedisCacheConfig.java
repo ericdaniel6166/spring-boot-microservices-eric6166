@@ -18,7 +18,6 @@ import java.time.Duration;
 @ConditionalOnProperty(name = "spring.cache.type", havingValue = "redis")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@EnableCaching
 public class RedisCacheConfig {
 
     RedisCacheProps redisCacheProps;

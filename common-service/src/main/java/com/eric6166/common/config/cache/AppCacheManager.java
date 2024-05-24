@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
@@ -16,6 +17,7 @@ import java.util.Collection;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 @ConditionalOnProperty(name = "spring.cache.enabled", havingValue = "true")
+@EnableCaching
 public class AppCacheManager {
 
     CacheManager cacheManager;
