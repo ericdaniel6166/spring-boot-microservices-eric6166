@@ -65,7 +65,7 @@ public final class DateTimeUtils {
     public static Optional<String> toOptionalString(LocalDateTime dateTime, String pattern) {
         try {
             return Optional.of(toString(dateTime, pattern));
-        } catch (DateTimeException e) {
+        } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
     }
@@ -81,7 +81,7 @@ public final class DateTimeUtils {
     public static Optional<String> toOptionalString(LocalDate date, String pattern) {
         try {
             return Optional.of(toString(date, pattern));
-        } catch (DateTimeException e) {
+        } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
     }
