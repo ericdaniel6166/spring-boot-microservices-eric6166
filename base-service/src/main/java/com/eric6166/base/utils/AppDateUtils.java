@@ -10,6 +10,7 @@ public final class AppDateUtils {
 
     public static final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE; //change
     public static final String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"; //change
+    public static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd"; //change
     public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_PATTERN);
 
     private AppDateUtils() {
@@ -18,6 +19,7 @@ public final class AppDateUtils {
 
     public static LocalDateTime toLocalDateTime(String dateTime, String pattern) {
         try {
+
             return LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern(pattern));
         } catch (DateTimeException e) {
             throw new IllegalArgumentException(String.format("the text cannot be parse, dateTime '%s', pattern '%s'", dateTime, pattern));
@@ -27,7 +29,7 @@ public final class AppDateUtils {
     public static Optional<LocalDateTime> toOptionalLocalDateTime(String dateTime, String pattern) {
         try {
             return Optional.of(toLocalDateTime(dateTime, pattern));
-        } catch (DateTimeException e) {
+        } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
     }
@@ -43,7 +45,7 @@ public final class AppDateUtils {
     public static Optional<LocalDate> toOptionalLocalDate(String date, String pattern) {
         try {
             return Optional.of(toLocalDate(date, pattern));
-        } catch (DateTimeException e) {
+        } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
     }

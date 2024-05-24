@@ -1,5 +1,6 @@
 package com.eric6166.base.validation;
 
+import com.eric6166.base.utils.BaseMessageConst;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -19,7 +20,7 @@ public @interface ValidFileMaxSize {
 
     long maxSize() default Long.MAX_VALUE; // MB
 
-    String message() default "{constraints.ValidFileMaxSize.message}";
+    String message() default BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_FILE_MAX_SIZE_MESSAGE;
 
     Class<?>[] groups() default {};
 

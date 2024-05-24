@@ -1,6 +1,5 @@
 package com.eric6166.base.validation;
 
-import com.eric6166.base.utils.BaseMessageConst;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -14,15 +13,24 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(
-        validatedBy = {FileExtensionValidator.class}
+        validatedBy = {NumberValidator.class}
 )
-public @interface ValidFileExtension {
+public @interface ValidNumber {
 
-    String[] extensions() default {};
+    Flag flag() default Flag.NOT_CHECK;
 
-    String message() default BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_FILE_EXTENSION_MESSAGE;
+    String message() default "";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
+
+    enum Flag {
+        NOT_CHECK,
+        IS_CREATABLE,
+        IS_PARSEABLE,
+        IS_DIGITS,
+        IS_INTEGER,
+
+    }
 }

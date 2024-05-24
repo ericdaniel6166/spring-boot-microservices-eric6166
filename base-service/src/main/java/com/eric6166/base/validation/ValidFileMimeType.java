@@ -1,5 +1,6 @@
 package com.eric6166.base.validation;
 
+import com.eric6166.base.utils.BaseMessageConst;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -19,7 +20,7 @@ public @interface ValidFileMimeType {
 
     String[] mimeTypes() default {};
 
-    String message() default "{constraints.ValidFileMimeType.message}";
+    String message() default BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_FILE_MIME_TYPE_MESSAGE;
 
     Class<?>[] groups() default {};
 

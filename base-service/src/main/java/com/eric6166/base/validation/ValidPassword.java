@@ -1,5 +1,6 @@
 package com.eric6166.base.validation;
 
+import com.eric6166.base.utils.BaseMessageConst;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -17,7 +18,7 @@ import java.lang.annotation.Target;
 )
 public @interface ValidPassword {
 
-    String message() default "{constraints.ValidPassword.message}";
+    String message() default BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_PASSWORD_MESSAGE;
 
     Class<?>[] groups() default {};
 
