@@ -10,7 +10,7 @@ import java.util.TimeZone;
 public class TimeZoneConfig {
     @Bean
     public void setTimeZone() {
-        TimeZone.setDefault(TimeZone.getTimeZone(DateTimeUtils.DEFAULT_TIME_ZONE_ID_STRING));
+        TimeZone.setDefault(TimeZone.getTimeZone(DateTimeUtils.DEFAULT_ZONE_ID_STRING));
     }
 
 }
