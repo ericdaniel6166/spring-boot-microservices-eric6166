@@ -46,12 +46,16 @@ public class CollectionStringValidator implements ConstraintValidator<ValidColle
             isValid = upperCaseValueList.containsAll(s.stream().map(String::toUpperCase).toList());
         }
         if (!isValid && StringUtils.isBlank(message)) {
-            constraintValidatorContext.disableDefaultConstraintViolation();
-            var msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_VALUE,
-                    new String[]{BaseConst.PLACEHOLDER_0, valueList.toString()}, LocaleContextHolder.getLocale());
-            constraintValidatorContext.buildConstraintViolationWithTemplate(msg).addConstraintViolation();
+            buildConstraintViolation(constraintValidatorContext);
         }
         return isValid;
+    }
+
+    private void buildConstraintViolation(ConstraintValidatorContext constraintValidatorContext) {
+        constraintValidatorContext.disableDefaultConstraintViolation();
+        var msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_VALUE,
+                new String[]{BaseConst.PLACEHOLDER_0, valueList.toString()}, LocaleContextHolder.getLocale());
+        constraintValidatorContext.buildConstraintViolationWithTemplate(msg).addConstraintViolation();
     }
 
 }

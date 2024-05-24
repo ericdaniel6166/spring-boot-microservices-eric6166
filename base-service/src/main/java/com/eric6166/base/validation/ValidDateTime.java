@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
 )
 public @interface ValidDateTime {
 
-    Flag flag() default Flag.NOT_CHECK;
+    Flag flag() default Flag.NOT_VALIDATE;
 
     String pattern();
 
@@ -28,7 +28,7 @@ public @interface ValidDateTime {
     Class<? extends Payload>[] payload() default {};
 
     enum Flag {
-        NOT_CHECK,
+        NOT_VALIDATE,
         LOCAL_DATE,
         LOCAL_DATE_TIME,
 

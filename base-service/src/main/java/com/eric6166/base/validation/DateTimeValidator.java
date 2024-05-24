@@ -41,18 +41,22 @@ public class DateTimeValidator implements ConstraintValidator<ValidDateTime, Str
             }
         }
         if (!isValid && StringUtils.isBlank(message)) {
-            constraintValidatorContext.disableDefaultConstraintViolation();
-            var msg = StringUtils.EMPTY;
-            switch (flag) {
-                case LOCAL_DATE -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_DATE,
-                        null, LocaleContextHolder.getLocale());
-                case LOCAL_DATE_TIME -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_DATE_TIME,
-                        null, LocaleContextHolder.getLocale());
-                default -> {
-                }
-            }
-            constraintValidatorContext.buildConstraintViolationWithTemplate(msg).addConstraintViolation();
+            buildConstraintViolation(constraintValidatorContext);
         }
         return isValid;
+    }
+
+    private void buildConstraintViolation(ConstraintValidatorContext constraintValidatorContext) {
+        constraintValidatorContext.disableDefaultConstraintViolation();
+        var msg = StringUtils.EMPTY;
+        switch (flag) {
+            case LOCAL_DATE -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_DATE,
+                    null, LocaleContextHolder.getLocale());
+            case LOCAL_DATE_TIME -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_DATE_TIME,
+                    null, LocaleContextHolder.getLocale());
+            default -> {
+            }
+        }
+        constraintValidatorContext.buildConstraintViolationWithTemplate(msg).addConstraintViolation();
     }
 }

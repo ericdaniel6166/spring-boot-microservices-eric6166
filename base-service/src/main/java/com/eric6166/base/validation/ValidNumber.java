@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
 )
 public @interface ValidNumber {
 
-    Flag flag() default Flag.NOT_CHECK;
+    Flag flag() default Flag.NOT_VALIDATE;
 
     String message() default "";
 
@@ -26,7 +26,7 @@ public @interface ValidNumber {
     Class<? extends Payload>[] payload() default {};
 
     enum Flag {
-        NOT_CHECK,
+        NOT_VALIDATE,
         IS_CREATABLE,
         IS_PARSEABLE,
         IS_DIGITS,

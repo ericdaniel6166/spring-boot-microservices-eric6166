@@ -43,20 +43,24 @@ public class NumberValidator implements ConstraintValidator<ValidNumber, String>
             }
         }
         if (!isValid && StringUtils.isBlank(message)) {
-            constraintValidatorContext.disableDefaultConstraintViolation();
-            var msg = StringUtils.EMPTY;
-            switch (flag) {
-                case IS_CREATABLE, IS_PARSEABLE -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_NUMBER,
-                        null, LocaleContextHolder.getLocale());
-                case IS_DIGITS -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_NUMBER_DIGITS,
-                        null, LocaleContextHolder.getLocale());
-                case IS_INTEGER -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_NUMBER_INTEGER,
-                        null, LocaleContextHolder.getLocale());
-                default -> {
-                }
-            }
-            constraintValidatorContext.buildConstraintViolationWithTemplate(msg).addConstraintViolation();
+            buildConstraintViolation(constraintValidatorContext);
         }
         return isValid;
+    }
+
+    private void buildConstraintViolation(ConstraintValidatorContext constraintValidatorContext) {
+        constraintValidatorContext.disableDefaultConstraintViolation();
+        var msg = StringUtils.EMPTY;
+        switch (flag) {
+            case IS_CREATABLE, IS_PARSEABLE -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_NUMBER,
+                    null, LocaleContextHolder.getLocale());
+            case IS_DIGITS -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_NUMBER_DIGITS,
+                    null, LocaleContextHolder.getLocale());
+            case IS_INTEGER -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_NUMBER_INTEGER,
+                    null, LocaleContextHolder.getLocale());
+            default -> {
+            }
+        }
+        constraintValidatorContext.buildConstraintViolationWithTemplate(msg).addConstraintViolation();
     }
 }
