@@ -6,7 +6,6 @@ public final class SecurityConst {
 
     public static final String ROLE_CUSTOMER = "CUSTOMER";
     public static final String ROLE_ADMIN = "ADMIN";
-    public static final String SECURITY_REQUIREMENT_ACCESS_TOKEN = "access_token";
 
     public static final String PREFERRED_USERNAME = "preferred_username";
     public static final String EMAIL = "email";
