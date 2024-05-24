@@ -22,11 +22,19 @@ public final class DateTimeUtils {
         throw new IllegalStateException("Utility class");
     }
 
+    /**
+     * The text is parsed using the pattern, returning a date-time.
+     *
+     * @param dateTime  the text to parse, not null
+     * @param pattern the pattern to use, not null
+     * @return the parsed local date-time, not null
+     * @throws IllegalArgumentException if the text cannot be parsed
+     */
     public static LocalDateTime toLocalDateTime(String dateTime, String pattern) {
         try {
             return LocalDateTime.parse(dateTime, DateTimeFormatter.ofPattern(pattern));
         } catch (DateTimeException e) {
-            throw new IllegalArgumentException(String.format("the text cannot be parse, dateTime '%s', pattern '%s'", dateTime, pattern));
+            throw new IllegalArgumentException(String.format("the text cannot be parsed, dateTime '%s', pattern '%s'", dateTime, pattern));
         }
     }
 

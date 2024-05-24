@@ -29,8 +29,8 @@ public @interface ValidDateTime {
 
     enum Flag {
         NOT_CHECK,
-        DATE,
-        DATE_TIME,
+        LOCAL_DATE,
+        LOCAL_DATE_TIME,
 
     }
 }

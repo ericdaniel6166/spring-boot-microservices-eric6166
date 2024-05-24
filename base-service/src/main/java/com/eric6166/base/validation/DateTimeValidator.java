@@ -35,8 +35,8 @@ public class DateTimeValidator implements ConstraintValidator<ValidDateTime, Str
         }
         boolean isValid = true;
         switch (flag) {
-            case DATE -> isValid = DateTimeUtils.toOptionalLocalDate(date, pattern).isPresent();
-            case DATE_TIME -> isValid = DateTimeUtils.toOptionalLocalDateTime(date, pattern).isPresent();
+            case LOCAL_DATE -> isValid = DateTimeUtils.toOptionalLocalDate(date, pattern).isPresent();
+            case LOCAL_DATE_TIME -> isValid = DateTimeUtils.toOptionalLocalDateTime(date, pattern).isPresent();
             default -> {
             }
         }
@@ -44,9 +44,9 @@ public class DateTimeValidator implements ConstraintValidator<ValidDateTime, Str
             constraintValidatorContext.disableDefaultConstraintViolation();
             var msg = StringUtils.EMPTY;
             switch (flag) {
-                case DATE -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_DATE,
+                case LOCAL_DATE -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_DATE,
                         null, LocaleContextHolder.getLocale());
-                case DATE_TIME -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_DATE_TIME,
+                case LOCAL_DATE_TIME -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_DATE_TIME,
                         null, LocaleContextHolder.getLocale());
                 default -> {
                 }
