@@ -14,6 +14,7 @@ import lombok.experimental.FieldDefaults;
 @Builder
 public class MessageResponse {
     Long id;
+    String uuid;
     String message;
 
 }
