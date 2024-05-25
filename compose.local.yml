@@ -60,6 +60,26 @@ services:
       timeout: 5s
       retries: 5
 
+  postgres-order:
+    container_name: postgres-order
+    image: postgres:14.9-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: order_service_v1
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-order-data:/var/lib/postgresql/data
+    networks:
+      - internal-network
+    restart: always
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+
   keycloak:
     container_name: keycloak
     image: quay.io/keycloak/keycloak:23.0.3
@@ -162,7 +182,7 @@ volumes:
   postgres-inventory-data:
   postgres-user-data:
   cache-data:
-#  postgres-order-data:
+  postgres-order-data:
 #  postgres-payment-data:
 #  activemq-data:
 #  activemq-log:
