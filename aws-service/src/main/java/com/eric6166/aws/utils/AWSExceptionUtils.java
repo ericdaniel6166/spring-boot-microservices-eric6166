@@ -16,11 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 
-@RequiredArgsConstructor
-@Component
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@Slf4j
-public final class AWSExceptionUtils {
+public final class AWSExceptionUtils { // remove all annotation
 
     public static AWSErrorResponse buildAWSErrorResponse(AwsServiceException e) {
         var awsErrorDetails = e.awsErrorDetails();
