@@ -81,6 +81,13 @@
             <groupId>io.github.resilience4j</groupId>
             <artifactId>resilience4j-micrometer</artifactId>
         </dependency>
+
+<!--        Mock JwtAuthenticationToken-->
+        <dependency>
+            <groupId>com.c4-soft.springaddons</groupId>
+            <artifactId>spring-addons-oauth2-test</artifactId>
+            <version>${spring-addons-oauth2-test.version}</version>
+        </dependency>
         <!--        vault-->
         <!--        <dependency>-->
         <!--            <groupId>org.springframework.cloud</groupId>-->

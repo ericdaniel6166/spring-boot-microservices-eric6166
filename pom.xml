@@ -47,6 +47,7 @@
         <passay.version>1.6.3</passay.version>
         <tika.version>2.9.2</tika.version>
         <commons-io.version>2.15.1</commons-io.version>
+        <spring-addons-oauth2-test.version>7.8.0</spring-addons-oauth2-test.version>
     </properties>
 
     <dependencyManagement>
