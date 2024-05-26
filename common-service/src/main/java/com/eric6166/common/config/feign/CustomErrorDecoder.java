@@ -14,8 +14,6 @@ import lombok.SneakyThrows;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 
 @RequiredArgsConstructor
@@ -36,7 +34,8 @@ public class CustomErrorDecoder implements ErrorDecoder {
             rootCause = errorJsonNode == null || errorJsonNode.isTextual() ? jsonNode : errorJsonNode;
         }
         if (rootCause == null) {
-            rootCause = new ErrorResponse(httpStatus, httpStatus.name(), httpStatus.getReasonPhrase(), BaseUtils.getPathFromUrl(response.request().url()), response.reason());
+            rootCause = new ErrorResponse(httpStatus, httpStatus.name(), httpStatus.getReasonPhrase(),
+                    BaseUtils.getPathFromUrl(response.request().url()), response.reason());
         }
         if (httpStatus.is5xxServerError()) {
             return new AppInternalServiceException(rootCause);
