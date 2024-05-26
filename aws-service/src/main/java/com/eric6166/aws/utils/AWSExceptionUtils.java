@@ -3,20 +3,14 @@ package com.eric6166.aws.utils;
 import com.eric6166.aws.dto.AWSErrorResponse;
 import com.eric6166.base.exception.AppBadRequestException;
 import com.eric6166.base.exception.AppException;
-import com.eric6166.base.exception.AppExceptionUtils;
 import com.eric6166.base.exception.AppInternalServiceException;
 import com.eric6166.base.exception.AppNotFoundException;
 import com.eric6166.base.utils.BaseUtils;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 
-public final class AWSExceptionUtils { // remove all annotation
+public final class AWSExceptionUtils {
 
     public static AWSErrorResponse buildAWSErrorResponse(AwsServiceException e) {
         var awsErrorDetails = e.awsErrorDetails();
