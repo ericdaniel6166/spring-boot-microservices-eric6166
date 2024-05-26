@@ -1,9 +1,7 @@
 package com.eric6166.security.exception;
 
 import com.eric6166.base.exception.AppExceptionUtils;
-import com.eric6166.base.exception.ErrorResponse;
 import com.eric6166.base.utils.BaseUtils;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

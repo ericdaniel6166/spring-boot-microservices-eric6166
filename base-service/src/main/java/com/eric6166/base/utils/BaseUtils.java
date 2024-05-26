@@ -12,6 +12,9 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 @RequiredArgsConstructor
 @Component
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -29,6 +32,16 @@ public class BaseUtils {
             errorResponse.setTraceId(appTraceIdContext.getTraceId());
         }
         return new ResponseEntity<>(new AppResponse<>(errorResponse), errorResponse.getHttpStatus());
+    }
+
+    public static String getPathFromUrl(String urlString) {
+        try {
+            URL url = new URL(urlString);
+            return url.getPath();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
 
