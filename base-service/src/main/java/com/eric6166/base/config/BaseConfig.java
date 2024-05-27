@@ -34,7 +34,7 @@ public class BaseConfig {
     //time zone config
     @Bean
     public void setTimeZone() {
-        TimeZone.setDefault(TimeZone.getTimeZone(DateTimeUtils.DEFAULT_ZONE_ID_STRING));
+        TimeZone.setDefault(TimeZone.getTimeZone(DateTimeUtils.DEFAULT_ZONE_ID));
     }
 
 }

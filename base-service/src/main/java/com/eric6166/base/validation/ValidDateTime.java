@@ -1,5 +1,6 @@
 package com.eric6166.base.validation;
 
+import com.eric6166.base.enums.AppDateTimeFormatter;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
@@ -17,9 +18,11 @@ import java.lang.annotation.Target;
 )
 public @interface ValidDateTime {
 
-    Flag flag() default Flag.NOT_VALIDATE;
+    Flag flag() default Flag.NONE;
 
-    String pattern();
+    AppDateTimeFormatter formatter() default AppDateTimeFormatter.NONE;
+
+    String pattern() default "";
 
     String message() default "";
 
@@ -28,10 +31,11 @@ public @interface ValidDateTime {
     Class<? extends Payload>[] payload() default {};
 
     enum Flag {
-        NOT_VALIDATE,
+        NONE,
         LOCAL_DATE,
         LOCAL_DATE_TIME,
         LOCAL_TIME,
 
     }
+
 }

@@ -17,7 +17,7 @@ import java.lang.annotation.Target;
 )
 public @interface ValidNumber {
 
-    Flag flag() default Flag.NOT_VALIDATE;
+    Flag flag() default Flag.NONE;
 
     String message() default "";
 
@@ -26,7 +26,7 @@ public @interface ValidNumber {
     Class<? extends Payload>[] payload() default {};
 
     enum Flag {
-        NOT_VALIDATE,
+        NONE,
         CREATABLE, // valid Java number
         PARSEABLE, // Hexadecimal and scientific notations are not considered parsable
         DIGITS, // contains only digit characters
