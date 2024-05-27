@@ -7,8 +7,15 @@ import java.util.Optional;
 
 public class AuditorAwareImpl implements AuditorAware<String> {
 
+    private static final String DEFAULT_CURRENT_AUDITOR = "SYSTEM";
+
     @Override
     public Optional<String> getCurrentAuditor() {
-        return Optional.of(AppSecurityUtils.getCurrentAuditor());
+        try {
+            return Optional.of(AppSecurityUtils.getUsername());
+        } catch (NullPointerException ignored) {
+            return Optional.of(DEFAULT_CURRENT_AUDITOR);
+        }
     }
+
 }

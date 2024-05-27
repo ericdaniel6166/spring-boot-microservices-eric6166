@@ -62,14 +62,6 @@ public class AppSecurityUtils {
         return getAuthentication().getName();
     }
 
-    public static String getCurrentAuditor() {
-        try {
-            return getUsername();
-        } catch (NullPointerException ignored) {
-            return SecurityConst.DEFAULT_CURRENT_AUDITOR;
-        }
-    }
-
     public static String getEmail() {
         return String.valueOf(getClaim(SecurityConst.EMAIL));
     }

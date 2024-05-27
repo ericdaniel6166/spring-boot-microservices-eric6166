@@ -21,8 +21,6 @@ public final class SecurityConst {
 
     public static final String ROLES = "roles";
 
-    public static final String DEFAULT_CURRENT_AUDITOR = "SYSTEM";
-
     private SecurityConst() {
         throw new IllegalStateException("Utility class");
     }
