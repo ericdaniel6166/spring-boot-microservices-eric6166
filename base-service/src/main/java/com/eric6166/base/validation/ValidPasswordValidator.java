@@ -2,7 +2,6 @@ package com.eric6166.base.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.passay.CharacterRule;
 import org.passay.EnglishCharacterData;
@@ -15,13 +14,7 @@ import org.passay.WhitespaceRule;
 import java.util.ArrayList;
 import java.util.List;
 
-@RequiredArgsConstructor
 public class ValidPasswordValidator implements ConstraintValidator<ValidPassword, String> {
-
-    @Override
-    public void initialize(ValidPassword constraintAnnotation) {
-        //
-    }
 
     @Override
     public boolean isValid(String password, ConstraintValidatorContext constraintValidatorContext) {
