@@ -33,19 +33,20 @@ public class DateTimeValidator implements ConstraintValidator<ValidDateTime, Str
     }
 
     @Override
-    public boolean isValid(String date, ConstraintValidatorContext constraintValidatorContext) {
-        if (StringUtils.isBlank(date)) {
+    public boolean isValid(String dateTime, ConstraintValidatorContext constraintValidatorContext) {
+        if (StringUtils.isBlank(dateTime)) {
             return true;
         }
         boolean isValid = true;
         if (formatter != AppDateTimeFormatter.NONE) {
-            isValid = DateTimeUtils.toOptionalTemporalAccessor(date, formatter.getFormatter()).isPresent();
+            isValid = DateTimeUtils.toOptionalTemporalAccessor(dateTime, formatter.getFormatter()).isPresent();
 
         } else {
             switch (flag) {
-                case LOCAL_DATE -> isValid = DateTimeUtils.toOptionalLocalDate(date, pattern).isPresent();
-                case LOCAL_DATE_TIME -> isValid = DateTimeUtils.toOptionalLocalDateTime(date, pattern).isPresent();
-                case LOCAL_TIME -> isValid = DateTimeUtils.toOptionalLocalTime(date, pattern).isPresent();
+                case LOCAL_DATE -> isValid = DateTimeUtils.toOptionalLocalDate(dateTime, pattern).isPresent();
+                case LOCAL_DATE_TIME -> isValid = DateTimeUtils.toOptionalLocalDateTime(dateTime, pattern).isPresent();
+                case LOCAL_TIME -> isValid = DateTimeUtils.toOptionalLocalTime(dateTime, pattern).isPresent();
+                case ZONED_DATE_TIME -> isValid = DateTimeUtils.toOptionalZonedDateTime(dateTime, pattern).isPresent();
                 default -> {
                 }
             }
@@ -75,7 +76,7 @@ public class DateTimeValidator implements ConstraintValidator<ValidDateTime, Str
             switch (flag) {
                 case LOCAL_DATE -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_DATE,
                         new String[]{BaseConst.PLACEHOLDER_0, pattern}, LocaleContextHolder.getLocale());
-                case LOCAL_DATE_TIME -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_DATE_TIME,
+                case LOCAL_DATE_TIME, ZONED_DATE_TIME -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_DATE_TIME,
                         new String[]{BaseConst.PLACEHOLDER_0, pattern}, LocaleContextHolder.getLocale());
                 case LOCAL_TIME -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_TIME,
                         new String[]{BaseConst.PLACEHOLDER_0, pattern}, LocaleContextHolder.getLocale());

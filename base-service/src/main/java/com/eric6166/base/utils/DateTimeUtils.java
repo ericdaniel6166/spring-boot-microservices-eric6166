@@ -17,6 +17,7 @@ public final class DateTimeUtils {
     public static final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_PATTERN);
 
     public static final String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"; //change
+    public static final String DEFAULT_ZONED_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSVV"; //change
     public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_PATTERN);
 
     public static final String DEFAULT_TIME_PATTERN = "HH:mm:ss.SSSSSS";
@@ -57,16 +58,16 @@ public final class DateTimeUtils {
         }
     }
 
-    public static LocalDate toLocalDate(String date, String pattern) {
-        return toLocalDate(date, DateTimeFormatter.ofPattern(pattern));
-    }
-
     public static Optional<LocalDateTime> toOptionalLocalDateTime(String dateTime, DateTimeFormatter formatter) {
         try {
             return Optional.of(toLocalDateTime(dateTime, formatter));
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
+    }
+
+    public static LocalDate toLocalDate(String date, String pattern) {
+        return toLocalDate(date, DateTimeFormatter.ofPattern(pattern));
     }
 
     public static LocalDate toLocalDate(String date, DateTimeFormatter formatter) {
@@ -85,10 +86,6 @@ public final class DateTimeUtils {
         }
     }
 
-    public static LocalTime toLocalTime(String time, String pattern) {
-        return toLocalTime(time, DateTimeFormatter.ofPattern(pattern));
-    }
-
     public static Optional<LocalDate> toOptionalLocalDate(String date, DateTimeFormatter formatter) {
         try {
             return Optional.of(toLocalDate(date, formatter));
@@ -97,11 +94,23 @@ public final class DateTimeUtils {
         }
     }
 
+    public static LocalTime toLocalTime(String time, String pattern) {
+        return toLocalTime(time, DateTimeFormatter.ofPattern(pattern));
+    }
+
     public static LocalTime toLocalTime(String time, DateTimeFormatter formatter) {
         try {
             return LocalTime.parse(time, formatter);
         } catch (DateTimeException e) {
             throw new IllegalArgumentException(String.format("the text cannot be parsed, time '%s'", time));
+        }
+    }
+
+    public static Optional<LocalTime> toOptionalLocalTime(String time, DateTimeFormatter formatter) {
+        try {
+            return Optional.of(toLocalTime(time, formatter));
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
         }
     }
 
@@ -113,16 +122,36 @@ public final class DateTimeUtils {
         }
     }
 
-    public static String toString(ZonedDateTime dateTime, String pattern) {
-        return toString(dateTime, DateTimeFormatter.ofPattern(pattern));
+    public static ZonedDateTime toZonedDateTime(String time, String pattern) {
+        return toZonedDateTime(time, DateTimeFormatter.ofPattern(pattern));
     }
 
-    public static Optional<LocalTime> toOptionalLocalTime(String time, DateTimeFormatter formatter) {
+    public static ZonedDateTime toZonedDateTime(String time, DateTimeFormatter formatter) {
         try {
-            return Optional.of(toLocalTime(time, formatter));
+            return ZonedDateTime.parse(time, formatter);
+        } catch (DateTimeException e) {
+            throw new IllegalArgumentException(String.format("the text cannot be parsed, time '%s'", time));
+        }
+    }
+
+    public static Optional<ZonedDateTime> toOptionalZonedDateTime(String time, DateTimeFormatter formatter) {
+        try {
+            return Optional.of(toZonedDateTime(time, formatter));
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
+    }
+
+    public static Optional<ZonedDateTime> toOptionalZonedDateTime(String time, String pattern) {
+        try {
+            return Optional.of(toZonedDateTime(time, pattern));
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
+        }
+    }
+
+    public static String toString(ZonedDateTime dateTime, String pattern) {
+        return toString(dateTime, DateTimeFormatter.ofPattern(pattern));
     }
 
     public static String toString(ZonedDateTime dateTime, DateTimeFormatter formatter) {

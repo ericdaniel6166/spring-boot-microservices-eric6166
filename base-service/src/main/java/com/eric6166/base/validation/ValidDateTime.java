@@ -35,6 +35,7 @@ public @interface ValidDateTime {
         LOCAL_DATE,
         LOCAL_DATE_TIME,
         LOCAL_TIME,
+        ZONED_DATE_TIME
 
     }
 
