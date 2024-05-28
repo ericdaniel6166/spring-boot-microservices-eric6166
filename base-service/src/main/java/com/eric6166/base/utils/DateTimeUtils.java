@@ -29,7 +29,7 @@ public final class DateTimeUtils {
     }
 
 
-    public static LocalDateTime toLocalDateTime(String dateTime, String pattern) throws IllegalArgumentException {
+    public static LocalDateTime toLocalDateTime(String dateTime, String pattern) {
         return toLocalDateTime(dateTime, DateTimeFormatter.ofPattern(pattern));
     }
 
@@ -57,7 +57,7 @@ public final class DateTimeUtils {
         }
     }
 
-    public static LocalDate toLocalDate(String date, String pattern) throws IllegalArgumentException {
+    public static LocalDate toLocalDate(String date, String pattern) {
         return toLocalDate(date, DateTimeFormatter.ofPattern(pattern));
     }
 
@@ -85,7 +85,7 @@ public final class DateTimeUtils {
         }
     }
 
-    public static LocalTime toLocalTime(String time, String pattern) throws IllegalArgumentException {
+    public static LocalTime toLocalTime(String time, String pattern) {
         return toLocalTime(time, DateTimeFormatter.ofPattern(pattern));
     }
 
@@ -113,7 +113,7 @@ public final class DateTimeUtils {
         }
     }
 
-    public static String toString(ZonedDateTime dateTime, String pattern) throws IllegalArgumentException {
+    public static String toString(ZonedDateTime dateTime, String pattern) {
         return toString(dateTime, DateTimeFormatter.ofPattern(pattern));
     }
 
@@ -173,12 +173,12 @@ public final class DateTimeUtils {
         }
     }
 
-    public static String toString(LocalDateTime dateTime, String pattern) throws IllegalArgumentException {
+    public static String toString(LocalDateTime dateTime, String pattern) {
         return toString(dateTime, DateTimeFormatter.ofPattern(pattern));
     }
 
 
-    public static String toString(LocalDate date, String pattern) throws IllegalArgumentException {
+    public static String toString(LocalDate date, String pattern) {
         return toString(date, DateTimeFormatter.ofPattern(pattern));
     }
 
@@ -206,7 +206,7 @@ public final class DateTimeUtils {
         }
     }
 
-    public static String toString(LocalTime time, String pattern) throws IllegalArgumentException {
+    public static String toString(LocalTime time, String pattern) {
         return toString(time, DateTimeFormatter.ofPattern(pattern));
     }
 
@@ -234,7 +234,7 @@ public final class DateTimeUtils {
         }
     }
 
-    public static TemporalAccessor toTemporalAccessor(String dateTime, String pattern) throws IllegalArgumentException {
+    public static TemporalAccessor toTemporalAccessor(String dateTime, String pattern) {
         return toTemporalAccessor(dateTime, DateTimeFormatter.ofPattern(pattern));
 
     }
