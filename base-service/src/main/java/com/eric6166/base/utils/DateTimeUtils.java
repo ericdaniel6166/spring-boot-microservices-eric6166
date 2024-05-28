@@ -37,7 +37,7 @@ public final class DateTimeUtils {
      * The text is parsed using the pattern, returning a date-time.
      *
      * @param dateTime  the text to parse, not null
-     * @param formatter – the formatter to use, not null
+     * @param formatter the formatter to use, not null
      * @return the parsed local date-time, not null
      * @throws DateTimeException if the text cannot be parsed
      */
