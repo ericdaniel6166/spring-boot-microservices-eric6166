@@ -39,7 +39,7 @@ public final class DateTimeUtils {
      * @param dateTime  the text to parse, not null
      * @param formatter the formatter to use, not null
      * @return the parsed local date-time, not null
-     * @throws DateTimeException if the text cannot be parsed
+     * @throws IllegalArgumentException if the text cannot be parsed
      */
     public static LocalDateTime toLocalDateTime(String dateTime, DateTimeFormatter formatter) {
         try {
