@@ -4,6 +4,8 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -13,22 +15,56 @@ import java.util.Optional;
 
 public final class DateTimeUtils {
 
-    public static final String DEFAULT_DATE_PATTERN = "yyyy-MM-dd";
-    public static final DateTimeFormatter DEFAULT_DATE_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_PATTERN);
+    public static final String DEFAULT_LOCAL_DATE_PATTERN = "yyyy-MM-dd";
+    public static final DateTimeFormatter DEFAULT_LOCAL_DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
 
-    public static final String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"; //change
-    public static final String DEFAULT_ZONED_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSVV"; //change
-    public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_DATE_TIME_PATTERN);
+    public static final String DEFAULT_LOCAL_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS";
+    public static final String DEFAULT_DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSSSSVV";
+    public static final DateTimeFormatter DEFAULT_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_DATE_TIME ;
+    public static final DateTimeFormatter DEFAULT_OFFSET_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_OFFSET_DATE_TIME;
+    public static final DateTimeFormatter DEFAULT_LOCAL_DATE_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE_TIME;
 
-    public static final String DEFAULT_TIME_PATTERN = "HH:mm:ss.SSSSSS";
-    public static final DateTimeFormatter DEFAULT_TIME_FORMATTER = DateTimeFormatter.ofPattern(DEFAULT_TIME_PATTERN);
+    public static final String DEFAULT_LOCAL_TIME_PATTERN = "HH:mm:ss.SSSSSS";
+    public static final DateTimeFormatter DEFAULT_LOCAL_TIME_FORMATTER = DateTimeFormatter.ISO_LOCAL_TIME;
 
     public static final ZoneId DEFAULT_ZONE_ID = ZoneOffset.UTC;
+    public static final DateTimeFormatter DEFAULT_OFFSET_TIME_FORMATTER = DateTimeFormatter.ISO_OFFSET_TIME;
 
     private DateTimeUtils() {
         throw new IllegalStateException("Utility class");
     }
 
+    public static OffsetTime toOffsetTime(String time, DateTimeFormatter formatter) {
+        try {
+            return OffsetTime.parse(time, formatter);
+        } catch (DateTimeException e) {
+            throw new IllegalArgumentException(String.format("the text cannot be parsed, time '%s'", time));
+        }
+    }
+
+    public static String toString(OffsetTime time, DateTimeFormatter formatter) {
+        try {
+            return time.format(formatter);
+        } catch (DateTimeException e) {
+            throw new IllegalArgumentException(String.format("the time cannot be formatted, time '%s'", time));
+        }
+    }
+
+    public static OffsetDateTime toOffsetDateTime(String dateTime, DateTimeFormatter formatter) {
+        try {
+            return OffsetDateTime.parse(dateTime, formatter);
+        } catch (DateTimeException e) {
+            throw new IllegalArgumentException(String.format("the text cannot be parsed, dateTime '%s'", dateTime));
+        }
+    }
+
+    public static String toString(OffsetDateTime dateTime, DateTimeFormatter formatter) {
+        try {
+            return dateTime.format(formatter);
+        } catch (DateTimeException e) {
+            throw new IllegalArgumentException(String.format("the dateTime cannot be formatted, dateTime '%s'", dateTime));
+        }
+    }
 
     public static LocalDateTime toLocalDateTime(String dateTime, String pattern) {
         return toLocalDateTime(dateTime, DateTimeFormatter.ofPattern(pattern));
@@ -122,29 +158,29 @@ public final class DateTimeUtils {
         }
     }
 
-    public static ZonedDateTime toZonedDateTime(String time, String pattern) {
-        return toZonedDateTime(time, DateTimeFormatter.ofPattern(pattern));
+    public static ZonedDateTime toZonedDateTime(String dateTime, String pattern) {
+        return toZonedDateTime(dateTime, DateTimeFormatter.ofPattern(pattern));
     }
 
-    public static ZonedDateTime toZonedDateTime(String time, DateTimeFormatter formatter) {
+    public static ZonedDateTime toZonedDateTime(String dateTime, DateTimeFormatter formatter) {
         try {
-            return ZonedDateTime.parse(time, formatter);
+            return ZonedDateTime.parse(dateTime, formatter);
         } catch (DateTimeException e) {
-            throw new IllegalArgumentException(String.format("the text cannot be parsed, time '%s'", time));
+            throw new IllegalArgumentException(String.format("the text cannot be parsed, dateTime '%s'", dateTime));
         }
     }
 
-    public static Optional<ZonedDateTime> toOptionalZonedDateTime(String time, DateTimeFormatter formatter) {
+    public static Optional<ZonedDateTime> toOptionalZonedDateTime(String dateTime, DateTimeFormatter formatter) {
         try {
-            return Optional.of(toZonedDateTime(time, formatter));
+            return Optional.of(toZonedDateTime(dateTime, formatter));
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
     }
 
-    public static Optional<ZonedDateTime> toOptionalZonedDateTime(String time, String pattern) {
+    public static Optional<ZonedDateTime> toOptionalZonedDateTime(String dateTime, String pattern) {
         try {
-            return Optional.of(toZonedDateTime(time, pattern));
+            return Optional.of(toZonedDateTime(dateTime, pattern));
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
@@ -294,6 +330,5 @@ public final class DateTimeUtils {
         }
 
     }
-
 
 }

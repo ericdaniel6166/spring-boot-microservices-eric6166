@@ -19,9 +19,13 @@ import org.springframework.context.annotation.Primary;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.OffsetDateTime;
+import java.time.OffsetTime;
+import java.time.ZonedDateTime;
 
 @Configuration
 public class JacksonConfig {
@@ -31,20 +35,30 @@ public class JacksonConfig {
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        objectMapper.setDateFormat(new SimpleDateFormat(DateTimeUtils.DEFAULT_DATE_TIME_PATTERN));
+        objectMapper.setDateFormat(new SimpleDateFormat(DateTimeUtils.DEFAULT_LOCAL_DATE_TIME_PATTERN));
 
         JavaTimeModule javaTimeModule = new JavaTimeModule();
-        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeUtils.DEFAULT_DATE_TIME_FORMATTER));
-        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeUtils.DEFAULT_DATE_TIME_FORMATTER));
-        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeUtils.DEFAULT_DATE_FORMATTER));
-        javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(DateTimeUtils.DEFAULT_DATE_FORMATTER));
-        javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(DateTimeUtils.DEFAULT_TIME_FORMATTER));
-        javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(DateTimeUtils.DEFAULT_TIME_FORMATTER));
+        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeUtils.DEFAULT_LOCAL_DATE_TIME_FORMATTER));
+        javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(DateTimeUtils.DEFAULT_LOCAL_DATE_TIME_FORMATTER));
+        javaTimeModule.addSerializer(LocalDate.class, new LocalDateSerializer(DateTimeUtils.DEFAULT_LOCAL_DATE_FORMATTER));
+        javaTimeModule.addDeserializer(LocalDate.class, new LocalDateDeserializer(DateTimeUtils.DEFAULT_LOCAL_DATE_FORMATTER));
+        javaTimeModule.addSerializer(LocalTime.class, new LocalTimeSerializer(DateTimeUtils.DEFAULT_LOCAL_TIME_FORMATTER));
+        javaTimeModule.addDeserializer(LocalTime.class, new LocalTimeDeserializer(DateTimeUtils.DEFAULT_LOCAL_TIME_FORMATTER));
 
         objectMapper.registerModule(javaTimeModule);
 
         SimpleModule simpleModule = new SimpleModule();
         simpleModule.addSerializer(BigDecimal.class, new BigDecimalSerializer());
+
+        simpleModule.addSerializer(ZonedDateTime.class, new AppZonedDateTimeSerializer());
+        simpleModule.addDeserializer(ZonedDateTime.class, new AppZonedDateTimeDeserializer());
+        simpleModule.addSerializer(Instant.class, new AppInstantSerializer());
+        simpleModule.addDeserializer(Instant.class, new AppInstantDeserializer());
+        simpleModule.addSerializer(OffsetDateTime.class, new AppOffsetDateTimeSerializer());
+        simpleModule.addDeserializer(OffsetDateTime.class, new AppOffsetDateTimeDeserializer());
+        simpleModule.addSerializer(OffsetTime.class, new AppOffsetTimeSerializer());
+        simpleModule.addDeserializer(OffsetTime.class, new AppOffsetTimeDeserializer());
+
         objectMapper.registerModule(simpleModule);
 
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
