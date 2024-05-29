@@ -34,11 +34,11 @@ public final class DateTimeUtils {
         throw new IllegalStateException("Utility class");
     }
 
-    public static OffsetTime toOffsetTime(String time, DateTimeFormatter formatter) {
+    public static OffsetTime toOffsetTime(String text, DateTimeFormatter formatter) {
         try {
-            return OffsetTime.parse(time, formatter);
+            return OffsetTime.parse(text, formatter);
         } catch (DateTimeException e) {
-            throw new IllegalArgumentException(String.format("the text cannot be parsed, time '%s'", time));
+            throw new IllegalArgumentException(String.format("the text cannot be parsed, text '%s'", text));
         }
     }
 
@@ -50,11 +50,11 @@ public final class DateTimeUtils {
         }
     }
 
-    public static OffsetDateTime toOffsetDateTime(String dateTime, DateTimeFormatter formatter) {
+    public static OffsetDateTime toOffsetDateTime(String text, DateTimeFormatter formatter) {
         try {
-            return OffsetDateTime.parse(dateTime, formatter);
+            return OffsetDateTime.parse(text, formatter);
         } catch (DateTimeException e) {
-            throw new IllegalArgumentException(String.format("the text cannot be parsed, dateTime '%s'", dateTime));
+            throw new IllegalArgumentException(String.format("the text cannot be parsed, text '%s'", text));
         }
     }
 
@@ -66,121 +66,121 @@ public final class DateTimeUtils {
         }
     }
 
-    public static LocalDateTime toLocalDateTime(String dateTime, String pattern) {
-        return toLocalDateTime(dateTime, DateTimeFormatter.ofPattern(pattern));
+    public static LocalDateTime toLocalDateTime(String text, String pattern) {
+        return toLocalDateTime(text, DateTimeFormatter.ofPattern(pattern));
     }
 
     /**
      * The text is parsed using the pattern, returning a date-time.
      *
-     * @param dateTime  the text to parse, not null
+     * @param text  the text to parse, not null
      * @param formatter the formatter to use, not null
      * @return the parsed local date-time, not null
      * @throws IllegalArgumentException if the text cannot be parsed
      */
-    public static LocalDateTime toLocalDateTime(String dateTime, DateTimeFormatter formatter) {
+    public static LocalDateTime toLocalDateTime(String text, DateTimeFormatter formatter) {
         try {
-            return LocalDateTime.parse(dateTime, formatter);
+            return LocalDateTime.parse(text, formatter);
         } catch (DateTimeException e) {
-            throw new IllegalArgumentException(String.format("the text cannot be parsed, dateTime '%s'", dateTime));
+            throw new IllegalArgumentException(String.format("the text cannot be parsed, text '%s'", text));
         }
     }
 
-    public static Optional<LocalDateTime> toOptionalLocalDateTime(String dateTime, String pattern) {
+    public static Optional<LocalDateTime> toOptionalLocalDateTime(String text, String pattern) {
         try {
-            return Optional.of(toLocalDateTime(dateTime, pattern));
+            return Optional.of(toLocalDateTime(text, pattern));
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
     }
 
-    public static Optional<LocalDateTime> toOptionalLocalDateTime(String dateTime, DateTimeFormatter formatter) {
+    public static Optional<LocalDateTime> toOptionalLocalDateTime(String text, DateTimeFormatter formatter) {
         try {
-            return Optional.of(toLocalDateTime(dateTime, formatter));
+            return Optional.of(toLocalDateTime(text, formatter));
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
     }
 
-    public static LocalDate toLocalDate(String date, String pattern) {
-        return toLocalDate(date, DateTimeFormatter.ofPattern(pattern));
+    public static LocalDate toLocalDate(String text, String pattern) {
+        return toLocalDate(text, DateTimeFormatter.ofPattern(pattern));
     }
 
-    public static LocalDate toLocalDate(String date, DateTimeFormatter formatter) {
+    public static LocalDate toLocalDate(String text, DateTimeFormatter formatter) {
         try {
-            return LocalDate.parse(date, formatter);
+            return LocalDate.parse(text, formatter);
         } catch (DateTimeException e) {
-            throw new IllegalArgumentException(String.format("the text cannot be parsed, date '%s'"));
+            throw new IllegalArgumentException(String.format("the text cannot be parsed, text '%s'"));
         }
     }
 
-    public static Optional<LocalDate> toOptionalLocalDate(String date, String pattern) {
+    public static Optional<LocalDate> toOptionalLocalDate(String text, String pattern) {
         try {
-            return Optional.of(toLocalDate(date, pattern));
+            return Optional.of(toLocalDate(text, pattern));
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
     }
 
-    public static Optional<LocalDate> toOptionalLocalDate(String date, DateTimeFormatter formatter) {
+    public static Optional<LocalDate> toOptionalLocalDate(String text, DateTimeFormatter formatter) {
         try {
-            return Optional.of(toLocalDate(date, formatter));
+            return Optional.of(toLocalDate(text, formatter));
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
     }
 
-    public static LocalTime toLocalTime(String time, String pattern) {
-        return toLocalTime(time, DateTimeFormatter.ofPattern(pattern));
+    public static LocalTime toLocalTime(String text, String pattern) {
+        return toLocalTime(text, DateTimeFormatter.ofPattern(pattern));
     }
 
-    public static LocalTime toLocalTime(String time, DateTimeFormatter formatter) {
+    public static LocalTime toLocalTime(String text, DateTimeFormatter formatter) {
         try {
-            return LocalTime.parse(time, formatter);
+            return LocalTime.parse(text, formatter);
         } catch (DateTimeException e) {
-            throw new IllegalArgumentException(String.format("the text cannot be parsed, time '%s'", time));
+            throw new IllegalArgumentException(String.format("the text cannot be parsed, text '%s'", text));
         }
     }
 
-    public static Optional<LocalTime> toOptionalLocalTime(String time, DateTimeFormatter formatter) {
+    public static Optional<LocalTime> toOptionalLocalTime(String text, DateTimeFormatter formatter) {
         try {
-            return Optional.of(toLocalTime(time, formatter));
+            return Optional.of(toLocalTime(text, formatter));
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
     }
 
-    public static Optional<LocalTime> toOptionalLocalTime(String time, String pattern) {
+    public static Optional<LocalTime> toOptionalLocalTime(String text, String pattern) {
         try {
-            return Optional.of(toLocalTime(time, pattern));
+            return Optional.of(toLocalTime(text, pattern));
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
     }
 
-    public static ZonedDateTime toZonedDateTime(String dateTime, String pattern) {
-        return toZonedDateTime(dateTime, DateTimeFormatter.ofPattern(pattern));
+    public static ZonedDateTime toZonedDateTime(String text, String pattern) {
+        return toZonedDateTime(text, DateTimeFormatter.ofPattern(pattern));
     }
 
-    public static ZonedDateTime toZonedDateTime(String dateTime, DateTimeFormatter formatter) {
+    public static ZonedDateTime toZonedDateTime(String text, DateTimeFormatter formatter) {
         try {
-            return ZonedDateTime.parse(dateTime, formatter);
+            return ZonedDateTime.parse(text, formatter);
         } catch (DateTimeException e) {
-            throw new IllegalArgumentException(String.format("the text cannot be parsed, dateTime '%s'", dateTime));
+            throw new IllegalArgumentException(String.format("the text cannot be parsed, text '%s'", text));
         }
     }
 
-    public static Optional<ZonedDateTime> toOptionalZonedDateTime(String dateTime, DateTimeFormatter formatter) {
+    public static Optional<ZonedDateTime> toOptionalZonedDateTime(String text, DateTimeFormatter formatter) {
         try {
-            return Optional.of(toZonedDateTime(dateTime, formatter));
+            return Optional.of(toZonedDateTime(text, formatter));
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
     }
 
-    public static Optional<ZonedDateTime> toOptionalZonedDateTime(String dateTime, String pattern) {
+    public static Optional<ZonedDateTime> toOptionalZonedDateTime(String text, String pattern) {
         try {
-            return Optional.of(toZonedDateTime(dateTime, pattern));
+            return Optional.of(toZonedDateTime(text, pattern));
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
@@ -299,32 +299,32 @@ public final class DateTimeUtils {
         }
     }
 
-    public static TemporalAccessor toTemporalAccessor(String dateTime, String pattern) {
-        return toTemporalAccessor(dateTime, DateTimeFormatter.ofPattern(pattern));
+    public static TemporalAccessor toTemporalAccessor(String text, String pattern) {
+        return toTemporalAccessor(text, DateTimeFormatter.ofPattern(pattern));
 
     }
 
-    public static Optional<TemporalAccessor> toOptionalTemporalAccessor(String dateTime, String pattern) {
+    public static Optional<TemporalAccessor> toOptionalTemporalAccessor(String text, String pattern) {
         try {
-            return Optional.of(toTemporalAccessor(dateTime, pattern));
+            return Optional.of(toTemporalAccessor(text, pattern));
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
 
     }
 
-    public static TemporalAccessor toTemporalAccessor(String dateTime, DateTimeFormatter formatter) {
+    public static TemporalAccessor toTemporalAccessor(String text, DateTimeFormatter formatter) {
         try {
-            return formatter.parse(dateTime);
+            return formatter.parse(text);
         } catch (DateTimeException e) {
-            throw new IllegalArgumentException(String.format("the dateTime cannot be parsed, dateTime '%s'", dateTime));
+            throw new IllegalArgumentException(String.format("the text cannot be parsed, text '%s'", text));
         }
 
     }
 
-    public static Optional<TemporalAccessor> toOptionalTemporalAccessor(String dateTime, DateTimeFormatter formatter) {
+    public static Optional<TemporalAccessor> toOptionalTemporalAccessor(String text, DateTimeFormatter formatter) {
         try {
-            return Optional.of(toTemporalAccessor(dateTime, formatter));
+            return Optional.of(toTemporalAccessor(text, formatter));
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
