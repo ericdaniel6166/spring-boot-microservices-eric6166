@@ -1,7 +1,5 @@
 package com.eric6166.base.exception;
 
-import brave.Tracer;
-import brave.propagation.TraceContextOrSamplingFlags;
 import com.eric6166.base.utils.BaseConst;
 import com.eric6166.base.utils.BaseUtils;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
@@ -48,42 +46,21 @@ public class RestExceptionHandler {
     MessageSource messageSource;
     BaseUtils baseUtils;
     AppExceptionUtils appExceptionUtils;
-    Tracer tracer;
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Object> handleResponseStatusException(ResponseStatusException e) {
-        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleResponseStatusException").start();
-        try (var ws = tracer.withSpanInScope(span)) {
-            span.error(e);
-            var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.valueOf(e.getStatusCode().value()), e);
-            span.tag("handleResponseStatusException errorResponse", errorResponse.toString());
-            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
-            return baseUtils.buildResponseExceptionEntity(errorResponse);
-        } catch (RuntimeException exception) {
-            span.error(exception);
-            throw exception;
-        } finally {
-            span.finish();
-        }
+        var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.valueOf(e.getStatusCode().value()), e);
+        log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+        return baseUtils.buildResponseExceptionEntity(errorResponse);
     }
 
 
     @ExceptionHandler(AppException.class)
     public ResponseEntity<Object> handleAppException(AppException e) {
-        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleAppException").start();
-        try (var ws = tracer.withSpanInScope(span)) {
-            span.error(e);
-            var errorResponse = appExceptionUtils.buildErrorResponse(e.getHttpStatus(), e.getError(),
-                    StringUtils.capitalize(e.getMessage()), e.getRootCause());
-            span.tag("handleAppException errorResponse", errorResponse.toString());
-            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
-            return baseUtils.buildResponseExceptionEntity(errorResponse);
-        } catch (RuntimeException exception) {
-            span.error(exception);
-            throw exception;
-        } finally {
-            span.finish();
-        }
+        var errorResponse = appExceptionUtils.buildErrorResponse(e.getHttpStatus(), e.getError(),
+                StringUtils.capitalize(e.getMessage()), e.getRootCause());
+        log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+        return baseUtils.buildResponseExceptionEntity(errorResponse);
     }
 
     @ExceptionHandler({HttpMessageNotReadableException.class,
@@ -91,41 +68,21 @@ public class RestExceptionHandler {
 //            InvalidDataAccessApiUsageException.class
     })
     public ResponseEntity<Object> handleBadRequestException(Exception e) {
-        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleBadRequestException").start();
-        try (var ws = tracer.withSpanInScope(span)) {
-            span.error(e);
-            var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.BAD_REQUEST, e);
-            span.tag("handleBadRequestException errorResponse", errorResponse.toString());
-            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
-            return baseUtils.buildResponseExceptionEntity(errorResponse);
-        } catch (RuntimeException exception) {
-            span.error(exception);
-            throw exception;
-        } finally {
-            span.finish();
-        }
+        var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.BAD_REQUEST, e);
+        log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+        return baseUtils.buildResponseExceptionEntity(errorResponse);
     }
 
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException e, HandlerMethod handlerMethod) {
-        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleConstraintViolationException").start();
-        try (var ws = tracer.withSpanInScope(span)) {
-            span.error(e);
-            List<ErrorDetail> errorDetails = new ArrayList<>();
-            var apiClassName = handlerMethod.getBeanType().getSimpleName();
-            for (var constraintViolation : e.getConstraintViolations()) {
-                errorDetails.add(buildErrorDetail(constraintViolation, apiClassName));
-            }
-            var errorResponse = appExceptionUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR, errorDetails);
-            span.tag("handleConstraintViolationException errorResponse", errorResponse.toString());
-            return baseUtils.buildResponseExceptionEntity(errorResponse);
-        } catch (RuntimeException exception) {
-            span.error(exception);
-            throw exception;
-        } finally {
-            span.finish();
+        List<ErrorDetail> errorDetails = new ArrayList<>();
+        var apiClassName = handlerMethod.getBeanType().getSimpleName();
+        for (var constraintViolation : e.getConstraintViolations()) {
+            errorDetails.add(buildErrorDetail(constraintViolation, apiClassName));
         }
+        var errorResponse = appExceptionUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR, errorDetails);
+        return baseUtils.buildResponseExceptionEntity(errorResponse);
     }
 
     private ErrorDetail buildErrorDetail(ConstraintViolation<?> constraintViolation, String apiClassName) {
@@ -145,27 +102,17 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(BindException.class)
     public ResponseEntity<Object> handleBindException(BindException e, HandlerMethod handlerMethod) {
-        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleBindException").start();
-        try (var ws = tracer.withSpanInScope(span)) {
-            span.error(e);
-            List<ErrorDetail> errorDetails = new ArrayList<>();
-            var apiClassName = handlerMethod.getBeanType().getSimpleName();
-            for (var objectError : e.getAllErrors()) {
-                if (objectError instanceof FieldError fieldError) {
-                    errorDetails.add(buildErrorDetail(fieldError, apiClassName));
-                } else {
-                    errorDetails.add(buildErrorDetail(objectError, apiClassName));
-                }
+        List<ErrorDetail> errorDetails = new ArrayList<>();
+        var apiClassName = handlerMethod.getBeanType().getSimpleName();
+        for (var objectError : e.getAllErrors()) {
+            if (objectError instanceof FieldError fieldError) {
+                errorDetails.add(buildErrorDetail(fieldError, apiClassName));
+            } else {
+                errorDetails.add(buildErrorDetail(objectError, apiClassName));
             }
-            var errorResponse = appExceptionUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR, errorDetails);
-            span.tag("handleBindException errorResponse", errorResponse.toString());
-            return baseUtils.buildResponseExceptionEntity(errorResponse);
-        } catch (RuntimeException exception) {
-            span.error(exception);
-            throw exception;
-        } finally {
-            span.finish();
         }
+        var errorResponse = appExceptionUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR, errorDetails);
+        return baseUtils.buildResponseExceptionEntity(errorResponse);
     }
 
     private ErrorDetail buildErrorDetail(ObjectError objectError, String apiClassName) {
@@ -238,35 +185,16 @@ public class RestExceptionHandler {
 
     @ExceptionHandler(CallNotPermittedException.class)
     public ResponseEntity<Object> handleCallNotPermittedException(CallNotPermittedException e) {
-        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handle the exception when the CircuitBreaker is open").start();
-        try (var ws = tracer.withSpanInScope(span)) {
-            span.error(e);
-            var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.SERVICE_UNAVAILABLE, e);
-            log.info("handle the exception when the CircuitBreaker is open, e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
-            return baseUtils.buildResponseExceptionEntity(errorResponse);
-        } catch (RuntimeException exception) {
-            span.error(exception);
-            throw exception;
-        } finally {
-            span.finish();
-        }
+        var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.SERVICE_UNAVAILABLE, e);
+        log.info("handle the exception when the CircuitBreaker is open, e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+        return baseUtils.buildResponseExceptionEntity(errorResponse);
     }
 
     @ExceptionHandler(Throwable.class)
     public ResponseEntity<Object> handleThrowable(Throwable e) {
-        var span = tracer.nextSpan(TraceContextOrSamplingFlags.create(tracer.currentSpan().context())).name("handleThrowable").start();
-        try (var ws = tracer.withSpanInScope(span)) {
-            span.error(e);
-            var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e);
-            span.tag("handleThrowable errorResponse", errorResponse.toString());
-            log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
-            return baseUtils.buildResponseExceptionEntity(errorResponse);
-        } catch (RuntimeException exception) {
-            span.error(exception);
-            throw exception;
-        } finally {
-            span.finish();
-        }
+        var errorResponse = appExceptionUtils.buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e);
+        log.info("e: {} , errorMessage: {}", e.getClass().getName(), e.getMessage()); // comment // for local testing
+        return baseUtils.buildResponseExceptionEntity(errorResponse);
     }
 
     @ExceptionHandler(CompletionException.class)
