@@ -8,6 +8,7 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatusCode;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -29,7 +30,7 @@ public class ErrorResponse {
     Object rootCause;
 
     public ErrorResponse() {
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);
     }
 
     public ErrorResponse(HttpStatusCode httpStatus, String error, String message, String path, Object rootCause) {

@@ -31,8 +31,4 @@ public enum AppDateTimeFormatter {
 
     DateTimeFormatter formatter;
 
-    @Override
-    public String toString() {
-        return this.name();
-    }
 }
