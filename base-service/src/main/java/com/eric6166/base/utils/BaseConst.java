@@ -18,7 +18,6 @@ public final class BaseConst {
     public static final int DEFAULT_MAX_INTEGER = Integer.MAX_VALUE; //change
     public static final String PLACEHOLDER_0 = "{0}";
     public static final String COMMON = "common";
-    public static final String ID = "id";
     public static final String DEFAULT_SORT_COLUMN = "id";
     public static final String DEFAULT_SORT_DIRECTION = "ASC";
     public static final String GENERAL_FIELD = "generalField";
