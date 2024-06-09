@@ -120,7 +120,7 @@ sequenceDiagram
     - spring-boot-microservices-eric6166 : https://github.com/ericdaniel6166/spring-boot-microservices-eric6166
         - shared configuration files, components, etc. that can be reused in other microservices (order-service,
           inventory-service, etc)
-    - discovery-service-eric6166 : https://github.com/ericdaniel6166/discovery-service--eric6166
+    - discovery-service-eric6166 : https://github.com/ericdaniel6166/discovery-service-eric6166
     - gateway-service-eric6166 : https://github.com/ericdaniel6166/gateway-service-eric6166
     - user-service-eric6166 : https://github.com/ericdaniel6166/user-service-eric6166
     - order-service-eric6166 : https://github.com/ericdaniel6166/order-service-eric6166
