@@ -1,5 +1,45 @@
 # spring-boot-microservices-eric6166
 
+## Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant OrderService
+    participant InventoryService
+    participant PaymentService
+    participant NotificationService
+
+    Customer->>OrderService: Create Order
+    OrderService->>OrderService: Emit OrderCreated Event
+    OrderService->>Customer: Order Created
+
+    OrderService-->>InventoryService: OrderCreated Event
+    InventoryService->>InventoryService: Reserve Inventory
+    InventoryService->>InventoryService: Emit InventoryReserved Event
+    InventoryService-->>PaymentService: InventoryReserved Event
+
+    PaymentService->>PaymentService: Process Payment
+    PaymentService->>PaymentService: Emit PaymentProcessed Event
+    PaymentService-->>NotificationService: PaymentProcessed Event
+
+    NotificationService->>NotificationService: Send Confirmation Email
+    NotificationService->>Customer: Order Confirmed
+
+    Note right of OrderService: If any step fails
+
+    InventoryService-->>OrderService: InventoryReserveFailed Event
+    PaymentService-->>OrderService: PaymentFailed Event
+    OrderService->>OrderService: Emit OrderFailed Event
+    OrderService->>Customer: Order Failed
+
+    OrderService-->>InventoryService: OrderFailed Event
+    InventoryService->>InventoryService: Compensate Inventory
+
+    OrderService-->>PaymentService: OrderFailed Event
+    PaymentService->>PaymentService: Compensate Payment
+```
+
 ## List what has been used
 
 - [Spring Boot](https://spring.io/projects/spring-boot), web framework, makes it easy to create stand-alone,
