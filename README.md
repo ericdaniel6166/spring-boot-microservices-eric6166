@@ -119,7 +119,7 @@ sequenceDiagram
     - discovery-service-eric6166 : https://github.com/ericdaniel6166/discovery-service--eric6166
     - gateway-service-eric6166 : https://github.com/ericdaniel6166/gateway-service-eric6166
     - user-service-eric6166 : https://github.com/ericdaniel6166/user-service-eric6166
-    - order-service-eric6166 : Updating
+    - order-service-eric6166 : https://github.com/ericdaniel6166/order-service-eric6166
     - inventory-service-eric6166 : https://github.com/ericdaniel6166/inventory-service-eric6166
     - payment-service-eric6166 : Updating
     - notification-service-eric6166 : Updating
