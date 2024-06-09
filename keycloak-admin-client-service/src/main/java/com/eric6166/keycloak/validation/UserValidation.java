@@ -41,7 +41,7 @@ public class UserValidation {
         if (searchByEmail.isPresent()) {
             var res = messageSource.getMessage(BaseMessageConst.MGS_RES_EMAIL, null, LocaleContextHolder.getLocale());
             var msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_RESOURCE_EXISTED, new String[]{res}, LocaleContextHolder.getLocale());
-            throw new AppValidationException(Collections.singletonList(new ValidationErrorDetail(BaseConst.FIELD_USERNAME, StringUtils.capitalize(msg))));
+            throw new AppValidationException(Collections.singletonList(new ValidationErrorDetail(BaseConst.FIELD_EMAIL, StringUtils.capitalize(msg))));
         }
     }
 
