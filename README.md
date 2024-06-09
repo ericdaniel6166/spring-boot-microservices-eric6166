@@ -87,17 +87,17 @@ sequenceDiagram
   production-grade Spring based Applications
 - [AWS Cloud](https://aws.amazon.com/), using AWS SDK for Java 2.x
   - S3, SQS, etc
-- [Apache Kafka](https://kafka.apache.org/), distributed and fault-tolerant stream processing system.
-- [Spring Cloud Netflix Eureka](https://spring.io/projects/spring-cloud-netflix), discovery service,
-  allows services to find and communicate with each other without hard-coding the hostname and port
-- [Spring Cloud Gateway](https://spring.io/projects/spring-cloud-gateway), gateway service, provide a simple, yet effective
+- [Apache Kafka](https://kafka.apache.org/), a distributed and fault-tolerant stream processing system used for event-driven communication between microservices.
+- [Spring Cloud Netflix Eureka](https://spring.io/projects/spring-cloud-netflix), a service discovery mechanism that allows microservices
+  to find and communicate with each other without hard-coding the hostname and port.
+- [Spring Cloud Gateway](https://spring.io/projects/spring-cloud-gateway), an api gateway that provide a simple, yet effective
   way to route to APIs and provide cross-cutting concerns to them such as: security, monitoring/metrics, and resiliency.
-- [Spring Data Redis](https://docs.spring.io/spring-data/redis/reference/redis/redis-cache.html), provides an implementation of Spring Framework’s Cache Abstraction
+- [Spring Data Redis](https://docs.spring.io/spring-data/redis/reference/redis/redis-cache.html), provides an implementation of Spring Framework’s Cache Abstraction.
 - [Spring Integration](https://docs.spring.io/spring-integration/reference/mqtt.html), provides inbound and outbound channel adapters to support the Message Queueing Telemetry Transport (MQTT) protocol.
-- [Resilience4j](https://github.com/resilience4j/resilience4j), library, helps prevent cascading failures
-  and provides mechanisms for graceful degradation and self-healing when external services experience issues
-- [Zipkin](https://zipkin.io/), distributed tracing system, provides end-to-end visibility into how requests flow through the system,
-  helping troubleshoot issues in distributed architectures
+- [Resilience4j](https://github.com/resilience4j/resilience4j), a library that helps prevent cascading failures
+  and provides mechanisms for graceful degradation and self-healing when external services experience issues.
+- [Zipkin](https://zipkin.io/), a distributed tracing system that provides end-to-end visibility into how requests flow through the system,
+  helping troubleshoot issues in distributed architectures.
 - ~~Spring Cloud Sleuth, autoconfiguration for distributed tracing~~
 - [Micrometer Tracing](https://micrometer.io/docs/tracing) with Brave, library for distributed tracing (update to Spring Boot 3.x)
 - [Docker](https://www.docker.com/) and docker-compose, for containerization
@@ -121,12 +121,19 @@ sequenceDiagram
         - shared configuration files, components, etc. that can be reused in other microservices (order-service,
           inventory-service, etc)
     - discovery-service-eric6166 : https://github.com/ericdaniel6166/discovery-service-eric6166
+      - This microservice acts as a registry for all the other microservices, allowing them to find and communicate with each other.
     - gateway-service-eric6166 : https://github.com/ericdaniel6166/gateway-service-eric6166
+      - This microservice acts as an entry point for external requests, routing them to the appropriate microservice.
     - user-service-eric6166 : https://github.com/ericdaniel6166/user-service-eric6166
+      - This microservice handles user-related functionality, such as creating, reading, and updating user data.
     - order-service-eric6166 : https://github.com/ericdaniel6166/order-service-eric6166
+      - This microservice handles order-related functionality, such as creating, reading, and updating order data.
     - inventory-service-eric6166 : https://github.com/ericdaniel6166/inventory-service-eric6166
+      - This microservice handles inventory-related functionality, such as managing product stock levels.
     - payment-service-eric6166 : Updating
+      - This microservice handles payment-related functionality, such as processing payments.
     - notification-service-eric6166 : Updating
+      - This microservice handles notification-related functionality, such as sending confirmation and cancellation emails.
 
 - Make sure microservice repositories at directory as below, otherwise should change this for dev-environment setup
 
