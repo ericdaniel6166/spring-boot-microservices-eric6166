@@ -34,12 +34,16 @@ sequenceDiagram
     PaymentService-->>OrderService: PaymentFailed Event
     OrderService->>OrderService: Emit OrderFailed Event
     OrderService->>Customer: Order Failed
+    OrderService-->>NotificationService: OrderFailed Event
+    NotificationService->>NotificationService: Send Cancellation Email
+    NotificationService->>Customer: Order Cancelled
 
     OrderService-->>InventoryService: OrderFailed Event
     InventoryService->>InventoryService: Compensate Inventory
 
     OrderService-->>PaymentService: OrderFailed Event
     PaymentService->>PaymentService: Compensate Payment
+
 ```
 #### Orchestration-based Saga
 
