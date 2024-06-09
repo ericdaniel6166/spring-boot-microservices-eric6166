@@ -2,6 +2,8 @@
 
 ## Sequence Diagram
 
+#### Choreography-based Saga
+
 ```mermaid
 sequenceDiagram
     participant Customer
@@ -38,6 +40,41 @@ sequenceDiagram
 
     OrderService-->>PaymentService: OrderFailed Event
     PaymentService->>PaymentService: Compensate Payment
+```
+#### Orchestration-based Saga
+
+```mermaid
+sequenceDiagram
+    participant Customer
+    participant Orchestrator
+    participant OrderService
+    participant InventoryService
+    participant PaymentService
+    participant NotificationService
+
+    Customer->>OrderService: Create Order
+    OrderService->>Orchestrator: Order Created
+    Orchestrator->>InventoryService: Reserve Inventory
+    InventoryService->>Orchestrator: Inventory Reserved
+    Orchestrator->>PaymentService: Process Payment
+    PaymentService->>Orchestrator: Payment Processed
+    Orchestrator->>OrderService: Confirm Order
+    OrderService->>Customer: Order Confirmed
+    Orchestrator->>NotificationService: Send Confirmation Email
+    NotificationService->>Customer: Order Confirmation Sent
+
+    Note right of Orchestrator: If any step fails
+
+    Orchestrator->>PaymentService: Compensate Payment
+    PaymentService->>Orchestrator: Payment Compensated
+    Orchestrator->>InventoryService: Compensate Inventory
+    InventoryService->>Orchestrator: Inventory Compensated
+    Orchestrator->>OrderService: Cancel Order
+    OrderService->>Customer: Order Cancelled
+    Orchestrator->>NotificationService: Send Cancellation Email
+    NotificationService->>Customer: Order Cancellation Sent
+
+
 ```
 
 ## List what has been used
