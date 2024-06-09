@@ -9,7 +9,7 @@ import org.springframework.data.domain.Sort;
 @Slf4j
 public final class PageUtils {
 
-    public static final String COLUMN_ID = "ID";
+    public static final String COLUMN_ID = "id";
 
     private PageUtils() {
         throw new IllegalStateException("Utility class");
