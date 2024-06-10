@@ -239,9 +239,8 @@ guest/P@ssw0rd
 ```bash
 http://localhost:8181/swagger-ui.html
 ```
-
 ![img.png](img.png)
-
+![img_1.png](img_1.png)
 ##### Zipkin
 
 ```bash
