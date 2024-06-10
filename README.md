@@ -269,6 +269,8 @@ admin/admin
 Cluster name: spring-boot-microservices
 Zookeeper Host: localhost
 Zookeeper Port: 2181
+
+Bootstrap servers: localhost:9092
 ```
 
 ![img_2.png](img_2.png)
