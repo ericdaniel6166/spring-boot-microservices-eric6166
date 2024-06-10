@@ -84,37 +84,31 @@ sequenceDiagram
 
 ## List what has been used
 
-- [Spring Boot](https://spring.io/projects/spring-boot), web framework, 
-makes it easy to create stand-alone, production-grade Spring based Applications
+- [Spring Boot](https://spring.io/projects/spring-boot), web framework, makes it easy to create stand-alone,
+  production-grade Spring based Applications
 - [AWS Cloud](https://aws.amazon.com/), using AWS SDK for Java 2.x
     - S3, SQS, etc
-- [Apache Kafka](https://kafka.apache.org/), a distributed and fault-tolerant stream processing system 
-used for event-driven communication between microservices.
-- [Spring Cloud Netflix Eureka](https://spring.io/projects/spring-cloud-netflix), 
-a service discovery mechanism that allows microservices to find and communicate with each other 
-without hard-coding the hostname and port.
-- [Spring Cloud Gateway](https://spring.io/projects/spring-cloud-gateway), 
-an api gateway that provide a simple, yet effective way 
-to route to APIs and provide cross-cutting concerns to them such as: 
-security, monitoring/metrics, and resiliency.
-- [Spring Data Redis](https://docs.spring.io/spring-data/redis/reference/redis/redis-cache.html), 
-provides an implementation of Spring Framework’s Cache Abstraction.
-- [Spring Integration](https://docs.spring.io/spring-integration/reference/mqtt.html), 
-provides inbound and outbound channel adapters 
-to support the Message Queueing Telemetry Transport (MQTT) protocol.
-- [Resilience4j](https://github.com/resilience4j/resilience4j), 
-a library that helps prevent cascading failures 
-and provides mechanisms for graceful degradation 
-and self-healing when external services experience issues.
-- [Zipkin](https://zipkin.io/), a distributed tracing system 
-that provides end-to-end visibility into how requests flow through the system, 
-helping troubleshoot issues in distributed architectures.
+- [Apache Kafka](https://kafka.apache.org/), a distributed and fault-tolerant stream processing system used for
+  event-driven communication between microservices.
+- [Spring Cloud Netflix Eureka](https://spring.io/projects/spring-cloud-netflix), a service discovery mechanism that
+  allows microservices to find and communicate with each other without hard-coding the hostname and port.
+- [Spring Cloud Gateway](https://spring.io/projects/spring-cloud-gateway), an api gateway that provide a simple, yet
+  effective way to route to APIs and provide cross-cutting concerns to them such as:
+  security, monitoring/metrics, and resiliency.
+- [Spring Data Redis](https://docs.spring.io/spring-data/redis/reference/redis/redis-cache.html), provides an
+  implementation of Spring Framework’s Cache Abstraction.
+- [Spring Integration](https://docs.spring.io/spring-integration/reference/mqtt.html), provides inbound and outbound
+  channel adapters to support the Message Queueing Telemetry Transport (MQTT) protocol.
+- [Resilience4j](https://github.com/resilience4j/resilience4j), a library that helps prevent cascading failures and
+  provides mechanisms for graceful degradation and self-healing when external services experience issues.
+- [Zipkin](https://zipkin.io/), a distributed tracing system that provides end-to-end visibility into how requests flow
+  through the system, helping troubleshoot issues in distributed architectures.
 - ~~Spring Cloud Sleuth, autoconfiguration for distributed tracing~~
-- [Micrometer Tracing](https://micrometer.io/docs/tracing) with Brave, 
-library for distributed tracing (update to Spring Boot 3.x)
+- [Micrometer Tracing](https://micrometer.io/docs/tracing) with Brave, library for distributed tracing (update to Spring
+  Boot 3.x)
 - [Docker](https://www.docker.com/) and docker-compose, for containerization
-- [Spring Data JPA](https://spring.io/projects/spring-data-jpa) 
-provides repository support for the Jakarta Persistence API
+- [Spring Data JPA](https://spring.io/projects/spring-data-jpa)
+  provides repository support for the Jakarta Persistence API
 - [Flywaydb](https://flywaydb.org/) for migrations
 - [Keycloak](https://www.keycloak.org/) for providing authentication, user management, fine-grained authorization
 - [PostgreSQL](https://www.postgresql.org/)
@@ -245,8 +239,10 @@ guest/P@ssw0rd
 ```bash
 http://localhost:8181/swagger-ui.html
 ```
+
 ![img.png](img.png)
 ![img_1.png](img_1.png)
+
 ##### Zipkin
 
 ```bash
