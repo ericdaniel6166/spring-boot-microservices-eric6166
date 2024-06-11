@@ -54,10 +54,12 @@ public class DateTimeValidator implements ConstraintValidator<ValidDateTime, Str
         var msg = StringUtils.EMPTY;
         if (appDateTimeFormatter != AppDateTimeFormatter.NONE) {
             switch (appDateTimeFormatter) {
-                case BASIC_ISO_DATE, ISO_LOCAL_DATE, ISO_OFFSET_DATE, ISO_DATE, ISO_ORDINAL_DATE, ISO_WEEK_DATE -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_DATE,
-                        new String[]{BaseConst.PLACEHOLDER_0, appDateTimeFormatter.name()}, LocaleContextHolder.getLocale());
-                case ISO_LOCAL_DATE_TIME, ISO_OFFSET_DATE_TIME, ISO_ZONED_DATE_TIME, ISO_DATE_TIME, ISO_INSTANT, RFC_1123_DATE_TIME -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_DATE_TIME,
-                        new String[]{BaseConst.PLACEHOLDER_0, appDateTimeFormatter.name()}, LocaleContextHolder.getLocale());
+                case BASIC_ISO_DATE, ISO_LOCAL_DATE, ISO_OFFSET_DATE, ISO_DATE, ISO_ORDINAL_DATE, ISO_WEEK_DATE ->
+                        msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_DATE,
+                                new String[]{BaseConst.PLACEHOLDER_0, appDateTimeFormatter.name()}, LocaleContextHolder.getLocale());
+                case ISO_LOCAL_DATE_TIME, ISO_OFFSET_DATE_TIME, ISO_ZONED_DATE_TIME, ISO_DATE_TIME, ISO_INSTANT, RFC_1123_DATE_TIME ->
+                        msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_DATE_TIME,
+                                new String[]{BaseConst.PLACEHOLDER_0, appDateTimeFormatter.name()}, LocaleContextHolder.getLocale());
                 case ISO_LOCAL_TIME, ISO_OFFSET_TIME, ISO_TIME -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_TIME,
                         new String[]{BaseConst.PLACEHOLDER_0, appDateTimeFormatter.name()}, LocaleContextHolder.getLocale());
                 default -> {
