@@ -13,6 +13,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
+import java.time.format.DateTimeFormatter;
+
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class DateTimeValidator implements ConstraintValidator<ValidDateTime, String> {
@@ -22,14 +24,14 @@ public class DateTimeValidator implements ConstraintValidator<ValidDateTime, Str
     String pattern;
     String message;
     ValidDateTime.Flag flag;
-    AppDateTimeFormatter formatter;
+    AppDateTimeFormatter appDateTimeFormatter;
 
     @Override
     public void initialize(ValidDateTime constraintAnnotation) {
         pattern = constraintAnnotation.pattern();
         flag = constraintAnnotation.flag();
         message = constraintAnnotation.message();
-        formatter = constraintAnnotation.formatter();
+        appDateTimeFormatter = constraintAnnotation.formatter();
     }
 
     @Override
@@ -37,20 +39,8 @@ public class DateTimeValidator implements ConstraintValidator<ValidDateTime, Str
         if (StringUtils.isBlank(dateTime)) {
             return true;
         }
-        boolean isValid = true;
-        if (formatter != AppDateTimeFormatter.NONE) {
-            isValid = DateTimeUtils.toOptionalTemporalAccessor(dateTime, formatter.getFormatter()).isPresent();
-
-        } else {
-            switch (flag) {
-                case LOCAL_DATE -> isValid = DateTimeUtils.toOptionalLocalDate(dateTime, pattern).isPresent();
-                case LOCAL_DATE_TIME -> isValid = DateTimeUtils.toOptionalLocalDateTime(dateTime, pattern).isPresent();
-                case LOCAL_TIME -> isValid = DateTimeUtils.toOptionalLocalTime(dateTime, pattern).isPresent();
-                case ZONED_DATE_TIME -> isValid = DateTimeUtils.toOptionalZonedDateTime(dateTime, pattern).isPresent();
-                default -> {
-                }
-            }
-        }
+        var formatter = appDateTimeFormatter != AppDateTimeFormatter.NONE ? appDateTimeFormatter.getFormatter() : DateTimeFormatter.ofPattern(pattern);
+        boolean isValid = DateTimeUtils.toOptionalTemporalAccessor(dateTime, formatter).isPresent();
 
         if (!isValid && StringUtils.isBlank(message)) {
             buildConstraintViolation(constraintValidatorContext);
@@ -61,14 +51,14 @@ public class DateTimeValidator implements ConstraintValidator<ValidDateTime, Str
     private void buildConstraintViolation(ConstraintValidatorContext constraintValidatorContext) {
         constraintValidatorContext.disableDefaultConstraintViolation();
         var msg = StringUtils.EMPTY;
-        if (formatter != AppDateTimeFormatter.NONE) {
-            switch (formatter) {
+        if (appDateTimeFormatter != AppDateTimeFormatter.NONE) {
+            switch (appDateTimeFormatter) {
                 case BASIC_ISO_DATE, ISO_LOCAL_DATE, ISO_OFFSET_DATE, ISO_DATE, ISO_ORDINAL_DATE, ISO_WEEK_DATE -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_DATE,
-                        new String[]{BaseConst.PLACEHOLDER_0, formatter.name()}, LocaleContextHolder.getLocale());
+                        new String[]{BaseConst.PLACEHOLDER_0, appDateTimeFormatter.name()}, LocaleContextHolder.getLocale());
                 case ISO_LOCAL_DATE_TIME, ISO_OFFSET_DATE_TIME, ISO_ZONED_DATE_TIME, ISO_DATE_TIME, ISO_INSTANT, RFC_1123_DATE_TIME -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_DATE_TIME,
-                        new String[]{BaseConst.PLACEHOLDER_0, formatter.name()}, LocaleContextHolder.getLocale());
+                        new String[]{BaseConst.PLACEHOLDER_0, appDateTimeFormatter.name()}, LocaleContextHolder.getLocale());
                 case ISO_LOCAL_TIME, ISO_OFFSET_TIME, ISO_TIME -> msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_TIME,
-                        new String[]{BaseConst.PLACEHOLDER_0, formatter.name()}, LocaleContextHolder.getLocale());
+                        new String[]{BaseConst.PLACEHOLDER_0, appDateTimeFormatter.name()}, LocaleContextHolder.getLocale());
                 default -> {
                 }
             }
