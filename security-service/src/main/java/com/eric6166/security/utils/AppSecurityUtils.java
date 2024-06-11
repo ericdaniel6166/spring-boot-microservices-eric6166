@@ -153,7 +153,7 @@ public class AppSecurityUtils {
 
     public static String getSessionId() {
         var sid = getClaim(SecurityConst.SESSION_ID);
-        return sid == null ? null : sid.toString();
+        return sid != null ? sid.toString() : null;
     }
 
     public String getAuthorizationHeader() {

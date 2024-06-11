@@ -105,7 +105,7 @@ public class AppSqsClient {
 
     public SendMessageResponse sendMessageByQueueUrl(String queueUrl, String message, Integer delaySeconds, String messageGroupId) throws AppException {
         try {
-            var inputDelaySeconds = delaySeconds == null ? sqsProps.getTemplate().getDelaySeconds() : delaySeconds;
+            var inputDelaySeconds = delaySeconds != null ? delaySeconds : sqsProps.getTemplate().getDelaySeconds();
             boolean fifoQueue = StringUtils.endsWith(queueUrl, AwsConst.SQS_SUFFIX_FIFO);
             String inputMessageGroupId;
             if (!fifoQueue) {
@@ -196,7 +196,7 @@ public class AppSqsClient {
 
     public ReceiveMessageResponse receiveMessageByQueueUrl(String queueUrl, Integer maxNumberOfMessages) throws AppException {
         try {
-            var inputMaxNumberOfMessages = maxNumberOfMessages == null ? sqsProps.getTemplate().getMaxNumberOfMessages() : maxNumberOfMessages;
+            var inputMaxNumberOfMessages = maxNumberOfMessages != null ? maxNumberOfMessages : sqsProps.getTemplate().getMaxNumberOfMessages();
             return sqsClient.receiveMessage(ReceiveMessageRequest.builder()
                     .queueUrl(queueUrl)
                     .maxNumberOfMessages(inputMaxNumberOfMessages)

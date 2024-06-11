@@ -196,7 +196,7 @@ public class AppS3Client {
 
     public PresignedGetObjectRequest presignGetObject(String bucket, String key, Duration signatureDuration) throws AppException {
         try {
-            var inputSignatureDuration = signatureDuration == null ? s3Props.getTemplate().getSignatureDuration() : signatureDuration;
+            var inputSignatureDuration = signatureDuration != null ? signatureDuration : s3Props.getTemplate().getSignatureDuration();
             return s3Presigner.presignGetObject(GetObjectPresignRequest.builder()
                     .signatureDuration(inputSignatureDuration)
                     .getObjectRequest(GetObjectRequest.builder()

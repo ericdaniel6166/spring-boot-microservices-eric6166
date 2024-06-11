@@ -24,7 +24,7 @@ public final class AWSExceptionUtils {
             rootCause = buildAWSErrorResponse(awsServiceException);
         }
         return new AppException(appException.getHttpStatus(), appException.getError(), appException.getMessage(),
-                rootCause == null ? BaseUtils.getRootCauseMessage(awsServiceException) : rootCause);
+                rootCause != null ? rootCause : BaseUtils.getRootCauseMessage(awsServiceException));
     }
 
     public static AppException buildAppException(AwsServiceException e) {
