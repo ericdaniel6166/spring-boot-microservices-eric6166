@@ -90,7 +90,7 @@ public class AppSqsClient {
         return sendMessageBatchByQueueUrl(getQueueUrl(queueName).queueUrl(), delaySeconds, messageGroupId, entries);
     }
 
-    public SendMessageBatchResponse sendMessageBatchByQueueUrlAndEntries(String queueUrl, Collection<SendMessageBatchRequestEntry> entries) throws AppException {
+    private SendMessageBatchResponse sendMessageBatchByQueueUrlAndEntries(String queueUrl, Collection<SendMessageBatchRequestEntry> entries) throws AppException {
         try {
             return sqsClient.sendMessageBatch(SendMessageBatchRequest.builder()
                     .queueUrl(queueUrl)
@@ -103,7 +103,7 @@ public class AppSqsClient {
         }
     }
 
-    public SendMessageResponse sendMessageByQueueUrl(String queueUrl, String message, Integer delaySeconds, String messageGroupId) throws AppException {
+    private SendMessageResponse sendMessageByQueueUrl(String queueUrl, String message, Integer delaySeconds, String messageGroupId) throws AppException {
         try {
             var inputDelaySeconds = delaySeconds != null ? delaySeconds : sqsProps.getTemplate().getDelaySeconds();
             boolean fifoQueue = StringUtils.endsWith(queueUrl, AwsConst.SQS_SUFFIX_FIFO);
@@ -129,16 +129,8 @@ public class AppSqsClient {
         }
     }
 
-    public SendMessageResponse sendMessageByQueueUrl(String queueUrl, String message, Integer delaySeconds) throws AppException {
-        return sendMessageByQueueUrl(queueUrl, message, delaySeconds, null);
-    }
-
     public SendMessageResponse sendMessageByQueueName(String queueName, String message, Integer delaySeconds, String messageGroupId) throws AppException {
         return sendMessageByQueueUrl(getQueueUrl(queueName).queueUrl(), message, delaySeconds, messageGroupId);
-    }
-
-    public SendMessageResponse sendMessageByQueueName(String queueName, String message, Integer delaySeconds) throws AppException {
-        return sendMessageByQueueUrl(getQueueUrl(queueName).queueUrl(), message, delaySeconds);
     }
 
     public DeleteQueueResponse deleteQueueByQueueName(String queueName) throws AppException {
@@ -179,7 +171,7 @@ public class AppSqsClient {
         return createQueue(queueName, queueAttributes);
     }
 
-    public CreateQueueResponse createQueue(String queueName, Map<QueueAttributeName, String> attributes) throws AppException {
+    private CreateQueueResponse createQueue(String queueName, Map<QueueAttributeName, String> attributes) throws AppException {
         try {
             return sqsClient.createQueue(CreateQueueRequest.builder()
                     .queueName(queueName)
@@ -188,10 +180,6 @@ public class AppSqsClient {
         } catch (AwsServiceException e) {
             throw AWSExceptionUtils.buildAppException(e);
         }
-    }
-
-    public ReceiveMessageResponse receiveMessageByQueueUrl(String queueUrl) throws AppException {
-        return receiveMessageByQueueUrl(queueUrl, null);
     }
 
     public ReceiveMessageResponse receiveMessageByQueueUrl(String queueUrl, Integer maxNumberOfMessages) throws AppException {
@@ -206,10 +194,6 @@ public class AppSqsClient {
         } catch (AwsServiceException e) {
             throw AWSExceptionUtils.buildAppException(e);
         }
-    }
-
-    public ReceiveMessageResponse receiveMessageByQueueName(String queueName) throws AppException {
-        return receiveMessageByQueueName(queueName, null);
     }
 
     public ReceiveMessageResponse receiveMessageByQueueName(String queueName, Integer maxNumberOfMessages) throws AppException {
@@ -235,7 +219,7 @@ public class AppSqsClient {
                 .build();
     }
 
-    public DeleteMessageBatchResponse deleteMessageBatchByQueueUrlAndEntries(String queueUrl, Collection<DeleteMessageBatchRequestEntry> entries) throws AppException {
+    private DeleteMessageBatchResponse deleteMessageBatchByQueueUrlAndEntries(String queueUrl, Collection<DeleteMessageBatchRequestEntry> entries) throws AppException {
         try {
             return sqsClient.deleteMessageBatch(DeleteMessageBatchRequest.builder()
                     .queueUrl(queueUrl)
