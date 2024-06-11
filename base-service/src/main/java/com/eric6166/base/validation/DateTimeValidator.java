@@ -39,7 +39,8 @@ public class DateTimeValidator implements ConstraintValidator<ValidDateTime, Str
         if (StringUtils.isBlank(dateTime)) {
             return true;
         }
-        var formatter = appDateTimeFormatter != AppDateTimeFormatter.NONE ? appDateTimeFormatter.getFormatter() : DateTimeFormatter.ofPattern(pattern);
+        var formatter = appDateTimeFormatter != AppDateTimeFormatter.NONE ?
+                appDateTimeFormatter.getFormatter() : DateTimeFormatter.ofPattern(pattern);
         boolean isValid = DateTimeUtils.toOptionalTemporalAccessor(dateTime, formatter).isPresent();
 
         if (!isValid && StringUtils.isBlank(message)) {
