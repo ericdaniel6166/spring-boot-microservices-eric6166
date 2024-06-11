@@ -40,9 +40,9 @@ maven-install:
 	./mvnw clean install -Dmaven.test.skip
 	cd ../user-service-eric6166; \
 	./mvnw clean install -Dmaven.test.skip
+	cd ../order-service-eric6166; \
+	./mvnw clean install -Dmaven.test.skip
 #	cd ../notification-service; \
-#	./mvnw clean install -Dmaven.test.skip
-#	cd ../order-service; \
 #	./mvnw clean install -Dmaven.test.skip
 #	cd ../product-service; \
 #	./mvnw clean install -Dmaven.test.skip
