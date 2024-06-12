@@ -6,6 +6,12 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
 @Slf4j
 public final class PageUtils {
 
@@ -16,13 +22,21 @@ public final class PageUtils {
     }
 
     public static Pageable buildPageable(Integer pageNumber, Integer size, String sortColumn, String sortDirection) {
-        Sort sort;
-        if (StringUtils.equalsIgnoreCase(sortColumn, COLUMN_ID)) {
-            sort = Sort.by(new Sort.Order(Sort.Direction.fromString(sortDirection), COLUMN_ID));
-        } else {
-            sort = Sort.by(new Sort.Order(Sort.Direction.fromString(sortDirection), sortColumn),
-                    Sort.Order.asc(COLUMN_ID));
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(new Sort.Order(Sort.Direction.fromString(sortDirection), COLUMN_ID));
+        if (!StringUtils.equalsIgnoreCase(sortColumn, COLUMN_ID)) {
+            orders.add(Sort.Order.asc(COLUMN_ID));
         }
+        var sort = Sort.by(orders);
+        return PageRequest.of(pageNumber - 1, size, sort);
+    }
+
+    public static Pageable buildPageable(Integer pageNumber, Integer size, List<Sort.Order> orders) {
+        var orderById = orders.stream().filter(order -> StringUtils.equalsIgnoreCase(order.getProperty(), COLUMN_ID)).findFirst();
+        if (orderById.isEmpty()) {
+            orders.add(Sort.Order.asc(COLUMN_ID));
+        }
+        var sort = Sort.by(orders);
         return PageRequest.of(pageNumber - 1, size, sort);
     }
 
@@ -30,6 +44,12 @@ public final class PageUtils {
         var sort = Sort.by(new Sort.Order(Sort.Direction.fromString(sortDirection), sortColumn));
         return PageRequest.of(pageNumber - 1, size, sort);
     }
+
+    public static Pageable buildSimplePageable(Integer pageNumber, Integer size, List<Sort.Order> orders) {
+        var sort = Sort.by(orders);
+        return PageRequest.of(pageNumber - 1, size, sort);
+    }
+
 
     public static Pageable buildSimplePageable(Integer pageNumber, Integer size) {
         return PageRequest.of(pageNumber - 1, size);
