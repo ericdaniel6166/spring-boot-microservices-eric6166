@@ -19,31 +19,34 @@ public final class PageUtils {
         throw new IllegalStateException("Utility class");
     }
 
-    public static Pageable buildPageable(Integer pageNumber, Integer size, String sortColumn, String sortDirection) {
+    public static Pageable buildPageable(Integer pageNumber, Integer pageSize, String sortColumn, String sortDirection) {
         List<Sort.Order> orders = new ArrayList<>();
         orders.add(new Sort.Order(Sort.Direction.fromString(sortDirection), sortColumn));
-        return buildPageable(pageNumber, size, orders);
+        return buildPageable(pageNumber, pageSize, orders);
     }
 
-    public static Pageable buildPageable(Integer pageNumber, Integer size, List<Sort.Order> orders) {
-        var orderById = orders.stream().filter(order -> StringUtils.equalsIgnoreCase(order.getProperty(), COLUMN_ID)).findFirst();
+    public static Pageable buildPageable(Integer pageNumber, Integer pageSize, List<Sort.Order> orders) {
+        var orderById = orders.stream()
+                .filter(order -> StringUtils.equalsIgnoreCase(order.getProperty(), COLUMN_ID))
+                .findFirst();
         if (orderById.isEmpty()) {
             orders.add(Sort.Order.asc(COLUMN_ID));
         }
-        return PageRequest.of(pageNumber - 1, size, Sort.by(orders));
+        return PageRequest.of(pageNumber - 1, pageSize, Sort.by(orders));
     }
 
-    public static Pageable buildSimplePageable(Integer pageNumber, Integer size, String sortColumn, String sortDirection) {
-        return buildSimplePageable(pageNumber, size, Collections.singletonList(new Sort.Order(Sort.Direction.fromString(sortDirection), sortColumn)));
+    public static Pageable buildSimplePageable(Integer pageNumber, Integer pageSize, String sortColumn, String sortDirection) {
+        return buildSimplePageable(pageNumber, pageSize,
+                Collections.singletonList(new Sort.Order(Sort.Direction.fromString(sortDirection), sortColumn)));
     }
 
-    public static Pageable buildSimplePageable(Integer pageNumber, Integer size, List<Sort.Order> orders) {
-        return PageRequest.of(pageNumber - 1, size, Sort.by(orders));
+    public static Pageable buildSimplePageable(Integer pageNumber, Integer pageSize, List<Sort.Order> orders) {
+        return PageRequest.of(pageNumber - 1, pageSize, Sort.by(orders));
     }
 
 
-    public static Pageable buildSimplePageable(Integer pageNumber, Integer size) {
-        return PageRequest.of(pageNumber - 1, size);
+    public static Pageable buildSimplePageable(Integer pageNumber, Integer pageSize) {
+        return PageRequest.of(pageNumber - 1, pageSize);
     }
 
 
