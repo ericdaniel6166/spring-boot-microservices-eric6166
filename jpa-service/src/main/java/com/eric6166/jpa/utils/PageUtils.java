@@ -23,12 +23,8 @@ public final class PageUtils {
 
     public static Pageable buildPageable(Integer pageNumber, Integer size, String sortColumn, String sortDirection) {
         List<Sort.Order> orders = new ArrayList<>();
-        orders.add(new Sort.Order(Sort.Direction.fromString(sortDirection), COLUMN_ID));
-        if (!StringUtils.equalsIgnoreCase(sortColumn, COLUMN_ID)) {
-            orders.add(Sort.Order.asc(COLUMN_ID));
-        }
-        var sort = Sort.by(orders);
-        return PageRequest.of(pageNumber - 1, size, sort);
+        orders.add(new Sort.Order(Sort.Direction.fromString(sortDirection), sortColumn));
+        return buildPageable(pageNumber, size, orders);
     }
 
     public static Pageable buildPageable(Integer pageNumber, Integer size, List<Sort.Order> orders) {
@@ -36,18 +32,17 @@ public final class PageUtils {
         if (orderById.isEmpty()) {
             orders.add(Sort.Order.asc(COLUMN_ID));
         }
-        var sort = Sort.by(orders);
-        return PageRequest.of(pageNumber - 1, size, sort);
+        return PageRequest.of(pageNumber - 1, size, Sort.by(orders));
     }
 
     public static Pageable buildSimplePageable(Integer pageNumber, Integer size, String sortColumn, String sortDirection) {
-        var sort = Sort.by(new Sort.Order(Sort.Direction.fromString(sortDirection), sortColumn));
-        return PageRequest.of(pageNumber - 1, size, sort);
+        List<Sort.Order> orders = new ArrayList<>();
+        orders.add(new Sort.Order(Sort.Direction.fromString(sortDirection), sortColumn));
+        return buildSimplePageable(pageNumber, size, orders);
     }
 
     public static Pageable buildSimplePageable(Integer pageNumber, Integer size, List<Sort.Order> orders) {
-        var sort = Sort.by(orders);
-        return PageRequest.of(pageNumber - 1, size, sort);
+        return PageRequest.of(pageNumber - 1, size, Sort.by(orders));
     }
 
 
