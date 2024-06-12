@@ -9,6 +9,7 @@ import org.springframework.data.domain.Sort;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,9 +37,7 @@ public final class PageUtils {
     }
 
     public static Pageable buildSimplePageable(Integer pageNumber, Integer size, String sortColumn, String sortDirection) {
-        List<Sort.Order> orders = new ArrayList<>();
-        orders.add(new Sort.Order(Sort.Direction.fromString(sortDirection), sortColumn));
-        return buildSimplePageable(pageNumber, size, orders);
+        return buildSimplePageable(pageNumber, size, Collections.singletonList(new Sort.Order(Sort.Direction.fromString(sortDirection), sortColumn)));
     }
 
     public static Pageable buildSimplePageable(Integer pageNumber, Integer size, List<Sort.Order> orders) {
