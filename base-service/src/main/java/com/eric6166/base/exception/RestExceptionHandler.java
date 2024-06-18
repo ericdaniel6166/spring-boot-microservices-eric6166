@@ -78,9 +78,9 @@ public class RestExceptionHandler {
     public ResponseEntity<Object> handleConstraintViolationException(ConstraintViolationException e, HandlerMethod handlerMethod) {
         List<ErrorDetail> errorDetails = new ArrayList<>();
         var apiClassName = handlerMethod.getBeanType().getSimpleName();
-        for (var constraintViolation : e.getConstraintViolations()) {
-            errorDetails.add(buildErrorDetail(constraintViolation, apiClassName));
-        }
+        e.getConstraintViolations().forEach(constraintViolation ->
+                errorDetails.add(buildErrorDetail(constraintViolation, apiClassName))
+        );
         var errorResponse = appExceptionUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR, errorDetails);
         return baseUtils.buildResponseExceptionEntity(errorResponse);
     }
@@ -104,13 +104,13 @@ public class RestExceptionHandler {
     public ResponseEntity<Object> handleBindException(BindException e, HandlerMethod handlerMethod) {
         List<ErrorDetail> errorDetails = new ArrayList<>();
         var apiClassName = handlerMethod.getBeanType().getSimpleName();
-        for (var objectError : e.getAllErrors()) {
+        e.getAllErrors().forEach(objectError -> {
             if (objectError instanceof FieldError fieldError) {
                 errorDetails.add(buildErrorDetail(fieldError, apiClassName));
             } else {
                 errorDetails.add(buildErrorDetail(objectError, apiClassName));
             }
-        }
+        });
         var errorResponse = appExceptionUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR, errorDetails);
         return baseUtils.buildResponseExceptionEntity(errorResponse);
     }
@@ -155,10 +155,7 @@ public class RestExceptionHandler {
                 }
             }
         }
-        if (StringUtils.isBlank(messageTemplate)) {
-            messageTemplate = objectError.getDefaultMessage();
-        }
-        return messageTemplate;
+        return StringUtils.defaultIfBlank(messageTemplate, objectError.getDefaultMessage());
     }
 
     private String formatMsg(String messageTemplate, String model) {
@@ -177,10 +174,7 @@ public class RestExceptionHandler {
                 //
             }
         }
-        if (StringUtils.isBlank(model)) {
-            model = messageSource.getMessage(String.format(KEY_COMMON_FIELD_TEMPLATE, BaseConst.COMMON, BaseConst.GENERAL_FIELD), null, LocaleContextHolder.getLocale()); // uncomment
-        }
-        return model;
+        return StringUtils.defaultIfBlank(model, messageSource.getMessage(String.format(KEY_COMMON_FIELD_TEMPLATE, BaseConst.COMMON, BaseConst.GENERAL_FIELD), null, LocaleContextHolder.getLocale()));
     }
 
     @ExceptionHandler(CallNotPermittedException.class)
