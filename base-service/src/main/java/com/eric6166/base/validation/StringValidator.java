@@ -35,17 +35,14 @@ public class StringValidator implements ConstraintValidator<ValidString, String>
         if (StringUtils.isBlank(s)) {
             return true;
         }
-        boolean isValid;
-        if (caseSensitive) {
-            isValid = StringUtils.equalsAny(s, values);
-        } else {
-            isValid = StringUtils.equalsAnyIgnoreCase(s, values);
-        }
+        boolean isValid = caseSensitive
+                ? StringUtils.equalsAny(s, values)
+                : StringUtils.equalsAnyIgnoreCase(s, values);
         if (!isValid && StringUtils.isBlank(message)) {
             constraintValidatorContext.disableDefaultConstraintViolation();
-            var message = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_VALUE,
+            var msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_VALUE,
                     new String[]{BaseConst.PLACEHOLDER_0, Arrays.toString(values)}, LocaleContextHolder.getLocale());
-            constraintValidatorContext.buildConstraintViolationWithTemplate(message).addConstraintViolation();
+            constraintValidatorContext.buildConstraintViolationWithTemplate(msg).addConstraintViolation();
         }
         return isValid;
     }

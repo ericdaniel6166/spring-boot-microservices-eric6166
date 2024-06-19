@@ -26,10 +26,7 @@ public class FileExtensionValidator implements ConstraintValidator<ValidFileExte
             return true;
         }
         var extension = FilenameUtils.getExtension(file.getOriginalFilename());
-        if (StringUtils.isBlank(extension)) {
-            return false;
-        }
-        return extensions.contains(extension.toLowerCase());
+        return StringUtils.isNotBlank(extension) && extensions.contains(extension.toLowerCase());
 
     }
 

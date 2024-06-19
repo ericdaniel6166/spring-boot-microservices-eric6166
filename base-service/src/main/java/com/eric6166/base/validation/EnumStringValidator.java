@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -20,15 +21,15 @@ public class EnumStringValidator implements ConstraintValidator<ValidEnumString,
 
     private final MessageSource messageSource;
 
-    List<String> valueList;
+    String[] values;
     boolean caseSensitive;
     String message;
 
     @Override
     public void initialize(ValidEnumString constraintAnnotation) {
-        valueList = Stream.of(constraintAnnotation.value().getEnumConstants())
+        values = Stream.of(constraintAnnotation.value().getEnumConstants())
                 .map(Enum::name)
-                .toList();
+                .toArray(String[]::new);
         caseSensitive = constraintAnnotation.caseSensitive();
         message = constraintAnnotation.message();
     }
@@ -38,24 +39,17 @@ public class EnumStringValidator implements ConstraintValidator<ValidEnumString,
         if (StringUtils.isBlank(s)) {
             return true;
         }
-        boolean isValid;
-        if (caseSensitive) {
-            isValid = valueList.contains(s);
-        } else {
-            isValid = valueList.contains(s.toUpperCase());
-        }
+        boolean isValid = caseSensitive
+                ? StringUtils.equalsAny(s, values)
+                : StringUtils.equalsAnyIgnoreCase(s, values);
+
         if (!isValid && StringUtils.isBlank(message)) {
-            buildConstraintViolation(constraintValidatorContext);
+            constraintValidatorContext.disableDefaultConstraintViolation();
+            var msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_VALUE,
+                    new String[]{BaseConst.PLACEHOLDER_0, Arrays.toString(values)}, LocaleContextHolder.getLocale());
+            constraintValidatorContext.buildConstraintViolationWithTemplate(msg).addConstraintViolation();
         }
         return isValid;
     }
-
-    private void buildConstraintViolation(ConstraintValidatorContext constraintValidatorContext) {
-        constraintValidatorContext.disableDefaultConstraintViolation();
-        var msg = messageSource.getMessage(BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_VALUE,
-                new String[]{BaseConst.PLACEHOLDER_0, valueList.toString()}, LocaleContextHolder.getLocale());
-        constraintValidatorContext.buildConstraintViolationWithTemplate(msg).addConstraintViolation();
-    }
-
 
 }

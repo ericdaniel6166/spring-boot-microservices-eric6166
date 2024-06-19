@@ -9,20 +9,16 @@ import org.springframework.web.multipart.MultipartFile;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class FileMaxSizeValidator implements ConstraintValidator<ValidFileMaxSize, MultipartFile> {
 
-    long maxSize;
+    long maxSizeInBytes;
 
     @Override
     public void initialize(ValidFileMaxSize constraintAnnotation) {
-        maxSize = constraintAnnotation.maxSize();
+        maxSizeInBytes = constraintAnnotation.maxSize() * 1024 * 1024;
     }
 
     @Override
     public boolean isValid(MultipartFile file, ConstraintValidatorContext constraintValidatorContext) {
-        if (file == null || file.isEmpty()) {
-            return true;
-        }
-        return maxSize * 1024 * 1024 >= file.getSize();
-
+        return file == null || file.isEmpty() || file.getSize() <= maxSizeInBytes;
     }
 
 

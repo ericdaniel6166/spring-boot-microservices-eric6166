@@ -39,12 +39,9 @@ public class CollectionStringValidator implements ConstraintValidator<ValidColle
         if (CollectionUtils.isEmpty(s)) {
             return true;
         }
-        boolean isValid;
-        if (caseSensitive) {
-            isValid = valueList.containsAll(s);
-        } else {
-            isValid = upperCaseValueList.containsAll(s.stream().map(String::toUpperCase).toList());
-        }
+        boolean isValid = caseSensitive
+                ? valueList.containsAll(s)
+                : upperCaseValueList.containsAll(s.stream().map(String::toUpperCase).toList());
         if (!isValid && StringUtils.isBlank(message)) {
             buildConstraintViolation(constraintValidatorContext);
         }
