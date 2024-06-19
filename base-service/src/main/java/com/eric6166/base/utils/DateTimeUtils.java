@@ -71,7 +71,7 @@ public final class DateTimeUtils {
     }
 
     /**
-     * The text is parsed using the pattern, returning a date-time.
+     * The text is parsed using the formatter, returning a date-time.
      *
      * @param text  the text to parse, not null
      * @param formatter the formatter to use, not null
