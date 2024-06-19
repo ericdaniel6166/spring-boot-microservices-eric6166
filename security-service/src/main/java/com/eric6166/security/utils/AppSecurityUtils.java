@@ -14,6 +14,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -27,13 +28,10 @@ public class AppSecurityUtils {
     HttpServletRequest httpServletRequest;
 
     public static boolean hasAnyRole(String... roles) {
-        Collection<String> authorities = getAuthorities();
-        for (var role : roles) {
-            if (authorities.contains(getRoleWithPrefix(SecurityConst.ROLE_PREFIX, role))) {
-                return true;
-            }
-        }
-        return false;
+        var authorities = getAuthorities();
+        return Arrays.stream(roles)
+                .map(role -> getRoleWithPrefix(SecurityConst.ROLE_PREFIX, role))
+                .anyMatch(authorities::contains);
     }
 
     private static String getRoleWithPrefix(String prefix, String role) {

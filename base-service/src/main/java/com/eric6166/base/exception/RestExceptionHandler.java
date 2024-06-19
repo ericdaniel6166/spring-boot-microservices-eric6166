@@ -29,7 +29,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletionException;
 
 @RestControllerAdvice
@@ -146,14 +148,17 @@ public class RestExceptionHandler {
     private String buildMessageTemplate(ObjectError objectError) {
         var messageTemplate = StringUtils.EMPTY;
         if (ObjectUtils.isNotEmpty(objectError.getCodes())) {
-            for (var code : objectError.getCodes()) {
-                try {
-                    messageTemplate = messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
-                    break;
-                } catch (NoSuchMessageException ignored) {
-                    //
-                }
-            }
+            messageTemplate = Arrays.stream(objectError.getCodes())
+                    .map(code -> {
+                        try {
+                            return messageSource.getMessage(code, null, LocaleContextHolder.getLocale());
+                        } catch (NoSuchMessageException e) {
+                            return null;
+                        }
+                    })
+                    .filter(Objects::nonNull)
+                    .findFirst()
+                    .orElse(StringUtils.EMPTY);
         }
         return StringUtils.defaultIfBlank(messageTemplate, objectError.getDefaultMessage());
     }
@@ -164,17 +169,19 @@ public class RestExceptionHandler {
     }
 
     private String buildModel(String keyField, String keyCommonField) {
-        var model = StringUtils.EMPTY;
         var keyFieldList = List.of(keyField, keyCommonField);
-        for (var key : keyFieldList) {
-            try {
-                model = messageSource.getMessage(key, null, LocaleContextHolder.getLocale());
-                break;
-            } catch (NoSuchMessageException ignored) {
-                //
-            }
-        }
-        return StringUtils.defaultIfBlank(model, messageSource.getMessage(String.format(KEY_COMMON_FIELD_TEMPLATE, BaseConst.COMMON, BaseConst.GENERAL_FIELD), null, LocaleContextHolder.getLocale()));
+        return keyFieldList.stream()
+                .map(key -> {
+                    try {
+                        return messageSource.getMessage(key, null, LocaleContextHolder.getLocale());
+                    } catch (NoSuchMessageException e) {
+                        return null;
+                    }
+                })
+                .filter(Objects::nonNull)
+                .findFirst()
+                .orElse(messageSource.getMessage(String.format(KEY_COMMON_FIELD_TEMPLATE,
+                        BaseConst.COMMON, BaseConst.GENERAL_FIELD), null, LocaleContextHolder.getLocale()));
     }
 
     @ExceptionHandler(CallNotPermittedException.class)
