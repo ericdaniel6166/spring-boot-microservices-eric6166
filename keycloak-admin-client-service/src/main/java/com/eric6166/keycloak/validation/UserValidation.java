@@ -26,7 +26,7 @@ public class UserValidation {
     KeycloakAminClient keycloakAminClient;
 
     public void validateUsernameExisted(String username) throws AppValidationException {
-        log.info("UserValidationImpl.validateUsernameExisted"); // comment // for local testing
+        log.info("UserValidation.validateUsernameExisted"); // comment // for local testing
         var searchByUsername = keycloakAminClient.searchUserByUsername(username);
         if (searchByUsername.isPresent()) {
             var res = messageSource.getMessage(BaseMessageConst.MGS_RES_USERNAME, null, LocaleContextHolder.getLocale());
@@ -36,7 +36,7 @@ public class UserValidation {
     }
 
     public void validateEmailExisted(String email) throws AppValidationException {
-        log.info("UserValidationImpl.validateEmailExisted"); // comment // for local testing
+        log.info("UserValidation.validateEmailExisted"); // comment // for local testing
         var searchByEmail = keycloakAminClient.searchUserByEmail(email);
         if (searchByEmail.isPresent()) {
             var res = messageSource.getMessage(BaseMessageConst.MGS_RES_EMAIL, null, LocaleContextHolder.getLocale());
