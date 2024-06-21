@@ -108,16 +108,16 @@ public class RestExceptionHandler {
         var apiClassName = handlerMethod.getBeanType().getSimpleName();
         e.getAllErrors().forEach(objectError -> {
             if (objectError instanceof FieldError fieldError) {
-                errorDetails.add(buildErrorDetail(fieldError, apiClassName));
+                errorDetails.add(buildFieldErrorDetail(fieldError, apiClassName));
             } else {
-                errorDetails.add(buildErrorDetail(objectError, apiClassName));
+                errorDetails.add(buildObjectErrorDetail(objectError, apiClassName));
             }
         });
         var errorResponse = appExceptionUtils.buildErrorResponse(ErrorCode.VALIDATION_ERROR, errorDetails);
         return baseUtils.buildResponseExceptionEntity(errorResponse);
     }
 
-    private ErrorDetail buildErrorDetail(ObjectError objectError, String apiClassName) {
+    private ErrorDetail buildObjectErrorDetail(ObjectError objectError, String apiClassName) {
         var messageTemplate = buildMessageTemplate(objectError);
         var object = objectError.getObjectName();
         var keyObject = String.format(KEY_OBJECT_TEMPLATE, apiClassName, object);
@@ -131,7 +131,7 @@ public class RestExceptionHandler {
 
     }
 
-    private ErrorDetail buildErrorDetail(FieldError fieldError, String apiClassName) {
+    private ErrorDetail buildFieldErrorDetail(FieldError fieldError, String apiClassName) {
         var messageTemplate = buildMessageTemplate(fieldError);
         var field = fieldError.getField();
         var keyField = String.format(KEY_FIELD_TEMPLATE, apiClassName, fieldError.getObjectName(), field);
