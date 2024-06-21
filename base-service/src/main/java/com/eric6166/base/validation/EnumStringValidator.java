@@ -35,13 +35,13 @@ public class EnumStringValidator implements ConstraintValidator<ValidEnumString,
     }
 
     @Override
-    public boolean isValid(String s, ConstraintValidatorContext constraintValidatorContext) {
-        if (StringUtils.isBlank(s)) {
+    public boolean isValid(String enumStr, ConstraintValidatorContext constraintValidatorContext) {
+        if (StringUtils.isBlank(enumStr)) {
             return true;
         }
         boolean isValid = caseSensitive
-                ? StringUtils.equalsAny(s, values)
-                : StringUtils.equalsAnyIgnoreCase(s, values);
+                ? StringUtils.equalsAny(enumStr, values)
+                : StringUtils.equalsAnyIgnoreCase(enumStr, values);
 
         if (!isValid && StringUtils.isBlank(message)) {
             constraintValidatorContext.disableDefaultConstraintViolation();
