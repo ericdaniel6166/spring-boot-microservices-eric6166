@@ -99,7 +99,7 @@ public class AppSqsClient {
         } catch (QueueDoesNotExistException e) {
             throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueUrl '%s'", queueUrl));
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
     }
 
@@ -125,7 +125,7 @@ public class AppSqsClient {
         } catch (QueueDoesNotExistException e) {
             throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueUrl '%s'", queueUrl));
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
     }
 
@@ -146,7 +146,7 @@ public class AppSqsClient {
         } catch (QueueDoesNotExistException e) {
             throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueUrl '%s'", queueUrl));
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
     }
 
@@ -158,7 +158,7 @@ public class AppSqsClient {
         } catch (QueueDoesNotExistException e) {
             throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueName '%s'", queueName));
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
     }
 
@@ -178,7 +178,7 @@ public class AppSqsClient {
                     .attributes(attributes)
                     .build());
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
     }
 
@@ -192,7 +192,7 @@ public class AppSqsClient {
         } catch (QueueDoesNotExistException e) {
             throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueUrl '%s'", queueUrl));
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
     }
 
@@ -228,7 +228,7 @@ public class AppSqsClient {
         } catch (QueueDoesNotExistException e) {
             throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueUrl '%s'", queueUrl));
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
 
     }
@@ -246,7 +246,7 @@ public class AppSqsClient {
         } catch (QueueDoesNotExistException e) {
             throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueUrl '%s'", queueUrl));
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
 
     }

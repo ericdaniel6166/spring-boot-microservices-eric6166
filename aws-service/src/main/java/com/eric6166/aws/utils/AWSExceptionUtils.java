@@ -28,7 +28,7 @@ public final class AWSExceptionUtils {
     }
 
     public static AppException buildAppException(AwsServiceException e) {
-        return buildAppException(e, StringUtils.EMPTY);
+        return buildAppException(e, e.getMessage());
     }
 
     public static AppException buildAppException(AwsServiceException e, String message) {

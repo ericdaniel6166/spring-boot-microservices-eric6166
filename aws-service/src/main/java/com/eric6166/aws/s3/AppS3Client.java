@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -76,7 +77,7 @@ public class AppS3Client {
         } catch (NoSuchBucketException e) {
             throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("bucket with name '%s'", bucket));
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
     }
 
@@ -89,7 +90,7 @@ public class AppS3Client {
         } catch (NoSuchBucketException e) {
             throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("bucket with name '%s'", bucket));
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
     }
 
@@ -102,7 +103,7 @@ public class AppS3Client {
         } catch (NoSuchBucketException e) {
             throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("bucket with name '%s'", bucket));
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
     }
 
@@ -115,7 +116,7 @@ public class AppS3Client {
         } catch (NoSuchBucketException e) {
             throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("bucket with name '%s'", bucket));
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
     }
 
@@ -128,7 +129,7 @@ public class AppS3Client {
         } catch (NoSuchBucketException e) {
             throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("bucket with name '%s'", bucket));
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
     }
 
@@ -141,7 +142,7 @@ public class AppS3Client {
         } catch (NoSuchBucketException e) {
             throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("bucket with name '%s'", bucket));
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
     }
 
@@ -149,7 +150,7 @@ public class AppS3Client {
         try {
             return s3Client.utilities().parseUri(URI.create(uri));
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
     }
 
@@ -165,7 +166,7 @@ public class AppS3Client {
         } catch (NoSuchBucketException e) {
             throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("bucket with name '%s'", bucket));
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
     }
 
@@ -190,7 +191,7 @@ public class AppS3Client {
                     .destinationKey(destinationKey)
                     .build());
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
     }
 
@@ -205,7 +206,7 @@ public class AppS3Client {
                             .build())
                     .build());
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
     }
 
@@ -218,7 +219,7 @@ public class AppS3Client {
         } catch (NoSuchBucketException e) {
             throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("bucket with name '%s'", bucket));
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
     }
 
@@ -246,7 +247,7 @@ public class AppS3Client {
         } catch (NoSuchBucketException e) {
             throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("bucket with name '%s'", bucket));
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
     }
 
@@ -258,7 +259,7 @@ public class AppS3Client {
         } catch (NoSuchBucketException e) {
             throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("bucket with name '%s'", bucket));
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         }
     }
 
@@ -272,7 +273,7 @@ public class AppS3Client {
         } catch (BucketAlreadyExistsException e) {
             throw AWSExceptionUtils.buildAppException(e, new AppBadRequestException(String.format("bucket with name '%s' is not available", bucket)));
         } catch (AwsServiceException e) {
-            throw AWSExceptionUtils.buildAppException(e);
+            throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
         } catch (IllegalArgumentException e) {
             throw new AppException(HttpStatus.BAD_REQUEST, e.getMessage());
         } catch (Exception e) {
@@ -294,7 +295,7 @@ public class AppS3Client {
                 case MOVED_PERMANENTLY -> {
                     //
                 }
-                default -> throw AWSExceptionUtils.buildAppException(e);
+                default -> throw AWSExceptionUtils.buildAppException(e, StringUtils.EMPTY);
             }
         }
         return isBucketExisted;
