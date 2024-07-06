@@ -3,6 +3,9 @@ package com.eric6166.aws.s3;
 import com.eric6166.aws.utils.AWSExceptionUtils;
 import com.eric6166.base.exception.AppBadRequestException;
 import com.eric6166.base.exception.AppException;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -67,9 +70,8 @@ public class AppS3Client {
 
     S3Client s3Client;
     S3Presigner s3Presigner;
-    S3Props s3Props;
 
-    public ListObjectsV2Response listObject(String bucket) throws AppException {
+    public ListObjectsV2Response listObject(@NotBlank String bucket) throws AppException {
         try {
             return s3Client.listObjectsV2(ListObjectsV2Request.builder()
                     .bucket(bucket)
@@ -81,7 +83,7 @@ public class AppS3Client {
         }
     }
 
-    public ResponseBytes<GetObjectResponse> getObjectAsBytes(String bucket, String key) throws AppException {
+    public ResponseBytes<GetObjectResponse> getObjectAsBytes(@NotBlank String bucket, @NotBlank String key) throws AppException {
         try {
             return s3Client.getObjectAsBytes(GetObjectRequest.builder()
                     .bucket(bucket)
@@ -94,7 +96,7 @@ public class AppS3Client {
         }
     }
 
-    public ResponseInputStream<GetObjectResponse> getObject(String bucket, String key) throws AppException {
+    public ResponseInputStream<GetObjectResponse> getObject(@NotBlank String bucket, @NotBlank String key) throws AppException {
         try {
             return s3Client.getObject(GetObjectRequest.builder()
                     .bucket(bucket)
@@ -107,7 +109,7 @@ public class AppS3Client {
         }
     }
 
-    public GetObjectAttributesResponse getObjectAttributes(String bucket, String key) throws AppException {
+    public GetObjectAttributesResponse getObjectAttributes(@NotBlank String bucket, @NotBlank String key) throws AppException {
         try {
             return s3Client.getObjectAttributes(GetObjectAttributesRequest.builder()
                     .bucket(bucket)
@@ -120,7 +122,7 @@ public class AppS3Client {
         }
     }
 
-    public GetObjectTaggingResponse getObjectTagging(String bucket, String key) throws AppException {
+    public GetObjectTaggingResponse getObjectTagging(@NotBlank String bucket, @NotBlank String key) throws AppException {
         try {
             return s3Client.getObjectTagging(GetObjectTaggingRequest.builder()
                     .bucket(bucket)
@@ -133,7 +135,7 @@ public class AppS3Client {
         }
     }
 
-    public URL getUrl(String bucket, String key) throws AppException {
+    public URL getUrl(@NotBlank String bucket, @NotBlank String key) throws AppException {
         try {
             return s3Client.utilities().getUrl(GetUrlRequest.builder()
                     .bucket(bucket)
@@ -146,7 +148,7 @@ public class AppS3Client {
         }
     }
 
-    public S3Uri parseUri(String uri) throws AppException {
+    public S3Uri parseUri(@NotBlank String uri) throws AppException {
         try {
             return s3Client.utilities().parseUri(URI.create(uri));
         } catch (AwsServiceException e) {
@@ -154,7 +156,7 @@ public class AppS3Client {
         }
     }
 
-    public PutObjectResponse uploadObject(String bucket, String key, MultipartFile file) throws IOException, AppException {
+    public PutObjectResponse uploadObject(@NotBlank String bucket, @NotBlank String key, @NotNull MultipartFile file) throws IOException, AppException {
         try {
             return s3Client.putObject(PutObjectRequest.builder()
                             .bucket(bucket)
@@ -170,19 +172,19 @@ public class AppS3Client {
         }
     }
 
-    public CopyObjectResponse renameObject(String bucket, String oldKey, String newKey) throws AppException {
+    public CopyObjectResponse renameObject(@NotBlank String bucket, @NotBlank String oldKey, @NotBlank String newKey) throws AppException {
         var response = copyObject(bucket, oldKey, bucket, newKey);
         deleteObject(bucket, oldKey);
         return response;
     }
 
-    public CopyObjectResponse moveObject(String sourceBucket, String sourceKey, String destinationBucket, String destinationKey) throws AppException {
+    public CopyObjectResponse moveObject(@NotBlank String sourceBucket, @NotBlank String sourceKey, @NotBlank String destinationBucket, @NotBlank String destinationKey) throws AppException {
         var response = copyObject(sourceBucket, sourceKey, destinationBucket, destinationKey);
         deleteObject(sourceBucket, sourceKey);
         return response;
     }
 
-    public CopyObjectResponse copyObject(String sourceBucket, String sourceKey, String destinationBucket, String destinationKey) throws AppException {
+    public CopyObjectResponse copyObject(@NotBlank String sourceBucket, @NotBlank String sourceKey, @NotBlank String destinationBucket, @NotBlank String destinationKey) throws AppException {
         try {
             return s3Client.copyObject(CopyObjectRequest.builder()
                     .sourceBucket(sourceBucket)
@@ -195,11 +197,10 @@ public class AppS3Client {
         }
     }
 
-    public PresignedGetObjectRequest presignGetObject(String bucket, String key, Duration signatureDuration) throws AppException {
+    public PresignedGetObjectRequest presignGetObject(@NotBlank String bucket, @NotBlank String key, @NotNull Duration signatureDuration) throws AppException {
         try {
-            var inputSignatureDuration = signatureDuration != null ? signatureDuration : s3Props.getTemplate().getSignatureDuration();
             return s3Presigner.presignGetObject(GetObjectPresignRequest.builder()
-                    .signatureDuration(inputSignatureDuration)
+                    .signatureDuration(signatureDuration)
                     .getObjectRequest(GetObjectRequest.builder()
                             .bucket(bucket)
                             .key(key)
@@ -210,7 +211,7 @@ public class AppS3Client {
         }
     }
 
-    public DeleteObjectResponse deleteObject(String bucket, String key) throws AppException {
+    public DeleteObjectResponse deleteObject(@NotBlank String bucket, @NotBlank String key) throws AppException {
         try {
             return s3Client.deleteObject(DeleteObjectRequest.builder()
                     .bucket(bucket)
@@ -223,15 +224,15 @@ public class AppS3Client {
         }
     }
 
-    public DeleteObjectsResponse deleteObjects(String bucket, String... keys) throws AppException {
+    public DeleteObjectsResponse deleteObjects(@NotBlank String bucket, @NotEmpty String... keys) throws AppException {
         return deleteObjects(bucket, Arrays.stream(keys));
     }
 
-    public DeleteObjectsResponse deleteObjects(String bucket, Collection<String> keys) throws AppException {
+    public DeleteObjectsResponse deleteObjects(@NotBlank String bucket, @NotEmpty Collection<String> keys) throws AppException {
         return deleteObjects(bucket, keys.stream());
     }
 
-    public DeleteObjectsResponse deleteObjects(String bucket, Stream<String> keys) throws AppException {
+    public DeleteObjectsResponse deleteObjects(@NotBlank String bucket, @NotNull Stream<String> keys) throws AppException {
         try {
             var objects = keys
                     .map(key -> ObjectIdentifier.builder()
@@ -251,7 +252,7 @@ public class AppS3Client {
         }
     }
 
-    public DeleteBucketResponse deleteBucket(String bucket) throws AppException {
+    public DeleteBucketResponse deleteBucket(@NotBlank String bucket) throws AppException {
         try {
             return s3Client.deleteBucket(DeleteBucketRequest.builder()
                     .bucket(bucket)
@@ -263,7 +264,7 @@ public class AppS3Client {
         }
     }
 
-    public CreateBucketResponse createBucket(String bucket) throws AppException {
+    public CreateBucketResponse createBucket(@NotBlank String bucket) throws AppException {
         try {
             return s3Client.createBucket(CreateBucketRequest.builder()
                     .bucket(bucket)
@@ -281,7 +282,7 @@ public class AppS3Client {
         }
     }
 
-    public boolean isBucketExisted(String bucket) throws AppException {
+    public boolean isBucketExisted(@NotBlank String bucket) throws AppException {
         boolean isBucketExisted = false;
         try {
             s3Client.headBucket(HeadBucketRequest.builder()

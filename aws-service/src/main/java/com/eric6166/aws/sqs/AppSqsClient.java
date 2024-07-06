@@ -4,11 +4,15 @@ package com.eric6166.aws.sqs;
 import com.eric6166.aws.utils.AWSExceptionUtils;
 import com.eric6166.aws.utils.AwsConst;
 import com.eric6166.base.exception.AppException;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Assertions;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
@@ -47,29 +51,23 @@ import java.util.stream.Collectors;
 public class AppSqsClient {
 
     SqsClient sqsClient;
-    SqsProps sqsProps;
 
-    private Collection<SendMessageBatchRequestEntry> buildSendMessageBatchRequestEntries(SqsSendMessageBatchRequestEntries entries,
-                                                                                         Integer delaySeconds, String messageGroupId, boolean fifoQueue) {
+    private Collection<SendMessageBatchRequestEntry> buildSendMessageBatchRequestEntries(@NotNull SqsSendMessageBatchRequestEntries entries,
+                                                                                         @NotNull Integer delaySeconds, String messageGroupId, boolean fifoQueue) {
         return entries.getSqsSendMessageBatchRequestEntries().stream().map(entry ->
                 buildSendMessageBatchRequestEntry(entry, delaySeconds, messageGroupId, fifoQueue)).collect(Collectors.toList());
     }
 
-    private SendMessageBatchRequestEntry buildSendMessageBatchRequestEntry(SqsSendMessageBatchRequestEntry entry,
-                                                                           Integer delaySeconds, String messageGroupId, boolean fifoQueue) {
+    private SendMessageBatchRequestEntry buildSendMessageBatchRequestEntry(@NotNull SqsSendMessageBatchRequestEntry entry,
+                                                                           @NotNull Integer delaySeconds, String messageGroupId, boolean fifoQueue) {
         Integer inputDelaySeconds;
-        if (delaySeconds != null) {
-            inputDelaySeconds = delaySeconds;
-        } else {
-            inputDelaySeconds = sqsProps.getTemplate().getDelaySeconds();
-        }
+        inputDelaySeconds = delaySeconds;
         String inputMessageGroupId;
         if (!fifoQueue) {
             inputMessageGroupId = null;
-        } else if (StringUtils.isNotBlank(messageGroupId)) {
-            inputMessageGroupId = messageGroupId;
         } else {
-            inputMessageGroupId = sqsProps.getTemplate().getQueue().getFifo().getMessageGroupId();
+            Assertions.assertTrue(StringUtils.isNotBlank(messageGroupId), "messageGroupId must not be blank");
+            inputMessageGroupId = messageGroupId;
         }
         return SendMessageBatchRequestEntry.builder()
                 .messageBody(entry.getMessageBody())
@@ -79,18 +77,18 @@ public class AppSqsClient {
                 .build();
     }
 
-    public SendMessageBatchResponse sendMessageBatchByQueueUrl(String queueUrl, Integer delaySeconds, String messageGroupId,
-                                                               SqsSendMessageBatchRequestEntries entries) throws AppException {
+    public SendMessageBatchResponse sendMessageBatchByQueueUrl(@NotBlank String queueUrl, @NotNull Integer delaySeconds, String messageGroupId,
+                                                               @NotNull SqsSendMessageBatchRequestEntries entries) throws AppException {
         return sendMessageBatchByQueueUrlAndEntries(queueUrl, buildSendMessageBatchRequestEntries(entries, delaySeconds,
                 messageGroupId, StringUtils.endsWith(queueUrl, AwsConst.SQS_SUFFIX_FIFO)));
     }
 
-    public SendMessageBatchResponse sendMessageBatchByQueueName(String queueName, Integer delaySeconds, String messageGroupId,
-                                                                SqsSendMessageBatchRequestEntries entries) throws AppException {
+    public SendMessageBatchResponse sendMessageBatchByQueueName(@NotBlank String queueName, @NotNull Integer delaySeconds, String messageGroupId,
+                                                                @NotNull SqsSendMessageBatchRequestEntries entries) throws AppException {
         return sendMessageBatchByQueueUrl(getQueueUrl(queueName).queueUrl(), delaySeconds, messageGroupId, entries);
     }
 
-    private SendMessageBatchResponse sendMessageBatchByQueueUrlAndEntries(String queueUrl, Collection<SendMessageBatchRequestEntry> entries) throws AppException {
+    private SendMessageBatchResponse sendMessageBatchByQueueUrlAndEntries(@NotBlank String queueUrl, @NotEmpty Collection<SendMessageBatchRequestEntry> entries) throws AppException {
         try {
             return sqsClient.sendMessageBatch(SendMessageBatchRequest.builder()
                     .queueUrl(queueUrl)
@@ -103,22 +101,20 @@ public class AppSqsClient {
         }
     }
 
-    private SendMessageResponse sendMessageByQueueUrl(String queueUrl, String message, Integer delaySeconds, String messageGroupId) throws AppException {
+    private SendMessageResponse sendMessageByQueueUrl(@NotBlank String queueUrl, String message, @NotNull Integer delaySeconds, String messageGroupId) throws AppException {
         try {
-            var inputDelaySeconds = delaySeconds != null ? delaySeconds : sqsProps.getTemplate().getDelaySeconds();
             boolean fifoQueue = StringUtils.endsWith(queueUrl, AwsConst.SQS_SUFFIX_FIFO);
             String inputMessageGroupId;
             if (!fifoQueue) {
                 inputMessageGroupId = null;
-            } else if (StringUtils.isNotBlank(messageGroupId)) {
-                inputMessageGroupId = messageGroupId;
             } else {
-                inputMessageGroupId = sqsProps.getTemplate().getQueue().getFifo().getMessageGroupId();
+                Assertions.assertTrue(StringUtils.isNotBlank(messageGroupId), "messageGroupId must not be blank");
+                inputMessageGroupId = messageGroupId;
             }
             return sqsClient.sendMessage(SendMessageRequest.builder()
                     .queueUrl(queueUrl)
                     .messageBody(message)
-                    .delaySeconds(inputDelaySeconds)
+                    .delaySeconds(delaySeconds)
                     .messageGroupId(inputMessageGroupId)
                     .build()
             );
@@ -129,15 +125,15 @@ public class AppSqsClient {
         }
     }
 
-    public SendMessageResponse sendMessageByQueueName(String queueName, String message, Integer delaySeconds, String messageGroupId) throws AppException {
+    public SendMessageResponse sendMessageByQueueName(@NotBlank String queueName, String message, @NotNull Integer delaySeconds, String messageGroupId) throws AppException {
         return sendMessageByQueueUrl(getQueueUrl(queueName).queueUrl(), message, delaySeconds, messageGroupId);
     }
 
-    public DeleteQueueResponse deleteQueueByQueueName(String queueName) throws AppException {
+    public DeleteQueueResponse deleteQueueByQueueName(@NotBlank String queueName) throws AppException {
         return deleteQueueByQueueUrl(getQueueUrl(queueName).queueUrl());
     }
 
-    public DeleteQueueResponse deleteQueueByQueueUrl(String queueUrl) throws AppException {
+    public DeleteQueueResponse deleteQueueByQueueUrl(@NotBlank String queueUrl) throws AppException {
         try {
             return sqsClient.deleteQueue(DeleteQueueRequest.builder()
                     .queueUrl(queueUrl)
@@ -150,7 +146,7 @@ public class AppSqsClient {
         }
     }
 
-    public GetQueueUrlResponse getQueueUrl(String queueName) throws AppException {
+    public GetQueueUrlResponse getQueueUrl(@NotBlank String queueName) throws AppException {
         try {
             return sqsClient.getQueueUrl(GetQueueUrlRequest.builder()
                     .queueName(queueName)
@@ -162,7 +158,7 @@ public class AppSqsClient {
         }
     }
 
-    public CreateQueueResponse createQueue(String queueName) throws AppException {
+    public CreateQueueResponse createQueue(@NotBlank String queueName) throws AppException {
         Map<QueueAttributeName, String> queueAttributes = new EnumMap<>(QueueAttributeName.class);
         if (StringUtils.endsWith(queueName, AwsConst.SQS_SUFFIX_FIFO)) {
             queueAttributes.put(QueueAttributeName.FIFO_QUEUE, Boolean.TRUE.toString());
@@ -171,7 +167,7 @@ public class AppSqsClient {
         return createQueue(queueName, queueAttributes);
     }
 
-    private CreateQueueResponse createQueue(String queueName, Map<QueueAttributeName, String> attributes) throws AppException {
+    private CreateQueueResponse createQueue(@NotBlank String queueName, Map<QueueAttributeName, String> attributes) throws AppException {
         try {
             return sqsClient.createQueue(CreateQueueRequest.builder()
                     .queueName(queueName)
@@ -182,12 +178,11 @@ public class AppSqsClient {
         }
     }
 
-    public ReceiveMessageResponse receiveMessageByQueueUrl(String queueUrl, Integer maxNumberOfMessages) throws AppException {
+    public ReceiveMessageResponse receiveMessageByQueueUrl(@NotBlank String queueUrl, @NotNull Integer maxNumberOfMessages) throws AppException {
         try {
-            var inputMaxNumberOfMessages = maxNumberOfMessages != null ? maxNumberOfMessages : sqsProps.getTemplate().getMaxNumberOfMessages();
             return sqsClient.receiveMessage(ReceiveMessageRequest.builder()
                     .queueUrl(queueUrl)
-                    .maxNumberOfMessages(inputMaxNumberOfMessages)
+                    .maxNumberOfMessages(maxNumberOfMessages)
                     .build());
         } catch (QueueDoesNotExistException e) {
             throw AWSExceptionUtils.buildAppNotFoundException(e, String.format("queue with queueUrl '%s'", queueUrl));
@@ -196,30 +191,30 @@ public class AppSqsClient {
         }
     }
 
-    public ReceiveMessageResponse receiveMessageByQueueName(String queueName, Integer maxNumberOfMessages) throws AppException {
+    public ReceiveMessageResponse receiveMessageByQueueName(@NotBlank String queueName, @NotNull Integer maxNumberOfMessages) throws AppException {
         return receiveMessageByQueueUrl(getQueueUrl(queueName).queueUrl(), maxNumberOfMessages);
     }
 
-    public DeleteMessageBatchResponse deleteMessageBatchByQueueName(String queueName, SqsDeleteMessageBatchRequestEntries messages) throws AppException {
+    public DeleteMessageBatchResponse deleteMessageBatchByQueueName(@NotBlank String queueName, @NotNull SqsDeleteMessageBatchRequestEntries messages) throws AppException {
         return deleteMessageBatchByQueueUrl(getQueueUrl(queueName).queueUrl(), messages);
     }
 
-    private DeleteMessageBatchResponse deleteMessageBatchByQueueUrl(String queueUrl, SqsDeleteMessageBatchRequestEntries messages) throws AppException {
+    private DeleteMessageBatchResponse deleteMessageBatchByQueueUrl(@NotBlank String queueUrl, @NotNull SqsDeleteMessageBatchRequestEntries messages) throws AppException {
         return deleteMessageBatchByQueueUrlAndEntries(queueUrl, buildDeleteMessageBatchRequestEntries(messages));
     }
 
-    private Collection<DeleteMessageBatchRequestEntry> buildDeleteMessageBatchRequestEntries(SqsDeleteMessageBatchRequestEntries messages) {
+    private Collection<DeleteMessageBatchRequestEntry> buildDeleteMessageBatchRequestEntries(@NotNull SqsDeleteMessageBatchRequestEntries messages) {
         return messages.getSqsDeleteMessageBatchRequestEntries().stream().map(this::buildDeleteMessageBatchRequestEntry).toList();
     }
 
-    private DeleteMessageBatchRequestEntry buildDeleteMessageBatchRequestEntry(SqsDeleteMessageBatchRequestEntry message) {
+    private DeleteMessageBatchRequestEntry buildDeleteMessageBatchRequestEntry(@NotNull SqsDeleteMessageBatchRequestEntry message) {
         return DeleteMessageBatchRequestEntry.builder()
                 .receiptHandle(message.getReceiptHandle())
                 .id(message.getId())
                 .build();
     }
 
-    private DeleteMessageBatchResponse deleteMessageBatchByQueueUrlAndEntries(String queueUrl, Collection<DeleteMessageBatchRequestEntry> entries) throws AppException {
+    private DeleteMessageBatchResponse deleteMessageBatchByQueueUrlAndEntries(@NotBlank String queueUrl, @NotEmpty Collection<DeleteMessageBatchRequestEntry> entries) throws AppException {
         try {
             return sqsClient.deleteMessageBatch(DeleteMessageBatchRequest.builder()
                     .queueUrl(queueUrl)
@@ -233,11 +228,11 @@ public class AppSqsClient {
 
     }
 
-    public DeleteMessageResponse deleteMessageByQueueName(String queueName, String receiptHandle) throws AppException {
+    public DeleteMessageResponse deleteMessageByQueueName(@NotBlank String queueName, @NotBlank String receiptHandle) throws AppException {
         return deleteMessageByQueueUrl(getQueueUrl(queueName).queueUrl(), receiptHandle);
     }
 
-    public DeleteMessageResponse deleteMessageByQueueUrl(String queueUrl, String receiptHandle) throws AppException {
+    public DeleteMessageResponse deleteMessageByQueueUrl(@NotBlank String queueUrl, @NotBlank String receiptHandle) throws AppException {
         try {
             return sqsClient.deleteMessage(DeleteMessageRequest.builder()
                     .queueUrl(queueUrl)

@@ -7,18 +7,5 @@ cloud:
     region: AWS_REGION
     s3:
       enabled: true
-      template:
-        bucket:
-          name: s3-bucket-eric6166
-        signature-duration-minutes: 10 # minutes
     sqs:
       enabled: true
-      template:
-        queue:
-          standard:
-            name: sqs-queue-standard-eric6166
-          fifo:
-            name: sqs-queue-fifo-eric6166.fifo
-            message-group-id: sqs-message-group-id-eric6166
-        delay-seconds: 0
-        max-number-of-messages: 10
