@@ -45,7 +45,7 @@ public class AppSecurityUtils {
     public static Collection<String> getAuthorities() {
         return getAuthentication().getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public static String getPreferredUsername() {

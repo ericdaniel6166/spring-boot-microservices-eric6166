@@ -55,7 +55,7 @@ public class AppSqsClient {
     private Collection<SendMessageBatchRequestEntry> buildSendMessageBatchRequestEntries(@NotNull SqsSendMessageBatchRequestEntries entries,
                                                                                          @NotNull Integer delaySeconds, String messageGroupId, boolean fifoQueue) {
         return entries.getSqsSendMessageBatchRequestEntries().stream().map(entry ->
-                buildSendMessageBatchRequestEntry(entry, delaySeconds, messageGroupId, fifoQueue)).collect(Collectors.toList());
+                buildSendMessageBatchRequestEntry(entry, delaySeconds, messageGroupId, fifoQueue)).toList();
     }
 
     private SendMessageBatchRequestEntry buildSendMessageBatchRequestEntry(@NotNull SqsSendMessageBatchRequestEntry entry,
