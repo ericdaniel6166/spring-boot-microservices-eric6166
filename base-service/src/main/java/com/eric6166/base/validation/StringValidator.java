@@ -4,9 +4,7 @@ import com.eric6166.base.utils.BaseConst;
 import com.eric6166.base.utils.BaseMessageConst;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -14,14 +12,13 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import java.util.Arrays;
 
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class StringValidator implements ConstraintValidator<ValidString, String> {
 
     private final MessageSource messageSource;
 
-    String[] values;
-    boolean caseSensitive;
-    String message;
+    private String[] values;
+    private boolean caseSensitive;
+    private String message;
 
     @Override
     public void initialize(ValidString constraintAnnotation) {

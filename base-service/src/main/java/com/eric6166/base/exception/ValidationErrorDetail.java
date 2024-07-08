@@ -1,28 +1,25 @@
 package com.eric6166.base.exception;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.experimental.FieldDefaults;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ValidationErrorDetail extends ErrorDetail {
 
     //    @JsonIgnore // uncomment // for local testing
-    String keyField;
-    String field;
+    private String keyField;
+    private String field;
     //    @JsonIgnore // uncomment // for local testing
-    String keyObject;
-    String object;
+    private String keyObject;
+    private String object;
     //    @JsonIgnore // uncomment // for local testing
-    Object rejectedValue;
-    String message;
+    private Object rejectedValue;
+    private String message;
 
     public ValidationErrorDetail(String field, String message) {
         this.field = field;

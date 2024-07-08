@@ -1,9 +1,7 @@
 package com.eric6166.aws.s3;
 
 import com.eric6166.aws.config.AWSProps;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,12 +11,11 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 @Configuration
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = "cloud.aws.s3.enabled", havingValue = "true")
 public class S3Config {
 
-    AWSProps awsProps;
+    private final AWSProps awsProps;
 
     @Bean
     public S3Client s3Client(AwsCredentialsProvider credentialsProvider) {

@@ -2,32 +2,29 @@ package com.eric6166.base.exception;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AccessLevel;
 import lombok.Data;
-import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatusCode;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 @Data
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ErrorResponse {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
-    LocalDateTime timestamp;
+    private LocalDateTime timestamp;
 
-    int status;
+    private int status;
 
     @JsonIgnore
-    HttpStatusCode httpStatus;
+    private HttpStatusCode httpStatus;
 
-    String traceId;
+    private String traceId;
 
-    String error;
+    private String error;
 
-    String message;
-    String path;
-    Object rootCause;
+    private String message;
+    private String path;
+    private Object rootCause;
 
     public ErrorResponse() {
         this.timestamp = LocalDateTime.now().truncatedTo(ChronoUnit.MICROS);

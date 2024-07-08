@@ -1,9 +1,7 @@
 package com.eric6166.keycloak.config;
 
 import jakarta.ws.rs.core.Response;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.resource.RealmResource;
@@ -16,14 +14,13 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 
 @Component
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @Slf4j
 @ConditionalOnProperty(name = "keycloak-admin-client.enabled", havingValue = "true")
 public class KeycloakAminClient {
 
-    Keycloak keycloak;
-    KeycloakAdminClientProps keycloakAdminClientProps;
+    private final Keycloak keycloak;
+    private final KeycloakAdminClientProps keycloakAdminClientProps;
 
 
     public Optional<UserRepresentation> searchUserByUsername(String username) {

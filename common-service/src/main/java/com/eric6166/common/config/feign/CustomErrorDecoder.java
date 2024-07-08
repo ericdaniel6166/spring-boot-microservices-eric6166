@@ -8,19 +8,16 @@ import com.eric6166.base.utils.BaseUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import feign.Response;
 import feign.codec.ErrorDecoder;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 
 import java.nio.charset.StandardCharsets;
 
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CustomErrorDecoder implements ErrorDecoder {
 
-    ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     @SneakyThrows
     @Override

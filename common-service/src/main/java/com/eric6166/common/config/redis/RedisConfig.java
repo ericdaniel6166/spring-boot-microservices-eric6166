@@ -1,8 +1,6 @@
 package com.eric6166.common.config.redis;
 
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,10 +12,9 @@ import org.springframework.data.redis.core.RedisTemplate;
 @Configuration
 @ConditionalOnProperty(name = "spring.data.redis.enabled", havingValue = "true")
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class RedisConfig {
 
-    RedisProps redisProps;
+    private final RedisProps redisProps;
 
     @Bean
     public RedisConnectionFactory connectionFactory() {

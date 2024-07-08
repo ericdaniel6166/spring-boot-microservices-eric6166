@@ -1,19 +1,16 @@
 package com.eric6166.jpa.dto;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.FieldDefaults;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 @Getter
 @Setter
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class PageResponse<T> {
-    List<T> content;
-    AppPageable pageable;
+    private List<T> content;
+    private AppPageable pageable;
 
     public PageResponse(List<T> content, Page<?> page) {
         this.content = content;
@@ -22,18 +19,17 @@ public class PageResponse<T> {
 
     @Getter
     @Setter
-    @FieldDefaults(level = AccessLevel.PRIVATE)
     public static class AppPageable {
-        int pageNumber;
-        int pageSize;
-        int numberOfElements;
-        boolean first;
-        boolean last;
-        boolean hasNext;
-        boolean hasPrevious;
-        boolean hasContent;
-        long totalElements;
-        int totalPages;
+        private int pageNumber;
+        private int pageSize;
+        private int numberOfElements;
+        private boolean first;
+        private boolean last;
+        private boolean hasNext;
+        private boolean hasPrevious;
+        private boolean hasContent;
+        private long totalElements;
+        private int totalPages;
 
         public AppPageable(Page<?> page) {
             this.pageNumber = page.getNumber() + 1;

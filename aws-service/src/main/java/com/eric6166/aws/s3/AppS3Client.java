@@ -6,9 +6,7 @@ import com.eric6166.base.exception.AppException;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -63,13 +61,12 @@ import java.util.stream.Stream;
 @Component
 @Slf4j
 @RequiredArgsConstructor
-@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @ConditionalOnProperty(name = "cloud.aws.s3.enabled", havingValue = "true")
 public class AppS3Client {
 
 
-    S3Client s3Client;
-    S3Presigner s3Presigner;
+    private final S3Client s3Client;
+    private final S3Presigner s3Presigner;
 
     public ListObjectsV2Response listObject(@NotBlank String bucket) throws AppException {
         try {

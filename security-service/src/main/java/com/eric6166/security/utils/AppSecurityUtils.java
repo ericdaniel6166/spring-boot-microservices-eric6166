@@ -2,9 +2,7 @@ package com.eric6166.security.utils;
 
 import com.eric6166.base.utils.DateTimeUtils;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,14 +16,12 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Component
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AppSecurityUtils {
 
-    HttpServletRequest httpServletRequest;
+    private final HttpServletRequest httpServletRequest;
 
     public static boolean hasAnyRole(String... roles) {
         var authorities = getAuthorities();

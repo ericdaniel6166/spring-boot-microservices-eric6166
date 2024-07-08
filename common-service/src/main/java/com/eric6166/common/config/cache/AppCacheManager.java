@@ -1,8 +1,6 @@
 package com.eric6166.common.config.cache;
 
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.cache.Cache;
@@ -14,13 +12,12 @@ import java.util.Collection;
 
 @Component
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 @ConditionalOnProperty(name = "spring.cache.enabled", havingValue = "true")
 @EnableCaching
 public class AppCacheManager {
 
-    CacheManager cacheManager;
+    private final CacheManager cacheManager;
 
     public Cache.ValueWrapper getCache(String cacheName, Object cacheKey) {
         log.info("get cache, cacheName: {}, cacheKey: {}", cacheName, cacheKey);

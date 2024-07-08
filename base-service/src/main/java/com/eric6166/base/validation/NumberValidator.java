@@ -3,22 +3,19 @@ package com.eric6166.base.validation;
 import com.eric6166.base.utils.BaseMessageConst;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class NumberValidator implements ConstraintValidator<ValidNumber, String> {
 
     private final MessageSource messageSource;
 
-    String message;
-    ValidNumber.Flag flag;
+    private String message;
+    private ValidNumber.Flag flag;
 
     @Override
     public void initialize(ValidNumber constraintAnnotation) {

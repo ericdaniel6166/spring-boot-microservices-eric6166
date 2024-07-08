@@ -1,8 +1,6 @@
 package com.eric6166.common.config.kafka;
 
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -17,12 +15,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = "spring.kafka.enabled", havingValue = "true")
 public class KafkaProducerConfig {
 
-    KafkaProps kafkaProperties;
+    private final KafkaProps kafkaProperties;
 
     @Bean
     public ProducerFactory<String, Object> producerFactory() {

@@ -7,9 +7,7 @@ import com.eric6166.base.exception.AppException;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
@@ -41,16 +39,14 @@ import software.amazon.awssdk.services.sqs.model.SendMessageResponse;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 @RequiredArgsConstructor
-@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @ConditionalOnProperty(name = "cloud.aws.sqs.enabled", havingValue = "true")
 public class AppSqsClient {
 
-    SqsClient sqsClient;
+    private final SqsClient sqsClient;
 
     private Collection<SendMessageBatchRequestEntry> buildSendMessageBatchRequestEntries(@NotNull SqsSendMessageBatchRequestEntries entries,
                                                                                          @NotNull Integer delaySeconds, String messageGroupId, boolean fifoQueue) {

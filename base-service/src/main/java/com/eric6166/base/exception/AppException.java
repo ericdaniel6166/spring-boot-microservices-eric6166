@@ -1,22 +1,19 @@
 package com.eric6166.base.exception;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.FieldDefaults;
 import org.springframework.http.HttpStatus;
 
 @Getter
 @Setter
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class AppException extends Exception {
 
-    Object rootCause;
-    String error;
+    private Object rootCause;
+    private String error;
 
-    HttpStatus httpStatus;
+    private HttpStatus httpStatus;
 
-    int status;
+    private int status;
 
     public AppException(HttpStatus httpStatus, String message) {
         super(message);

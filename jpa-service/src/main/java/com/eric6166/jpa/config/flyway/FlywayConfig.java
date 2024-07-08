@@ -1,8 +1,6 @@
 package com.eric6166.jpa.config.flyway;
 
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.flywaydb.core.Flyway;
 import org.flywaydb.core.api.MigrationVersion;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -14,7 +12,6 @@ import javax.sql.DataSource;
 import java.util.Optional;
 
 @Configuration
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = "spring.flyway.enabled", havingValue = "true")
 public class FlywayConfig {
@@ -23,7 +20,7 @@ public class FlywayConfig {
     private static final String FLYWAY_BASELINE_VERSION_DEFAULT = "0.0";
     private static final String FLYWAY_LOCATION_DEFAULT = "classpath:db/migration/";
 
-    FlywayProps flywayProps;
+    private final FlywayProps flywayProps;
 
     @Bean
     public Flyway flyway(DataSource dataSource) {

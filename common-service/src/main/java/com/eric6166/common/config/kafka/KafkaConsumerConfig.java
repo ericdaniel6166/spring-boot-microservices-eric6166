@@ -1,8 +1,6 @@
 package com.eric6166.common.config.kafka;
 
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -17,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = "spring.kafka.enabled", havingValue = "true")
 @EnableKafka
@@ -25,7 +22,7 @@ public class KafkaConsumerConfig {
 
     private static final String TRUST_ALL_PACKAGES = "*";
 
-    KafkaProps kafkaProps;
+    private final KafkaProps kafkaProps;
 
     public ConsumerFactory<String, Object> consumerFactory(String groupId) {
         Map<String, Object> props = new HashMap<>();

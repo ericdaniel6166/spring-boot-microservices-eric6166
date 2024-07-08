@@ -1,14 +1,11 @@
 package com.eric6166.keycloak.config;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.FieldDefaults;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-@FieldDefaults(level = AccessLevel.PRIVATE)
 @Getter
 @Setter
 @Configuration
@@ -16,9 +13,9 @@ import org.springframework.context.annotation.Configuration;
 @ConfigurationProperties(prefix = "keycloak-admin-client")
 public class KeycloakAdminClientProps {
 
-    String serverUrl;
-    String realm;
-    String clientId;
-    String clientSecret;
-    String issuerUri;
+    private String serverUrl;
+    private String realm;
+    private String clientId;
+    private String clientSecret;
+    private String issuerUri;
 }

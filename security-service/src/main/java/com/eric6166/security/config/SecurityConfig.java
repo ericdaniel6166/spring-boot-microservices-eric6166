@@ -1,9 +1,7 @@
 package com.eric6166.security.config;
 
 import com.eric6166.security.utils.SecurityConst;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +23,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Configuration
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @RequiredArgsConstructor
 @ConditionalOnProperty(name = "security.enabled", havingValue = "true")
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
@@ -34,7 +31,7 @@ public class SecurityConfig {
     private static final String[] ROLE_CUSTOMER_URLS = {"/customer/**"};
     private static final String[] ROLE_ADMIN_URLS = {"/admin/**"};
 
-    SecurityProps securityProps;
+    private final SecurityProps securityProps;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {

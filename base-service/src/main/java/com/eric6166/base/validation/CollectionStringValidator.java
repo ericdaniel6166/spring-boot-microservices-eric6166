@@ -4,9 +4,7 @@ import com.eric6166.base.utils.BaseConst;
 import com.eric6166.base.utils.BaseMessageConst;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
@@ -16,15 +14,14 @@ import java.util.Collection;
 import java.util.List;
 
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class CollectionStringValidator implements ConstraintValidator<ValidCollectionString, Collection<String>> {
 
     private final MessageSource messageSource;
 
-    List<String> valueList;
-    List<String> upperCaseValueList;
-    boolean caseSensitive;
-    String message;
+    private List<String> valueList;
+    private List<String> upperCaseValueList;
+    private boolean caseSensitive;
+    private String message;
 
     @Override
     public void initialize(ValidCollectionString constraintAnnotation) {

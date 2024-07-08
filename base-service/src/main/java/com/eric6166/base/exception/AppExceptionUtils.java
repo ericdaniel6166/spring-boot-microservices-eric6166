@@ -2,20 +2,17 @@ package com.eric6166.base.exception;
 
 import com.eric6166.base.utils.BaseUtils;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 
 @RequiredArgsConstructor
 @Component
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public final class AppExceptionUtils {
 
-    HttpServletRequest httpServletRequest;
+    private final HttpServletRequest httpServletRequest;
 
     public ErrorResponse buildErrorResponse(HttpStatus httpStatus, Throwable e) {
         return buildErrorResponse(httpStatus, httpStatus.name(), httpStatus.getReasonPhrase(), BaseUtils.getRootCauseMessage(e));

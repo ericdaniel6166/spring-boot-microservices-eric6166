@@ -2,18 +2,15 @@ package com.eric6166.base.validation;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import lombok.AccessLevel;
-import lombok.experimental.FieldDefaults;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@FieldDefaults(level = AccessLevel.PRIVATE)
 public class FileExtensionValidator implements ConstraintValidator<ValidFileExtension, MultipartFile> {
 
-    List<String> extensions;
+    private List<String> extensions;
 
     @Override
     public void initialize(ValidFileExtension constraintAnnotation) {

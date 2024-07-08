@@ -5,9 +5,7 @@ import com.eric6166.base.utils.BaseUtils;
 import io.github.resilience4j.circuitbreaker.CallNotPermittedException;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +34,6 @@ import java.util.concurrent.CompletionException;
 
 @RestControllerAdvice
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class RestExceptionHandler {
 
@@ -45,9 +42,9 @@ public class RestExceptionHandler {
     private static final String KEY_OBJECT_TEMPLATE = "%s.%s";
     private static final String KEY_FIELD_TEMPLATE_PROPERTY_PATH = "%s.%s";
 
-    MessageSource messageSource;
-    BaseUtils baseUtils;
-    AppExceptionUtils appExceptionUtils;
+    private final MessageSource messageSource;
+    private final BaseUtils baseUtils;
+    private final AppExceptionUtils appExceptionUtils;
 
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Object> handleResponseStatusException(ResponseStatusException e) {

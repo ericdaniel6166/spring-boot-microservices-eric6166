@@ -1,15 +1,12 @@
 package com.eric6166.base.enums;
 
-import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 
 import java.time.format.DateTimeFormatter;
 
 @Getter
 @RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum AppDateTimeFormatter {
     NONE(null),
     BASIC_ISO_DATE(DateTimeFormatter.BASIC_ISO_DATE),
@@ -29,6 +26,6 @@ public enum AppDateTimeFormatter {
     RFC_1123_DATE_TIME(DateTimeFormatter.RFC_1123_DATE_TIME),
     ;
 
-    DateTimeFormatter formatter;
+    private final DateTimeFormatter formatter;
 
 }

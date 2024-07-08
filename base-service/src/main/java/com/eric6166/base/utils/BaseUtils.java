@@ -3,9 +3,7 @@ package com.eric6166.base.utils;
 import com.eric6166.base.config.tracing.AppTraceIdContext;
 import com.eric6166.base.dto.AppResponse;
 import com.eric6166.base.exception.ErrorResponse;
-import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -17,11 +15,10 @@ import java.net.URL;
 
 @RequiredArgsConstructor
 @Component
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class BaseUtils {
 
-    AppTraceIdContext appTraceIdContext;
+    private final AppTraceIdContext appTraceIdContext;
 
     public static String getRootCauseMessage(Throwable e) {
         return ExceptionUtils.getRootCause(e).getMessage();
