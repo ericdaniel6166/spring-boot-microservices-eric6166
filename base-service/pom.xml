@@ -31,10 +31,10 @@
             <artifactId>commons-collections4</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-validation</artifactId>
-        </dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-validation</artifactId>
+</dependency>
         <!--        brave, zipkin-reporter, zipkin-sender-okhttp3, and zipkin-reporter-brave-->
         <!--        https://www.baeldung.com/java-brave-->
         <dependency>

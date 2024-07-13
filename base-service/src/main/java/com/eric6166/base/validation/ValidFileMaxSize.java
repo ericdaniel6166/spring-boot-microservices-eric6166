@@ -20,7 +20,7 @@ public @interface ValidFileMaxSize {
 
     long maxSize() default Long.MAX_VALUE; // MB
 
-    String message() default BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_FILE_MAX_SIZE_MESSAGE;
+    String message() default "{constraints.ValidFileMaxSize.message}";
 
     Class<?>[] groups() default {};
 

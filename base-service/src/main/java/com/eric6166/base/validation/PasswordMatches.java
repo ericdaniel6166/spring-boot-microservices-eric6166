@@ -18,7 +18,7 @@ import java.lang.annotation.Target;
 )
 public @interface PasswordMatches {
 
-    String message() default BaseMessageConst.MSG_ERR_CONSTRAINS_PASSWORD_MATCHES_MESSAGE;
+    String message() default "{constraints.PasswordMatches.message}";
 
     Class<?>[] groups() default {};
 

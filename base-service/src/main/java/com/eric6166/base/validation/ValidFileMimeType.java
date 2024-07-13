@@ -20,7 +20,7 @@ public @interface ValidFileMimeType {
 
     String[] mimeTypes() default {};
 
-    String message() default BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_FILE_MIME_TYPE_MESSAGE;
+    String message() default "{constraints.ValidFileMimeType.message}";
 
     Class<?>[] groups() default {};
 

@@ -20,7 +20,7 @@ public @interface ValidFileExtension {
 
     String[] extensions() default {};
 
-    String message() default BaseMessageConst.MSG_ERR_CONSTRAINS_VALID_FILE_EXTENSION_MESSAGE;
+    String message() default "{constraints.ValidFileExtension.message}";
 
     Class<?>[] groups() default {};
 
