@@ -56,6 +56,7 @@ import java.net.URL;
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
@@ -222,16 +223,12 @@ public class AppS3Client {
     }
 
     public DeleteObjectsResponse deleteObjects(@NotBlank String bucket, @NotEmpty String... keys) throws AppException {
-        return deleteObjects(bucket, Arrays.stream(keys));
+        return deleteObjects(bucket, Arrays.stream(keys).collect(Collectors.toList()));
     }
 
     public DeleteObjectsResponse deleteObjects(@NotBlank String bucket, @NotEmpty Collection<String> keys) throws AppException {
-        return deleteObjects(bucket, keys.stream());
-    }
-
-    public DeleteObjectsResponse deleteObjects(@NotBlank String bucket, @NotNull Stream<String> keys) throws AppException {
         try {
-            var objects = keys
+            var objects = keys.stream()
                     .map(key -> ObjectIdentifier.builder()
                             .key(key)
                             .build())
