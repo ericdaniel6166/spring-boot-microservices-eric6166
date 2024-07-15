@@ -32,13 +32,13 @@ public class CollectionStringValidator implements ConstraintValidator<ValidColle
     }
 
     @Override
-    public boolean isValid(Collection<String> s, ConstraintValidatorContext constraintValidatorContext) {
-        if (CollectionUtils.isEmpty(s)) {
+    public boolean isValid(Collection<String> strings, ConstraintValidatorContext constraintValidatorContext) {
+        if (CollectionUtils.isEmpty(strings)) {
             return true;
         }
         boolean isValid = caseSensitive
-                ? valueList.containsAll(s)
-                : upperCaseValueList.containsAll(s.stream().map(String::toUpperCase).toList());
+                ? valueList.containsAll(strings)
+                : upperCaseValueList.containsAll(strings.stream().map(String::toUpperCase).toList());
         if (!isValid && StringUtils.isBlank(message)) {
             buildConstraintViolation(constraintValidatorContext);
         }

@@ -28,9 +28,7 @@ public class ValidPasswordValidator implements ConstraintValidator<ValidPassword
         rules.add(new CharacterRule(EnglishCharacterData.LowerCase, 1));
         rules.add(new CharacterRule(EnglishCharacterData.Digit, 1));
         rules.add(new CharacterRule(EnglishCharacterData.Special, 1));
-        var validator = new PasswordValidator(rules);
-        var result = validator.validate(new PasswordData(password));
-        return result.isValid();
+        return new PasswordValidator(rules).validate(new PasswordData(password)).isValid();
     }
 
 
