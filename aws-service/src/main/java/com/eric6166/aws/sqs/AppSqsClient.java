@@ -159,7 +159,7 @@ public class AppSqsClient {
         return createQueue(queueName, queueAttributes);
     }
 
-    private CreateQueueResponse createQueue(@NotBlank String queueName, Map<QueueAttributeName, String> attributes) throws AppException {
+    public CreateQueueResponse createQueue(@NotBlank String queueName, Map<QueueAttributeName, String> attributes) throws AppException {
         try {
             return sqsClient.createQueue(CreateQueueRequest.builder()
                     .queueName(queueName)
