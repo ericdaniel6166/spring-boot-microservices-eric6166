@@ -58,10 +58,8 @@ public class AppSqsClient {
                                                                            @NotNull Integer delaySeconds, String messageGroupId, boolean fifoQueue) {
         Integer inputDelaySeconds;
         inputDelaySeconds = delaySeconds;
-        String inputMessageGroupId;
-        if (!fifoQueue) {
-            inputMessageGroupId = null;
-        } else {
+        String inputMessageGroupId = null;
+        if (fifoQueue) {
             Assertions.assertTrue(StringUtils.isNotBlank(messageGroupId), "messageGroupId must not be blank");
             inputMessageGroupId = messageGroupId;
         }
@@ -100,10 +98,8 @@ public class AppSqsClient {
     private SendMessageResponse sendMessageByQueueUrl(@NotBlank String queueUrl, String message, @NotNull Integer delaySeconds, String messageGroupId) throws AppException {
         try {
             boolean fifoQueue = StringUtils.endsWith(queueUrl, AwsConst.SQS_SUFFIX_FIFO);
-            String inputMessageGroupId;
-            if (!fifoQueue) {
-                inputMessageGroupId = null;
-            } else {
+            String inputMessageGroupId = null;
+            if (fifoQueue) {
                 Assertions.assertTrue(StringUtils.isNotBlank(messageGroupId), "messageGroupId must not be blank");
                 inputMessageGroupId = messageGroupId;
             }
