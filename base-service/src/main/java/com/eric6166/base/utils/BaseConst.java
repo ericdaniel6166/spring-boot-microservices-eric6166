@@ -55,6 +55,10 @@ public final class BaseConst {
     public static final String EXTENSION_DOCX = "docx";
     public static final String EXTENSION_DOC = "doc";
 
+    public static final String PREVIOUS_30_DAYS = "30";
+    public static final String PREVIOUS_60_DAYS = "60";
+    public static final String PREVIOUS_90_DAYS = "90";
+
     private BaseConst() {
         throw new IllegalStateException("Utility class");
     }
