@@ -1,19 +1,18 @@
-package com.eric6166.common.utils;
+package com.eric6166.common.config.kafka;
 
 import com.eric6166.base.exception.AppException;
-import com.eric6166.common.config.kafka.AppEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.support.SendResult;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 
 @Slf4j
-public final class CommonUtils {
-
-    private CommonUtils() {
-        throw new IllegalStateException("Utility class");
-    }
+@Configuration
+@ConditionalOnProperty(name = "spring.kafka.enabled", havingValue = "true")
+public class KafkaUtils {
 
     public static void handleSendResult(AppEvent appEvent, CompletableFuture<SendResult<String, Object>> sendResult) throws AppException {
         sendResult.whenComplete((result, throwable) -> {
