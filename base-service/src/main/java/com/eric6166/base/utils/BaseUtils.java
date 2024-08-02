@@ -52,6 +52,7 @@ public class BaseUtils {
         }
     }
 
+
     public ResponseEntity<Object> buildResponseExceptionEntity(ErrorResponse errorResponse) {
         if (ObjectUtils.isNotEmpty(appTraceIdContext)) {
             errorResponse.setTraceId(appTraceIdContext.getTraceId());
