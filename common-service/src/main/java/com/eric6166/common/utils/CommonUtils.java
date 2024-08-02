@@ -1,4 +1,4 @@
-package com.eric6166.common.Utils;
+package com.eric6166.common.utils;
 
 import com.eric6166.base.exception.AppException;
 import com.eric6166.common.config.kafka.AppEvent;
