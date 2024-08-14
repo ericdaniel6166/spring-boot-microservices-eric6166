@@ -17,7 +17,7 @@ public class KafkaUtils {
     public static void handleSendResult(AppEvent appEvent, CompletableFuture<SendResult<String, Object>> sendResult) throws AppException {
         sendResult.whenComplete((result, throwable) -> {
             if (throwable != null) {
-                log.info("Failed to send appEvent, topic: {}, uuid: {}", result.getProducerRecord().topic(), appEvent.getUuid(), throwable);
+                log.info("Failed to send appEvent, topic: {}, uuid: {}, message: {}", result.getProducerRecord().topic(), appEvent.getUuid(), throwable.getCause().getMessage());
             } else {
                 log.debug("appEvent sent, topic: {}, uuid :{}", result.getProducerRecord().topic() , appEvent.getUuid());
             }
