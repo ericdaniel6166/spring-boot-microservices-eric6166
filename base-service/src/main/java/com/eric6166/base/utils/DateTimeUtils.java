@@ -66,10 +66,6 @@ public final class DateTimeUtils {
         }
     }
 
-    public static LocalDateTime toLocalDateTime(String text, String pattern) {
-        return toLocalDateTime(text, DateTimeFormatter.ofPattern(pattern));
-    }
-
     /**
      * The text is parsed using the formatter, returning a date-time.
      *
@@ -92,10 +88,6 @@ public final class DateTimeUtils {
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
-    }
-
-    public static LocalDate toLocalDate(String text, String pattern) {
-        return toLocalDate(text, DateTimeFormatter.ofPattern(pattern));
     }
 
     public static LocalDate toLocalDate(String text, DateTimeFormatter formatter) {
