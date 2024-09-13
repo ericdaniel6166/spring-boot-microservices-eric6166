@@ -86,14 +86,6 @@ public final class DateTimeUtils {
         }
     }
 
-    public static Optional<LocalDateTime> toOptionalLocalDateTime(String text, String pattern) {
-        try {
-            return Optional.of(toLocalDateTime(text, pattern));
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        }
-    }
-
     public static Optional<LocalDateTime> toOptionalLocalDateTime(String text, DateTimeFormatter formatter) {
         try {
             return Optional.of(toLocalDateTime(text, formatter));
@@ -114,24 +106,12 @@ public final class DateTimeUtils {
         }
     }
 
-    public static Optional<LocalDate> toOptionalLocalDate(String text, String pattern) {
-        try {
-            return Optional.of(toLocalDate(text, pattern));
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        }
-    }
-
     public static Optional<LocalDate> toOptionalLocalDate(String text, DateTimeFormatter formatter) {
         try {
             return Optional.of(toLocalDate(text, formatter));
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
-    }
-
-    public static LocalTime toLocalTime(String text, String pattern) {
-        return toLocalTime(text, DateTimeFormatter.ofPattern(pattern));
     }
 
     public static LocalTime toLocalTime(String text, DateTimeFormatter formatter) {
@@ -150,18 +130,6 @@ public final class DateTimeUtils {
         }
     }
 
-    public static Optional<LocalTime> toOptionalLocalTime(String text, String pattern) {
-        try {
-            return Optional.of(toLocalTime(text, pattern));
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        }
-    }
-
-    public static ZonedDateTime toZonedDateTime(String text, String pattern) {
-        return toZonedDateTime(text, DateTimeFormatter.ofPattern(pattern));
-    }
-
     public static ZonedDateTime toZonedDateTime(String text, DateTimeFormatter formatter) {
         try {
             return ZonedDateTime.parse(text, formatter);
@@ -178,18 +146,6 @@ public final class DateTimeUtils {
         }
     }
 
-    public static Optional<ZonedDateTime> toOptionalZonedDateTime(String text, String pattern) {
-        try {
-            return Optional.of(toZonedDateTime(text, pattern));
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        }
-    }
-
-    public static String toString(ZonedDateTime dateTime, String pattern) {
-        return toString(dateTime, DateTimeFormatter.ofPattern(pattern));
-    }
-
     public static String toString(ZonedDateTime dateTime, DateTimeFormatter formatter) {
         try {
             return dateTime.format(formatter);
@@ -201,22 +157,6 @@ public final class DateTimeUtils {
     public static Optional<String> toOptionalString(ZonedDateTime dateTime, DateTimeFormatter formatter) {
         try {
             return Optional.of(toString(dateTime, formatter));
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        }
-    }
-
-    public static Optional<String> toOptionalString(ZonedDateTime dateTime, String pattern) {
-        try {
-            return Optional.of(toString(dateTime, pattern));
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        }
-    }
-
-    public static Optional<String> toOptionalString(LocalDateTime dateTime, String pattern) {
-        try {
-            return Optional.of(toString(dateTime, pattern));
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
@@ -238,28 +178,11 @@ public final class DateTimeUtils {
         }
     }
 
-    public static String toString(LocalDateTime dateTime, String pattern) {
-        return toString(dateTime, DateTimeFormatter.ofPattern(pattern));
-    }
-
-
-    public static String toString(LocalDate date, String pattern) {
-        return toString(date, DateTimeFormatter.ofPattern(pattern));
-    }
-
     public static String toString(LocalDate date, DateTimeFormatter formatter) {
         try {
             return date.format(formatter);
         } catch (DateTimeException e) {
             throw new IllegalArgumentException(String.format("the date cannot be formatted, date '%s'", date));
-        }
-    }
-
-    public static Optional<String> toOptionalString(LocalDate date, String pattern) {
-        try {
-            return Optional.of(toString(date, pattern));
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
         }
     }
 
@@ -271,9 +194,6 @@ public final class DateTimeUtils {
         }
     }
 
-    public static String toString(LocalTime time, String pattern) {
-        return toString(time, DateTimeFormatter.ofPattern(pattern));
-    }
 
     public static String toString(LocalTime time, DateTimeFormatter formatter) {
         try {
@@ -289,28 +209,6 @@ public final class DateTimeUtils {
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
-    }
-
-    public static Optional<String> toOptionalString(LocalTime time, String pattern) {
-        try {
-            return Optional.of(toString(time, pattern));
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        }
-    }
-
-    public static TemporalAccessor toTemporalAccessor(String text, String pattern) {
-        return toTemporalAccessor(text, DateTimeFormatter.ofPattern(pattern));
-
-    }
-
-    public static Optional<TemporalAccessor> toOptionalTemporalAccessor(String text, String pattern) {
-        try {
-            return Optional.of(toTemporalAccessor(text, pattern));
-        } catch (IllegalArgumentException e) {
-            return Optional.empty();
-        }
-
     }
 
     public static TemporalAccessor toTemporalAccessor(String text, DateTimeFormatter formatter) {
